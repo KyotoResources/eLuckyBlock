@@ -1,0 +1,95 @@
+#  .,::::::       :::      ...    :::  .,-:::::  :::  .  .-:.     ::-.:::::::.   :::         ...       .,-:::::  :::  .
+#  ;;;;''''       ;;;      ;;     ;;;,;;;'````'  ;;; .;;,.';;.   ;;;;' ;;;'';;'  ;;;      .;;;;;;;.  ,;;;'````'  ;;; .;;,.
+#   [[cccc        [[[     [['     [[[[[[         [[[[[/'    '[[,[[['   [[[__[[\. [[[     ,[[     \[[,[[[         [[[[[/'
+#   $$""""        $$'     $$      $$$$$$        _$$$$,        c$$"     $$""""Y$$ $$'     $$$,     $$$$$$        _$$$$,
+#   888oo,__     o88oo,.__88    .d888`88bo,__,o,"888"88o,   ,8P"`     _88o,,od8Po88oo,.__"888,_ _,88P`88bo,__,o,"888"88o,
+#   """"YUMMM    """"YUMMM "YmmMMMM""  "YUMMMMMP"MMM "MMP" mM"        ""YUMMMP" """"YUMMM  "YMMMMMP"   "YUMMMMMP"MMM "MMP"
+#
+#   Version: 1.0
+#   LuckyBlocks
+#
+#   Wiki: https://zs0bye.gitbook.io/eluckyblock/plugins/eluckyblock-free
+#
+
+exampleNormal:
+  # Material ids 1.8+ are supported.
+  # Example if you have a 1.8+ server:
+  # material: 19
+  # while for a 1.13+ server it must be without id:
+  # material: SPONGE
+  material: SPONGE
+  # Ignore "data" if you have server version 1.13+
+  data: 0
+  particles: MOBSPAWNER_FLAMES
+  rewards: exampleNormal
+
+  # Example if you want to put a permission:
+  # permission_required:
+  #   enabled: true
+  #   permission: luckyblock.example
+  #   modules:
+  #     chat: true
+  #     title: true
+  #     action: true
+  #   chat: '%prefix%You can''t break this luckyblock!'
+  #   title:
+  #     title: '&c&lYOU ARE NOT ALLOWED!'
+  #     subtitle: '&4&l┃ &cYou can''t break this LuckyBlock!'
+  #     fade-in: 20
+  #     stay: 40
+  #     fade-out: 20
+  #   action: '%prefix%You can''t break this luckyblock!'
+  permission_required:
+    enabled: false
+
+  prevent:
+    # - deny_pickup: Remove the luckyblock drop as soon as you destroy it.
+    # - deny_absorb: If you put a sponge as a material, it will not be absorbed by the water,
+    #                This option ONLY supports 1.13+.
+    deny_pickup: true
+    deny_absorb: true
+    blocked_worlds:
+      type: BLACKLIST
+      worlds:
+        - blworld1
+    # Support for regions only works if
+    # Only "Hooks > WorldGuard" is active!
+    # ATTENTION! Only WorldGuard version 7+ is supported
+    blocked_regions:
+      type: BLACKLIST
+      regions:
+        - blworld1
+
+exampleVip:
+  material: WET_SPONGE
+  data: 0
+  particles: MOBSPAWNER_FLAMES
+  rewards: exampleVip
+
+  permission_required:
+    enabled: true
+    permission: luckyblock.examplevip
+    modules:
+      chat: true
+      title: true
+      action: true
+    chat: '%prefix%You can''t break this luckyblock!'
+    title:
+      title: '&c&lYOU ARE NOT ALLOWED!'
+      subtitle: '&4&l┃ &cYou can''t break this LuckyBlock!'
+      fade-in: 20
+      stay: 40
+      fade-out: 20
+    action: '%prefix%You can''t break this luckyblock!'
+
+  prevent:
+    deny_pickup: true
+    deny_absorb: true
+    blocked_worlds:
+      type: BLACKLIST
+      worlds:
+        - blworld1
+    blocked_regions:
+      type: BLACKLIST
+      regions:
+        - blworld1

@@ -1,0 +1,146 @@
+#  .,::::::       :::      ...    :::  .,-:::::  :::  .  .-:.     ::-.:::::::.   :::         ...       .,-:::::  :::  .
+#  ;;;;''''       ;;;      ;;     ;;;,;;;'````'  ;;; .;;,.';;.   ;;;;' ;;;'';;'  ;;;      .;;;;;;;.  ,;;;'````'  ;;; .;;,.
+#   [[cccc        [[[     [['     [[[[[[         [[[[[/'    '[[,[[['   [[[__[[\. [[[     ,[[     \[[,[[[         [[[[[/'
+#   $$""""        $$'     $$      $$$$$$        _$$$$,        c$$"     $$""""Y$$ $$'     $$$,     $$$$$$        _$$$$,
+#   888oo,__     o88oo,.__88    .d888`88bo,__,o,"888"88o,   ,8P"`     _88o,,od8Po88oo,.__"888,_ _,88P`88bo,__,o,"888"88o,
+#   """"YUMMM    """"YUMMM "YmmMMMM""  "YUMMMMMP"MMM "MMP" mM"        ""YUMMMP" """"YUMMM  "YMMMMMP"   "YUMMMMMP"MMM "MMP"
+#
+#   Version: 1.0
+#   Animations
+#
+#   Wiki: https://zs0bye.gitbook.io/eluckyblock/plugins/eluckyblock-free
+#
+
+# Animations allow you to better customize luckyblock prizes.
+# Creating an animation is very simple and to apply it just insert the placeholder
+# %animation_<name>%, in the titles/actions/bossbar in the rewards located on rewards.yml
+luckyblock:
+  interval: 4
+  texts:
+    - '&d&lL'
+    - '&d&lLU'
+    - '&d&lLUC'
+    - '&d&lLUCK'
+    - '&d&lLUCKY'
+    - '&d&lLUCKYB'
+    - '&d&lLUCKYBL'
+    - '&d&lLUCKYBLO'
+    - '&d&lLUCKYBLOC'
+    - '&d&lLUCKYBLOCK'
+    - '&d&lLUCKYBLOCK'
+    - '&5&lL&d&lUCKYBLOCK'
+    - '&5&lLU&d&lCKYBLOCK'
+    - '&5&lLUC&d&lKYBLOCK'
+    - '&5&lLUCK&d&lYBLOCK'
+    - '&5&lLUCKY&d&lBLOCK'
+    - '&5&lLUCKYB&d&lLOCK'
+    - '&5&lLUCKYBLO&d&lCK'
+    - '&5&lLUCKYBLOC&d&lK'
+    - '&5&lLUCKYBLOCK'
+fast:
+  interval: 4
+  texts:
+    - '&d&lYOU ARE VERY FAST!'
+    - '&f&lYOU ARE VERY FAST!'
+    - '&d&lYOU ARE VERY FAST!'
+    - '&f&lYOU ARE VERY FAST!'
+    - '&d&lYOU ARE VERY FAST!'
+    - '&f&lYOU ARE VERY FAST!'
+    - '&d&lYOU ARE VERY FAST!'
+    - '&f&lYOU ARE VERY FAST!'
+    - '&d&lYOU ARE VERY FAST!'
+    - '&f&lYOU ARE VERY FAST!'
+    - '&d&lYOU ARE VERY FAST!'
+    - '&f&lYOU ARE VERY FAST!'
+    - '&d&lYOU ARE VERY FAST!'
+    - '&f&lYOU ARE VERY FAST!'
+legendary:
+  interval: 1
+  texts:
+    - '&e&lLEGENDARY'
+    - '&f&lL&e&lEGENDARY'
+    - '&f&lLE&e&lGENDARY'
+    - '&f&lLEG&e&lENDARY'
+    - '&e&lL&f&lEGE&e&lNDARY'
+    - '&e&lLE&f&lGEN&e&lDARY'
+    - '&e&lLEG&f&lEND&e&lARY'
+    - '&e&lLEGE&f&lNDA&e&lRY'
+    - '&e&lLEGEN&f&lDAR&e&lY'
+    - '&e&lLEGEND&f&lARY'
+    - '&e&lLEGENDA&f&lRY'
+    - '&e&lLEGENDAR&f&lY'
+    - '&e&lLEGENDARY'
+    - '&f&lL&e&lEGENDARY'
+    - '&f&lLE&e&lGENDARY'
+    - '&f&lLEG&e&lENDARY'
+    - '&e&lL&f&lEGE&e&lNDARY'
+    - '&e&lLE&f&lGEN&e&lDARY'
+    - '&e&lLEG&f&lEND&e&lARY'
+    - '&e&lLEGE&f&lNDA&e&lRY'
+    - '&e&lLEGEN&f&lDAR&e&lY'
+    - '&e&lLEGEND&f&lARY'
+    - '&e&lLEGENDA&f&lRY'
+    - '&e&lLEGENDAR&f&lY'
+    - '&e&lLEGENDARY'
+    - '&f&lL&e&lEGENDARY'
+    - '&f&lLE&e&lGENDARY'
+    - '&f&lLEG&e&lENDARY'
+    - '&e&lL&f&lEGE&e&lNDARY'
+    - '&e&lLE&f&lGEN&e&lDARY'
+    - '&e&lLEG&f&lEND&e&lARY'
+    - '&e&lLEGE&f&lNDA&e&lRY'
+    - '&e&lLEGEN&f&lDAR&e&lY'
+    - '&e&lLEGEND&f&lARY'
+    - '&e&lLEGENDA&f&lRY'
+    - '&e&lLEGENDAR&f&lY'
+    - '&e&lLEGENDARY'
+found100:
+  interval: 4
+  texts:
+    - '&7»»» You found 100$ «««'
+    - '&d»&7»» You found 100$ ««&d«'
+    - '&7»&d»&7» You found 100$ «&d«&7«'
+    - '&7»»&d»&7 You found &d100$ «&7««'
+    - '&7»»&d«&7 You found &d100$ »&7««'
+    - '&7»&d««&7 You found &d100$ »»&7«'
+    - '&7&d«««&7 You found &d100$ »»»'
+found10k:
+  interval: 4
+  texts:
+    - '&7»»» You found 10k$ «««'
+    - '&d»&7»» You found 10k$ ««&d«'
+    - '&7»&d»&7» You found 10k$ «&d«&7«'
+    - '&7»»&d»&7 You found &d10k$ «&7««'
+    - '&7»»&d«&7 You found &d10k$ »&7««'
+    - '&7»&d««&7 You found &d10k$ »»&7«'
+    - '&7&d«««&7 You found &d10k$ »»»'
+found100k:
+  interval: 4
+  texts:
+    - '&7»»» You found 100k$ «««'
+    - '&d»&7»» You found 100k$ ««&d«'
+    - '&7»&d»&7» You found 100k$ «&d«&7«'
+    - '&7»»&d»&7 You found &d100k$ «&7««'
+    - '&7»»&d«&7 You found &d100k$ »&7««'
+    - '&7»&d««&7 You found &d100k$ »»&7«'
+    - '&7&d«««&7 You found &d100k$ »»»'
+found1M:
+  interval: 4
+  texts:
+    - '&7»»» You found 1M$ «««'
+    - '&d»&7»» You found 1M$ ««&d«'
+    - '&7»&d»&7» You found 1M$ «&d«&7«'
+    - '&7»»&d»&7 You found &d1M$ «&7««'
+    - '&7»»&d«&7 You found &d1M$ »&7««'
+    - '&7»&d««&7 You found &d1M$ »»&7«'
+    - '&7&d«««&7 You found &d1M$ »»»'
+foundLegendary:
+  interval: 2
+  texts:
+    - '&7»»» You have found a Legendary LuckyBlock! «««'
+    - '&e»&7»» You have found a Legendary LuckyBlock! ««&e«'
+    - '&7»&e»&7» You have found a Legendary LuckyBlock! «&e«&7«'
+    - '&7»»&e»&7 You have found a &6Legendary &7LuckyBlock! &e«&7««'
+    - '&7»»&e«&7 You have found a &6Legendary &7LuckyBlock! &e»&7««'
+    - '&7»&e««&7 You have found a &6Legendary &7LuckyBlock! &e»»&7«'
+    - '&7&e«««&7 You have found a &6Legendary &7LuckyBlock! &e»»»'

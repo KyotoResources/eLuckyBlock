@@ -1,0 +1,17 @@
+#  .,::::::       :::      ...    :::  .,-:::::  :::  .  .-:.     ::-.:::::::.   :::         ...       .,-:::::  :::  .
+#  ;;;;''''       ;;;      ;;     ;;;,;;;'````'  ;;; .;;,.';;.   ;;;;' ;;;'';;'  ;;;      .;;;;;;;.  ,;;;'````'  ;;; .;;,.
+#   [[cccc        [[[     [['     [[[[[[         [[[[[/'    '[[,[[['   [[[__[[\. [[[     ,[[     \[[,[[[         [[[[[/'
+#   $$""""        $$'     $$      $$$$$$        _$$$$,        c$$"     $$""""Y$$ $$'     $$$,     $$$$$$        _$$$$,
+#   888oo,__     o88oo,.__88    .d888`88bo,__,o,"888"88o,   ,8P"`     _88o,,od8Po88oo,.__"888,_ _,88P`88bo,__,o,"888"88o,
+#   """"YUMMM    """"YUMMM "YmmMMMM""  "YUMMMMMP"MMM "MMP" mM"        ""YUMMMP" """"YUMMM  "YMMMMMP"   "YUMMMMMP"MMM "MMP"
+#
+#   Version: 1.0
+#   Messages
+#
+#   Wiki: https://zs0bye.gitbook.io/eluckyblock/plugins/eluckyblock-free
+#
+
+# ------------------
+# General Messages
+reload_configuration: '%prefix%Configuration reloaded successfully!'
+update_notification: '%prefix%A new update is available! Download version &d%new%&7 from &dhttps://www.spigotmc.org/resources/eluckyblock.97759/&7, you currently have version &d%old%&7.'

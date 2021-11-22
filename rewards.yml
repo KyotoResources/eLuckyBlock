@@ -1,0 +1,102 @@
+#  .,::::::       :::      ...    :::  .,-:::::  :::  .  .-:.     ::-.:::::::.   :::         ...       .,-:::::  :::  .
+#  ;;;;''''       ;;;      ;;     ;;;,;;;'````'  ;;; .;;,.';;.   ;;;;' ;;;'';;'  ;;;      .;;;;;;;.  ,;;;'````'  ;;; .;;,.
+#   [[cccc        [[[     [['     [[[[[[         [[[[[/'    '[[,[[['   [[[__[[\. [[[     ,[[     \[[,[[[         [[[[[/'
+#   $$""""        $$'     $$      $$$$$$        _$$$$,        c$$"     $$""""Y$$ $$'     $$$,     $$$$$$        _$$$$,
+#   888oo,__     o88oo,.__88    .d888`88bo,__,o,"888"88o,   ,8P"`     _88o,,od8Po88oo,.__"888,_ _,88P`88bo,__,o,"888"88o,
+#   """"YUMMM    """"YUMMM "YmmMMMM""  "YUMMMMMP"MMM "MMP" mM"        ""YUMMMP" """"YUMMM  "YMMMMMP"   "YUMMMMMP"MMM "MMP"
+#
+#   Version: 1.0
+#   Rewards
+#
+#   Wiki: https://zs0bye.gitbook.io/eluckyblock/plugins/eluckyblock-free
+#
+
+# Type of awards executable:
+# - [TITLE] title;subtitle;fade-in;stay;fade-out
+# - [BROADCAST_TITLE] title;subtitle;fade-in;stay;fade-out
+# - [ACTION] text
+# - [BROADCAST_ACTION] text
+# - [MESSAGE] text
+# - [BROADCAST] text
+# - [BOSSBAR] title;color;style;progress;times
+# - [BROADCAST_BOSSBAR] title;color;style;progress;times
+# - [SOUND] sound;acute;volume
+# - [EFFECT] effect;level;times
+# - [CLEAR_EFFECT] effect (or all)
+# - [PLAYER] command without /
+# - [CONSOLE] command without /
+# - [SUDO] text
+# - [ITEM] material;data
+# - [SPAWNMOB] mob
+exampleNormal:
+  1:
+    chance: 60
+    execute:
+      - '[TITLE] %animation_luckyblock%;&5&l┃ &dYou found 100$;20;40;20'
+      - '[SOUND] BLOCK_LAVA_POP;0;1'
+      - '[MESSAGE] %prefix%You found &d100$&7!'
+      - '[ACTION] %animation_found100%'
+      - '[CONSOLE] eco give %player% 100'
+  2:
+    chance: 55
+    execute:
+      - '[TITLE] %animation_fast%;none;20;40;20'
+      - '[SOUND] BLOCK_LAVA_POP;0;1'
+      - '[ACTION] %prefix%Now you are very fast!'
+      - '[EFFECT] FAST_DIGGING;2;120'
+      - '[EFFECT] SPEED;5;200'
+  3:
+    chance: 60
+    execute:
+      - '[TITLE] &c&lYOU HAD BAD LUCK!;&4&l┃ &cYou lost 500$;20;40;20'
+      - '[SOUND] BLOCK_LAVA_POP;0;1'
+      - '[MESSAGE] %prefix%You lost &c&m500$&7!'
+      - '[ACTION] &c&l- 500$'
+      - '[CONSOLE] eco take %player% 500'
+      - '[EFFECT] BLINDNESS;0;60'
+  4:
+    chance: 50
+    execute:
+      - '[TITLE] %animation_luckyblock%;&5&l┃ &dYou found 10k$;20;40;20'
+      - '[SOUND] BLOCK_LAVA_POP;0;1'
+      - '[MESSAGE] %prefix%You found &d10k$&7!'
+      - '[ACTION] %animation_found10k%'
+      - '[CONSOLE] eco give %player% 10000'
+  5:
+    chance: 10
+    execute:
+      - '[BROADCAST_TITLE] %animation_legendary%;&6&l┃ &e%player% has found a Legendary LuckyBlock!;20;40;20'
+      - '[SOUND] BLOCK_LAVA_POP;0;1'
+      - '[BROADCAST] %prefix%&d%player% &7has found a &eLegendary&7 LuckyBlock!'
+      - '[BROADCAST_ACTION] &d%player% &7has found a &eLegendary&7 LuckyBlock!'
+      - '[MESSAGE] %prefix%You found &d1M$&7!'
+      - '[SUDO] I found a 1M$!'
+      - '[PLAYER] balance'
+      - '[CONSOLE] eco give %player% 1000000'
+      - '[BOSSBAR] %animation_foundLegendary%;YELLOW;SEGMENTED_20;1.0;5'
+      - '[CLEAR_EFFECT] all'
+  nothing:
+    execute:
+      - '[TITLE] &c&lYOU HAVE NOT FOUND ANYTHING;none;20;40;20'
+      - '[MESSAGE] %prefix%You did not find anything!'
+exampleVip:
+  1:
+    chance: 60
+    execute:
+      - '[TITLE] %animation_luckyblock%;&5&l┃ &dYou found 100k$;20;40;20'
+      - '[SOUND] BLOCK_LAVA_POP;0;1'
+      - '[MESSAGE] %prefix%You found &d100k$&7!'
+      - '[ACTION] %animation_found100k%'
+      - '[CONSOLE] eco give %player% 100000'
+  2:
+    chance: 40
+    execute:
+      - '[TITLE] %animation_luckyblock%;&5&l┃ &dYou found 1M$;20;40;20'
+      - '[SOUND] BLOCK_LAVA_POP;0;1'
+      - '[MESSAGE] %prefix%You found &d1M$&7!'
+      - '[ACTION] %animation_found1M%'
+      - '[CONSOLE] eco give %player% 1000000'
+  nothing:
+    execute:
+      - '[TITLE] &c&lYOU HAVE NOT FOUND ANYTHING;none;20;40;20'
+      - '[MESSAGE] %prefix%You did not find anything!'
