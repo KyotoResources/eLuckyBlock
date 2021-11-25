@@ -1,7 +1,7 @@
 package it.zS0bye.eLuckyBlock.tasks;
 
 import it.zS0bye.eLuckyBlock.eLuckyBlock;
-import it.zS0bye.eLuckyBlock.methods.launchFirework;
+import it.zS0bye.eLuckyBlock.methods.LaunchFirework;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -35,7 +35,7 @@ public class TimerFireworksTask extends BukkitRunnable {
         if(fireworkTicks.get(player) == times) {
             this.plugin.stopFireworkTask(player);
         }
-        new launchFirework(plugin, location, type, colors);
+        new LaunchFirework(plugin, location, type, colors);
         fireworkTicks.put(player, fireworkTicks.get(player)+1);
 
     }

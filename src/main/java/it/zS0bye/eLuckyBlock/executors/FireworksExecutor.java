@@ -1,7 +1,7 @@
 package it.zS0bye.eLuckyBlock.executors;
 
 import it.zS0bye.eLuckyBlock.eLuckyBlock;
-import it.zS0bye.eLuckyBlock.methods.launchFirework;
+import it.zS0bye.eLuckyBlock.methods.LaunchFirework;
 import it.zS0bye.eLuckyBlock.tasks.TimerFireworksTask;
 import it.zS0bye.eLuckyBlock.utils.FireworkUtils;
 import org.bukkit.Location;
@@ -61,7 +61,7 @@ public class FireworksExecutor extends Executors {
 
 
         if(times == 0) {
-            new launchFirework(this.plugin, this.location, type, colors);
+            new LaunchFirework(this.plugin, this.location, type, colors);
             return;
         }
 

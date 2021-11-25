@@ -12,14 +12,14 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.List;
 
-public class launchFirework implements Listener {
+public class LaunchFirework implements Listener {
 
     private final eLuckyBlock plugin;
     private final Location location;
     private final String type;
     private final List<String> colors;
 
-    public launchFirework(final eLuckyBlock plugin, final Location location, final String type, final List<String> colors) {
+    public LaunchFirework(final eLuckyBlock plugin, final Location location, final String type, final List<String> colors) {
         this.plugin = plugin;
         this.location = location;
         this.type = type;
