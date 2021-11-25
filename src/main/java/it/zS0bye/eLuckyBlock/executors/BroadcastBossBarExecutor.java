@@ -31,8 +31,8 @@ public class BroadcastBossBarExecutor extends Executors {
     }
 
     @Override
-    protected void startAnimations(String getAnimation, Player players, String color, String style, double progress, int times) {
-        super.startAnimations(getAnimation, players, color, style, progress, times);
+    protected void startTask(String getAnimation, Player players, String color, String style, double progress, int times) {
+        super.startTask(getAnimation, players, color, style, progress, times);
 
         long interval = this.animations.getInt(getAnimation + ".interval");
 
@@ -76,7 +76,7 @@ public class BroadcastBossBarExecutor extends Executors {
                     this.plugin.stopBossBarTask(players);
                     this.plugin.stopBossTimesTask(players);
 
-                    startAnimations(getAnimation, players,  color, style, progress, times);
+                    startTask(getAnimation, players,  color, style, progress, times);
                     return;
                 }
             }

@@ -3,22 +3,21 @@ package it.zS0bye.eLuckyBlock;
 import it.zS0bye.eLuckyBlock.commands.MainCommand;
 import it.zS0bye.eLuckyBlock.database.SQLConnection;
 import it.zS0bye.eLuckyBlock.database.SQLLuckyBlock;
-import it.zS0bye.eLuckyBlock.files.AnimationsFiles;
-import it.zS0bye.eLuckyBlock.files.LanguagesFiles;
-import it.zS0bye.eLuckyBlock.files.LuckyBlocksFiles;
-import it.zS0bye.eLuckyBlock.files.RewardsFiles;
+import it.zS0bye.eLuckyBlock.files.*;
 import it.zS0bye.eLuckyBlock.hooks.PlaceholderAPI;
+import it.zS0bye.eLuckyBlock.listeners.FireworkListener;
 import it.zS0bye.eLuckyBlock.listeners.JoinListener;
 import it.zS0bye.eLuckyBlock.listeners.LuckyBlockListener;
-import it.zS0bye.eLuckyBlock.listeners.QuitListener;
 import it.zS0bye.eLuckyBlock.listeners.SpongeListener;
 import it.zS0bye.eLuckyBlock.updater.UpdateType;
 import it.zS0bye.eLuckyBlock.updater.VandalUpdater;
 import it.zS0bye.eLuckyBlock.utils.*;
 import lombok.Getter;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -29,12 +28,14 @@ import java.util.Map;
 @Getter
 public class eLuckyBlock extends JavaPlugin {
 
-    private LanguagesFiles lang;
-    private LuckyBlocksFiles lucky;
-    private AnimationsFiles animations;
-    private RewardsFiles rewards;
+    private LanguagesFile lang;
+    private LuckyBlocksFile lucky;
+    private AnimationsFile animations;
+    private RewardsFile rewards;
+    private FireworksFile fireworks;
     private SQLConnection sqlConnection;
     private SQLLuckyBlock sqlLuckyBlock;
+    private Economy economy;
     @Getter
     private static eLuckyBlock instance;
 
@@ -46,7 +47,9 @@ public class eLuckyBlock extends JavaPlugin {
     private final Map<Player, Integer> bossBarTicks = new HashMap<>();
     private final Map<Player, BukkitTask> bossTimesTask = new HashMap<>();
     private final Map<Player, BossBar> bossTimes = new HashMap<>();
-    private final Map<String, Integer> luckyBreaks= new HashMap<>();
+    private final Map<Player, Integer> fireworkTicks = new HashMap<>();
+    private final Map<Player, BukkitTask> fireworkTask = new HashMap<>();
+    private final Map<String, Integer> luckyBreaks = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -93,11 +96,13 @@ public class eLuckyBlock extends JavaPlugin {
 
     @Override
     public void onDisable() {
+
         try {
-            sqlConnection.closeConnection();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            this.sqlConnection.closeConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
     }
 
     private void SQLConnection() {
@@ -122,34 +127,59 @@ public class eLuckyBlock extends JavaPlugin {
             if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
                 new PlaceholderAPI(this).register();
             }else {
-                getLogger().warning("Could not find PlaceholderAPI! This plugin is required.");
+                getLogger().severe("Could not find PlaceholderAPI! This plugin is required.");
                 Bukkit.getPluginManager().disablePlugin(this);
             }
         }
 
         if(ConfigUtils.HOOKS_WORLDGUARD.getBoolean()) {
             if (Bukkit.getPluginManager().getPlugin("WorldGuard") == null) {
-                getLogger().warning("Could not find WorldGuard! This plugin is required.");
+                getLogger().severe("Could not find WorldGuard! This plugin is required.");
+                Bukkit.getPluginManager().disablePlugin(this);
+            }
+        }
+
+        if(ConfigUtils.HOOKS_VAULT.getBoolean()) {
+            if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
+                getLogger().severe("Could not find Vault! This plugin is required.");
+                Bukkit.getPluginManager().disablePlugin(this);
+            }
+
+            if (!setupEconomy()) {
+                getLogger().severe("Disabled due to no Vault dependency found!");
                 Bukkit.getPluginManager().disablePlugin(this);
             }
         }
     }
 
+    private boolean setupEconomy()
+    {
+        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
+
+        if (economyProvider != null) {
+            economy = economyProvider.getProvider();
+        }
+
+        return (economy != null);
+    }
+
     private void loadFiles() {
         saveDefaultConfig();
-        this.lang = new LanguagesFiles(this);
-        this.lucky = new LuckyBlocksFiles(this);
-        this.animations = new AnimationsFiles(this);
-        this.rewards = new RewardsFiles(this);
+        this.lang = new LanguagesFile(this);
+        this.lucky = new LuckyBlocksFile(this);
+        this.animations = new AnimationsFile(this);
+        this.rewards = new RewardsFile(this);
+        this.fireworks = new FireworksFile(this);
     }
 
     private void loadCommands() {
         getCommand("eluckyblock").setExecutor(new MainCommand(this));
+        getCommand("eluckyblock").setTabCompleter(new MainCommand(this));
     }
 
     private void loadListeners() {
         Bukkit.getPluginManager().registerEvents(new JoinListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new QuitListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new FireworkListener(), this);
         this.lucky.getConfig().getKeys(false).forEach(luckyblocks -> {
             Bukkit.getPluginManager().registerEvents(new LuckyBlockListener(this, luckyblocks), this);
 
@@ -173,7 +203,7 @@ public class eLuckyBlock extends JavaPlugin {
         String resourceId = "97759";
         UpdateType updateType = UpdateType.valueOf(ConfigUtils.CHECK_UPDATE_TYPE.getString());
         VandalUpdater vandalUpdater = new VandalUpdater(this, resourceId, updateType);
-        vandalUpdater.setUpdateMessage(LangUtils.UPDATE_NOTIFICATION.getString());
+        vandalUpdater.setUpdateMessage(LangUtils.UPDATE_NOTIFICATION.getCustomString());
         vandalUpdater.runTaskTimerAsynchronously(this, 20L, 30 * 60 * 20L);
     }
 
@@ -209,6 +239,14 @@ public class eLuckyBlock extends JavaPlugin {
         if(bossTimesTask.containsKey(p)) {
             bossTimesTask.get(p).cancel();
             bossTimesTask.remove(p);
+        }
+    }
+
+    public void stopFireworkTask(final Player p) {
+        if(fireworkTask.containsKey(p)) {
+            fireworkTask.get(p).cancel();
+            fireworkTask.remove(p);
+            fireworkTicks.put(p, 0);
         }
     }
 

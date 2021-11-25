@@ -1,6 +1,6 @@
 package it.zS0bye.eLuckyBlock.utils;
 
-import it.zS0bye.eLuckyBlock.files.LanguagesFiles;
+import it.zS0bye.eLuckyBlock.files.LanguagesFile;
 import it.zS0bye.eLuckyBlock.eLuckyBlock;
 import org.bukkit.command.CommandSender;
 
@@ -8,12 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum LangUtils implements IFileUtils {
-    RELOAD_CONFIGURATION("reload_configuration"),
-    UPDATE_NOTIFICATION("update_notification");
+    PLAYER_NOT_FOUND("player_not_found"),
+    INSUFFICIENT_PERMISSIONS("insufficient_permissions"),
+    UPDATE_NOTIFICATION("update_notification"),
+    HELP_USERS_TEXTS("Help_Command.users.texts"),
+    RELOAD_ADMINS_CONFIGURATIONS("Reload_Command.admins.configurations"),
+    INFO_USERS_CURRENT_BREAKS("Info_Command.users.current_breaks"),
+    INFO_ADMINS_PLAYER_BREAKS("Info_Command.admins.player_breaks");
+
 
     private final String path;
     private final eLuckyBlock plugin;
-    private final LanguagesFiles lang;
+    private final LanguagesFile lang;
     private final static int CENTER_PX = 154;
 
     LangUtils(String path) {
@@ -34,11 +40,11 @@ public enum LangUtils implements IFileUtils {
 
     @Override
     public List<String> getStringList() {
-        List<String> lore = new ArrayList<>();
-        for(String setLore : this.lang.getConfig().getStringList(path)) {
-            lore.add(ColorUtils.getColor(setLore));
+        List<String> list = new ArrayList<>();
+        for(String setList : this.lang.getConfig().getStringList(path)) {
+            list.add(ColorUtils.getColor(setList));
         }
-        return lore;
+        return list;
     }
 
     @Override
@@ -72,13 +78,6 @@ public enum LangUtils implements IFileUtils {
             return;
         }
         sender.sendMessage(getCustomString());
-    }
-
-    public void send(final String msg, final CommandSender sender) {
-        if (msg.isEmpty()) {
-            return;
-        }
-        sender.sendMessage(msg);
     }
 
     private String sendCentered(String message){

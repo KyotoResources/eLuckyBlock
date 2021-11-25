@@ -8,19 +8,19 @@ public abstract class FileUtils {
 
     private final static int CENTER_PX = 154;
 
-    abstract String getPrefix();
+    protected abstract String getPrefix();
 
-    abstract String getString(final String path);
+    public abstract String getString(final String path);
 
-    abstract List<String> getStringList(final String path);
+    public abstract List<String> getStringList(final String path);
 
-    abstract boolean contains(final String path);
+    public abstract boolean contains(final String path);
 
-    abstract boolean equals(final String path, final String equals);
+    public abstract boolean equals(final String path, final String equals);
 
-    abstract boolean getBoolean(final String path);
+    public abstract boolean getBoolean(final String path);
 
-    abstract int getInt(final String path);
+    public abstract int getInt(final String path);
 
     public String getCustomString(final String path) {
         if (getString(path).startsWith("%prefix%")) {
@@ -45,7 +45,7 @@ public abstract class FileUtils {
         sender.sendMessage(getCustomString(path));
     }
 
-    public void send(final String msg, final CommandSender sender) {
+    public static void send(final String msg, final CommandSender sender) {
         if (msg.isEmpty()) {
             return;
         }

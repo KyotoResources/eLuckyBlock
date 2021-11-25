@@ -1,12 +1,14 @@
 package it.zS0bye.eLuckyBlock.utils;
 
 import it.zS0bye.eLuckyBlock.eLuckyBlock;
+import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RewardUtils extends FileUtils{
+@Getter
+public class RewardUtils extends FileUtils {
 
     private final FileConfiguration rewards;
     private final String chance;
@@ -16,14 +18,6 @@ public class RewardUtils extends FileUtils{
         this.rewards = eLuckyBlock.getInstance().getRewards().getConfig();
         this.chance = luckyblock + "." + reward + ".chance";
         this.execute = luckyblock + "." + reward + ".execute";
-    }
-
-    public String getChance() {
-        return chance;
-    }
-
-    public String getExecute() {
-        return execute;
     }
 
     protected String getPrefix() {
@@ -38,15 +32,16 @@ public class RewardUtils extends FileUtils{
         return this.rewards.getString(path).equalsIgnoreCase(equals);
     }
 
-    boolean getBoolean(String path) {
+    public boolean getBoolean(String path) {
         return this.rewards.getBoolean(path);
     }
 
     public List<String> getStringList(final String path) {
-        List<String> lore = new ArrayList<>();
-        for(String setLore : this.rewards.getStringList(path))
-            lore.add(ColorUtils.getColor(setLore));
-        return lore;
+        List<String> list = new ArrayList<>();
+        for(String setList : this.rewards.getStringList(path)) {
+            list.add(ColorUtils.getColor(setList));
+        }
+        return list;
     }
 
     public boolean contains(String path) {

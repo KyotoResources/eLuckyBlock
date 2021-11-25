@@ -32,8 +32,8 @@ public class BroadcastActionExecutor extends Executors {
     }
 
     @Override
-    protected void startAnimations(String getAnimation, Player players) {
-        super.startAnimations(getAnimation, players);
+    protected void startTask(String getAnimation, Player players) {
+        super.startTask(getAnimation, players);
         long interval = this.animations.getInt(getAnimation + ".interval");
 
         actionTicks.put(players, 0);
@@ -58,7 +58,7 @@ public class BroadcastActionExecutor extends Executors {
             for (String getAnimation : this.animations.getKeys(false)) {
                 if (msg.equals("%animation_" + getAnimation + "%")) {
                     this.plugin.stopActionTask(players);
-                    startAnimations(getAnimation, players);
+                    startTask(getAnimation, players);
                     return;
                 }
             }

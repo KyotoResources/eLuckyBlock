@@ -5,7 +5,7 @@
 #   888oo,__     o88oo,.__88    .d888`88bo,__,o,"888"88o,   ,8P"`     _88o,,od8Po88oo,.__"888,_ _,88P`88bo,__,o,"888"88o,
 #   """"YUMMM    """"YUMMM "YmmMMMM""  "YUMMMMMP"MMM "MMP" mM"        ""YUMMMP" """"YUMMM  "YMMMMMP"   "YUMMMMMP"MMM "MMP"
 #
-#   Version: 1.0
+#   Version: 1.2.1
 #   Rewards
 #
 #   Wiki: https://zs0bye.gitbook.io/eluckyblock/plugins/eluckyblock-free
@@ -28,6 +28,11 @@
 # - [SUDO] text
 # - [ITEM] material;data
 # - [SPAWNMOB] mob
+# - [GIVE_XP] level;exp
+# - [TAKE_XP] level;exp
+# - [GIVE_MONEY] number of money
+# - [TAKE_MONEY] number of money
+# - [LAUNCH_FIREWORKS] firework name
 exampleNormal:
   1:
     chance: 60
@@ -36,8 +41,36 @@ exampleNormal:
       - '[SOUND] BLOCK_LAVA_POP;0;1'
       - '[MESSAGE] %prefix%You found &d100$&7!'
       - '[ACTION] %animation_found100%'
-      - '[CONSOLE] eco give %player% 100'
+      - '[GIVE_MONEY] 100'
+      - '[LAUNCH_FIREWORKS] firework1'
   2:
+    chance: 60
+    execute:
+      - '[TITLE] %animation_luckyblock%;&5&l┃ &dYou found 10 XP;20;40;20'
+      - '[SOUND] BLOCK_LAVA_POP;0;1'
+      - '[MESSAGE] %prefix%You found &d10 XP&7!'
+      - '[ACTION] %animation_found100%'
+      - '[GIVE_XP] 0;10'
+      - '[LAUNCH_FIREWORKS] firework1'
+  3:
+    chance: 60
+    execute:
+      - '[TITLE] %animation_luckyblock%;&5&l┃ &dYou found 1 Level + 50 XP;20;40;20'
+      - '[SOUND] BLOCK_LAVA_POP;0;1'
+      - '[MESSAGE] %prefix%You found &d1 Level + 50 XP&7!'
+      - '[ACTION] %animation_found100%'
+      - '[GIVE_XP] 1;50'
+      - '[LAUNCH_FIREWORKS] firework1'
+  4:
+    chance: 60
+    execute:
+      - '[TITLE] %animation_luckyblock%;&5&l┃ &dYou found 20 Tokens;20;40;20'
+      - '[SOUND] BLOCK_LAVA_POP;0;1'
+      - '[MESSAGE] %prefix%You found &d1 Level + 50 XP&7!'
+      - '[ACTION] %animation_found100%'
+      - '[CONSOLE] tokens add %player% 10'
+      - '[LAUNCH_FIREWORKS] firework1'
+  5:
     chance: 55
     execute:
       - '[TITLE] %animation_fast%;none;20;40;20'
@@ -45,24 +78,25 @@ exampleNormal:
       - '[ACTION] %prefix%Now you are very fast!'
       - '[EFFECT] FAST_DIGGING;2;120'
       - '[EFFECT] SPEED;5;200'
-  3:
+  6:
     chance: 60
     execute:
       - '[TITLE] &c&lYOU HAD BAD LUCK!;&4&l┃ &cYou lost 500$;20;40;20'
       - '[SOUND] BLOCK_LAVA_POP;0;1'
       - '[MESSAGE] %prefix%You lost &c&m500$&7!'
       - '[ACTION] &c&l- 500$'
-      - '[CONSOLE] eco take %player% 500'
+      - '[TAKE_MONEY] 500'
       - '[EFFECT] BLINDNESS;0;60'
-  4:
+  7:
     chance: 50
     execute:
       - '[TITLE] %animation_luckyblock%;&5&l┃ &dYou found 10k$;20;40;20'
       - '[SOUND] BLOCK_LAVA_POP;0;1'
       - '[MESSAGE] %prefix%You found &d10k$&7!'
       - '[ACTION] %animation_found10k%'
-      - '[CONSOLE] eco give %player% 10000'
-  5:
+      - '[GIVE_MONEY] 10000'
+      - '[LAUNCH_FIREWORKS] firework1'
+  8:
     chance: 10
     execute:
       - '[BROADCAST_TITLE] %animation_legendary%;&6&l┃ &e%player% has found a Legendary LuckyBlock!;20;40;20'
@@ -72,9 +106,10 @@ exampleNormal:
       - '[MESSAGE] %prefix%You found &d1M$&7!'
       - '[SUDO] I found a 1M$!'
       - '[PLAYER] balance'
-      - '[CONSOLE] eco give %player% 1000000'
+      - '[GIVE_MONEY] 1000000'
       - '[BOSSBAR] %animation_foundLegendary%;YELLOW;SEGMENTED_20;1.0;5'
       - '[CLEAR_EFFECT] all'
+      - '[LAUNCH_FIREWORKS] firework2'
   nothing:
     execute:
       - '[TITLE] &c&lYOU HAVE NOT FOUND ANYTHING;none;20;40;20'
@@ -87,7 +122,7 @@ exampleVip:
       - '[SOUND] BLOCK_LAVA_POP;0;1'
       - '[MESSAGE] %prefix%You found &d100k$&7!'
       - '[ACTION] %animation_found100k%'
-      - '[CONSOLE] eco give %player% 100000'
+      - '[GIVE_MONEY] 100000'
   2:
     chance: 40
     execute:
@@ -95,7 +130,7 @@ exampleVip:
       - '[SOUND] BLOCK_LAVA_POP;0;1'
       - '[MESSAGE] %prefix%You found &d1M$&7!'
       - '[ACTION] %animation_found1M%'
-      - '[CONSOLE] eco give %player% 1000000'
+      - '[GIVE_MONEY] 1000000'
   nothing:
     execute:
       - '[TITLE] &c&lYOU HAVE NOT FOUND ANYTHING;none;20;40;20'

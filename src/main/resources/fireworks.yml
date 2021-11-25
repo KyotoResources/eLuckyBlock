@@ -1,0 +1,34 @@
+#  .,::::::       :::      ...    :::  .,-:::::  :::  .  .-:.     ::-.:::::::.   :::         ...       .,-:::::  :::  .
+#  ;;;;''''       ;;;      ;;     ;;;,;;;'````'  ;;; .;;,.';;.   ;;;;' ;;;'';;'  ;;;      .;;;;;;;.  ,;;;'````'  ;;; .;;,.
+#   [[cccc        [[[     [['     [[[[[[         [[[[[/'    '[[,[[['   [[[__[[\. [[[     ,[[     \[[,[[[         [[[[[/'
+#   $$""""        $$'     $$      $$$$$$        _$$$$,        c$$"     $$""""Y$$ $$'     $$$,     $$$$$$        _$$$$,
+#   888oo,__     o88oo,.__88    .d888`88bo,__,o,"888"88o,   ,8P"`     _88o,,od8Po88oo,.__"888,_ _,88P`88bo,__,o,"888"88o,
+#   """"YUMMM    """"YUMMM "YmmMMMM""  "YUMMMMMP"MMM "MMP" mM"        ""YUMMMP" """"YUMMM  "YMMMMMP"   "YUMMMMMP"MMM "MMP"
+#
+#   Version: 1.2.1
+#   Animations
+#
+#   Wiki: https://zs0bye.gitbook.io/eluckyblock/plugins/eluckyblock-free
+#
+
+# You can use the fireworks to embellish luckyblocks,
+# and you can put them via the rewards.yml file,
+# in the executor "[LAUNCH_FIREWORKS] firework name"
+firework1:
+  # Types Available: BALL, BALL_LARGE, BURST, CREEPER, STAR
+  type: STAR
+  # Time is in seconds
+  times: 0
+  # The delay is in ticks (20 ticks = 1 second)
+  delay: 10
+  # The color list is in RGB - red,green,blue
+  colors:
+    - '153,0,204'
+    - '153,153,255'
+firework2:
+  type: BURST
+  times: 3
+  delay: 10
+  colors:
+    - '255,204,0'
+    - '255,204,0'

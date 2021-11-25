@@ -25,9 +25,11 @@ public class LuckyBlockListener extends LuckyUtils implements Listener {
     private final FileConfiguration rewards;
     private final String luckyblocks;
     private final Map<String, Integer> luckyBreaks;
+    private final SQLLuckyBlock sql;
 
     public LuckyBlockListener(final eLuckyBlock plugin, final String luckyblocks) {
         super(luckyblocks);
+        this.sql = plugin.getSqlLuckyBlock();
         this.rewards = plugin.getRewards().getConfig();
         this.luckyBreaks = plugin.getLuckyBreaks();
         this.luckyblocks = luckyblocks;
@@ -97,7 +99,14 @@ public class LuckyBlockListener extends LuckyUtils implements Listener {
 
         if(luckyBreaks.containsKey(p.getName())) {
             luckyBreaks.put(p.getName(), luckyBreaks.get(p.getName()) + 1);
+            this.sql.addLuckyBreaks(p.getName(), luckyBreaks.get(p.getName()));
+        }else {
+            this.sql.getLuckyBreaks(p.getName()).thenAccept(getLuckyBreaks -> {
+                luckyBreaks.put(p.getName(), getLuckyBreaks + 1);
+                this.sql.addLuckyBreaks(p.getName(), getLuckyBreaks + 1);
+            });
         }
+
 
         ThreadLocalRandom random = ThreadLocalRandom.current();
         String LuckyReward = getString(getRewards());
@@ -136,6 +145,11 @@ public class LuckyBlockListener extends LuckyUtils implements Listener {
             new SudoExecutor(execute, p);
             new SpawnMobExecutor(execute, e.getBlock().getLocation());
             new ItemExecutor(execute, e.getBlock().getLocation());
+            new GiveXPExecutor(execute, p);
+            new TakeXPExecutor(execute, p);
+            new GiveMoneyExecutor(execute, p);
+            new TakeMoneyExecutor(execute, p);
+            new FireworksExecutor(execute, p, e.getBlock().getLocation());
         });
     }
 

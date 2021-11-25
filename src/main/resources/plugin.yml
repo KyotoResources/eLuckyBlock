@@ -1,7 +1,7 @@
 name: eLuckyBlock
 main: it.zS0bye.eLuckyBlock.eLuckyBlock
-softdepend: [PlaceholderAPI, WorldGuard]
-version: 1.1.1
+softdepend: [PlaceholderAPI, WorldGuard, Vault]
+version: 1.2.1
 api-version: 1.13
 author: zS0bye
 description: The LuckyBlock Plugin you needed! For Prison, SkyBlock, etc..
@@ -10,6 +10,26 @@ commands:
     description: Main command of eLuckyBlock
     aliases: [eluckyblocks, luckyblock, luckyblocks, elb, lb]
 permissions:
+  luckyblock.*:
+    description: Gives access to all eLuckyBlock permissions
+    children:
+      luckyblock.command: true
+      luckyblock.command.*: true
+  luckyblock.command.*:
+    description: Gives access to all eLuckyBlock commands
+    children:
+      luckyblock.command.reload: true
+      luckyblock.command.info: true
+      luckyblock.command.info.others: true
   luckyblock.command:
     description: Allow to use eLuckyBlock command
+    default: op
+  luckyblock.command.reload:
+    description: Allow to use reload command
+    default: op
+  luckyblock.command.info:
+    description: Allow to use info command
+    default: true
+  luckyblock.command.info.others:
+    description: Allow to use info others command
     default: op

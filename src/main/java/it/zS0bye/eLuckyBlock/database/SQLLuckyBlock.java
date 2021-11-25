@@ -34,13 +34,17 @@ public class SQLLuckyBlock {
 
     public CompletableFuture<Boolean> hasNotLuckyBreaks(final String name) {
         return CompletableFuture.supplyAsync(() -> {
+            PreparedStatement pst = null;
+            ResultSet rs = null;
             try {
-                PreparedStatement pst = this.sql.getConnection().prepareStatement("SELECT breaks FROM luckyblock WHERE PlayerName = ?");
+                pst = this.sql.getConnection().prepareStatement("SELECT breaks FROM luckyblock WHERE PlayerName = ?");
                 pst.setString(1, name);
-                ResultSet rs = pst.executeQuery();
+                rs = pst.executeQuery();
                 return !rs.next();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
+            } finally {
+                close(pst, rs);
             }
             return true;
         });
@@ -48,26 +52,32 @@ public class SQLLuckyBlock {
 
     public void setLuckyBreaks(final String name) {
         CompletableFuture.runAsync(() -> {
+            PreparedStatement pst = null;
             try {
-                PreparedStatement pst = this.sql.getConnection().prepareStatement("INSERT INTO luckyblock(PlayerName,breaks) VALUES(?,?)");
+                pst = this.sql.getConnection().prepareStatement("INSERT INTO luckyblock(PlayerName,breaks) VALUES(?,?)");
                 pst.setString(1, name);
                 pst.setInt(2, 0);
                 pst.executeUpdate();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
+            } finally {
+                close(pst);
             }
         });
     }
 
     public void addLuckyBreaks(final String name, final int luckybreaks) {
         CompletableFuture.runAsync(() -> {
+            PreparedStatement pst = null;
             try {
-                PreparedStatement pst = this.sql.getConnection().prepareStatement("UPDATE luckyblock SET breaks = ? WHERE PlayerName = ?");
+                pst = this.sql.getConnection().prepareStatement("UPDATE luckyblock SET breaks = ? WHERE PlayerName = ?");
                 pst.setInt(1, luckybreaks);
                 pst.setString(2, name);
                 pst.executeUpdate();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
+            } finally {
+                close(pst);
             }
         });
 
@@ -81,19 +91,32 @@ public class SQLLuckyBlock {
                 setLuckyBreaks(name);
             }
             CompletableFuture.runAsync(() -> {
+                PreparedStatement pst = null;
+                ResultSet rs = null;
                 try {
-                    PreparedStatement pst = this.sql.getConnection().prepareStatement("SELECT breaks FROM luckyblock WHERE PlayerName = ?");
+                    pst = this.sql.getConnection().prepareStatement("SELECT breaks FROM luckyblock WHERE PlayerName = ?");
                     pst.setString(1, name);
-                    ResultSet rs = pst.executeQuery();
+                    rs = pst.executeQuery();
                     if (rs.next()) {
                         future.complete(rs.getInt("breaks"));
                     }
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
+                } finally {
+                    close(pst, rs);
                 }
             });
     });
         return  future;
+    }
+
+    private void close(final PreparedStatement pst) {
+        try { pst.close(); } catch (Exception e) { e.printStackTrace();}
+    }
+
+    private void close(final PreparedStatement pst, ResultSet rs) {
+        try { rs.close(); } catch (Exception e) { e.printStackTrace(); }
+        try { pst.close(); } catch (Exception e) { e.printStackTrace();}
     }
 
 }

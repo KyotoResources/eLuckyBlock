@@ -12,6 +12,7 @@ public enum ConfigUtils implements IFileUtils {
     CHECK_UPDATE_TYPE("Settings.check_update.type"),
     HOOKS_PLACEHOLDERAPI("Settings.hooks.PlaceholderAPI"),
     HOOKS_WORLDGUARD("Settings.hooks.WorldGuard"),
+    HOOKS_VAULT("Settings.hooks.Vault"),
     DB_TYPE("Storage.type"),
     DB_NAME("Storage.mysql.database"),
     DB_HOST("Storage.mysql.hostname"),
@@ -41,11 +42,11 @@ public enum ConfigUtils implements IFileUtils {
 
     @Override
     public List<String> getStringList() {
-        List<String> lore = new ArrayList<>();
-        for(String setLore : this.plugin.getConfig().getStringList(path)) {
-            lore.add(ColorUtils.getColor(setLore));
+        List<String> list = new ArrayList<>();
+        for (String setList : this.plugin.getConfig().getStringList(path)) {
+            list.add(ColorUtils.getColor(setList));
         }
-        return lore;
+        return list;
     }
 
     @Override
@@ -79,13 +80,6 @@ public enum ConfigUtils implements IFileUtils {
             return;
         }
         sender.sendMessage(getCustomString());
-    }
-
-    public void send(final String msg, final CommandSender sender) {
-        if (msg.isEmpty()) {
-            return;
-        }
-        sender.sendMessage(msg);
     }
 
     public String sendCentered(String message){

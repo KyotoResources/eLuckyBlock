@@ -77,10 +77,11 @@ public class LuckyUtils extends FileUtils {
     }
 
     public List<String> getStringList(final String path) {
-        List<String> lore = new ArrayList<>();
-        for(String setLore : this.lucky.getStringList(path))
-            lore.add(ColorUtils.getColor(setLore));
-        return lore;
+        List<String> list = new ArrayList<>();
+        for(String setList : this.lucky.getStringList(path)) {
+            list.add(ColorUtils.getColor(setList));
+        }
+        return list;
     }
 
     public boolean getBoolean(final String path) {

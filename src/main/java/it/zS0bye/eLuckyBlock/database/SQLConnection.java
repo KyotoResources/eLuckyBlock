@@ -33,7 +33,6 @@ public class SQLConnection {
             return;
         }
         this.connection.close();
-        this.connection = null;
     }
 
     public boolean hasConnection() {

@@ -30,8 +30,8 @@ public class TitleExecutor extends Executors {
     }
 
     @Override
-    protected void startAnimations(String getAnimation, String subtitle, int fadein, int stay, int fadeout) {
-        super.startAnimations(getAnimation, subtitle, fadein, stay, fadeout);
+    protected void startTask(String getAnimation, String subtitle, int fadein, int stay, int fadeout) {
+        super.startTask(getAnimation, subtitle, fadein, stay, fadeout);
         long interval = this.animations.getInt(getAnimation + ".interval");
 
         titleTicks.put(player, 0);
@@ -68,11 +68,11 @@ public class TitleExecutor extends Executors {
                 this.plugin.stopTitleTask(player);
 
                 if (subtitle.equalsIgnoreCase("none")) {
-                    startAnimations(getAnimation, "", fadein, stay, fadeout);
+                    startTask(getAnimation, "", fadein, stay, fadeout);
                     return;
                 }
 
-                startAnimations(getAnimation, subtitle, fadein, stay, fadeout);
+                startTask(getAnimation, subtitle, fadein, stay, fadeout);
                 return;
             }
         }

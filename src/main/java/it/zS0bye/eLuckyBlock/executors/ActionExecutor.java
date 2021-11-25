@@ -31,8 +31,8 @@ public class ActionExecutor extends Executors {
     }
 
     @Override
-    protected void startAnimations(String getAnimation) {
-        super.startAnimations(getAnimation);
+    protected void startTask(String getAnimation) {
+        super.startTask(getAnimation);
         long interval = this.animations.getInt(getAnimation + ".interval");
 
         actionTicks.put(player, 0);
@@ -55,7 +55,7 @@ public class ActionExecutor extends Executors {
         for (String getAnimation : this.animations.getKeys(false)) {
             if (msg.equals("%animation_" + getAnimation + "%")) {
                 this.plugin.stopActionTask(player);
-                startAnimations(getAnimation);
+                startTask(getAnimation);
                 return;
             }
         }

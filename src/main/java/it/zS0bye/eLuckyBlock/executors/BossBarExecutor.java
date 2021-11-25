@@ -30,8 +30,8 @@ public class BossBarExecutor extends Executors {
     }
 
     @Override
-    protected void startAnimations(String getAnimation, String color, String style, double progress, int times) {
-        super.startAnimations(getAnimation, color, style, progress, times);
+    protected void startTask(String getAnimation, String color, String style, double progress, int times) {
+        super.startTask(getAnimation, color, style, progress, times);
         long interval = this.animations.getInt(getAnimation + ".interval");
 
         bossBarTicks.put(player, 0);
@@ -73,7 +73,7 @@ public class BossBarExecutor extends Executors {
                 this.plugin.stopBossBarTask(player);
                 this.plugin.stopBossTimesTask(player);
 
-                startAnimations(getAnimation, color, style, progress, times);
+                startTask(getAnimation, color, style, progress, times);
                 return;
             }
         }
