@@ -5,7 +5,7 @@
 #   888oo,__     o88oo,.__88    .d888`88bo,__,o,"888"88o,   ,8P"`     _88o,,od8Po88oo,.__"888,_ _,88P`88bo,__,o,"888"88o,
 #   """"YUMMM    """"YUMMM "YmmMMMM""  "YUMMMMMP"MMM "MMP" mM"        ""YUMMMP" """"YUMMM  "YMMMMMP"   "YUMMMMMP"MMM "MMP"
 #
-#   Version: 1.2.1
+#   Version: 1.3
 #   Rewards
 #
 #   Wiki: https://zs0bye.gitbook.io/eluckyblock/plugins/eluckyblock-free
@@ -33,6 +33,8 @@
 # - [GIVE_MONEY] number of money
 # - [TAKE_MONEY] number of money
 # - [LAUNCH_FIREWORKS] firework name
+# - [SCHEMATIC] schematic name
+# - [PARTICLES] particles name
 exampleNormal:
   1:
     chance: 60
@@ -43,6 +45,7 @@ exampleNormal:
       - '[ACTION] %animation_found100%'
       - '[GIVE_MONEY] 100'
       - '[LAUNCH_FIREWORKS] firework1'
+      - '[PARTICLES] MOBSPAWNER_FLAMES'
   2:
     chance: 60
     execute:
@@ -52,6 +55,7 @@ exampleNormal:
       - '[ACTION] %animation_found100%'
       - '[GIVE_XP] 0;10'
       - '[LAUNCH_FIREWORKS] firework1'
+      - '[PARTICLES] MOBSPAWNER_FLAMES'
   3:
     chance: 60
     execute:
@@ -61,6 +65,7 @@ exampleNormal:
       - '[ACTION] %animation_found100%'
       - '[GIVE_XP] 1;50'
       - '[LAUNCH_FIREWORKS] firework1'
+      - '[PARTICLES] MOBSPAWNER_FLAMES'
   4:
     chance: 60
     execute:
@@ -70,6 +75,7 @@ exampleNormal:
       - '[ACTION] %animation_found100%'
       - '[CONSOLE] tokens add %player% 10'
       - '[LAUNCH_FIREWORKS] firework1'
+      - '[PARTICLES] MOBSPAWNER_FLAMES'
   5:
     chance: 55
     execute:
@@ -78,6 +84,7 @@ exampleNormal:
       - '[ACTION] %prefix%Now you are very fast!'
       - '[EFFECT] FAST_DIGGING;2;120'
       - '[EFFECT] SPEED;5;200'
+      - '[PARTICLES] MOBSPAWNER_FLAMES'
   6:
     chance: 60
     execute:
@@ -87,6 +94,7 @@ exampleNormal:
       - '[ACTION] &c&l- 500$'
       - '[TAKE_MONEY] 500'
       - '[EFFECT] BLINDNESS;0;60'
+      - '[PARTICLES] MOBSPAWNER_FLAMES'
   7:
     chance: 50
     execute:
@@ -96,6 +104,7 @@ exampleNormal:
       - '[ACTION] %animation_found10k%'
       - '[GIVE_MONEY] 10000'
       - '[LAUNCH_FIREWORKS] firework1'
+      - '[PARTICLES] MOBSPAWNER_FLAMES'
   8:
     chance: 10
     execute:
@@ -110,10 +119,12 @@ exampleNormal:
       - '[BOSSBAR] %animation_foundLegendary%;YELLOW;SEGMENTED_20;1.0;5'
       - '[CLEAR_EFFECT] all'
       - '[LAUNCH_FIREWORKS] firework2'
+      - '[PARTICLES] MOBSPAWNER_FLAMES'
   nothing:
     execute:
       - '[TITLE] &c&lYOU HAVE NOT FOUND ANYTHING;none;20;40;20'
       - '[MESSAGE] %prefix%You did not find anything!'
+      - '[PARTICLES] MOBSPAWNER_FLAMES'
 exampleVip:
   1:
     chance: 60
@@ -123,6 +134,7 @@ exampleVip:
       - '[MESSAGE] %prefix%You found &d100k$&7!'
       - '[ACTION] %animation_found100k%'
       - '[GIVE_MONEY] 100000'
+      - '[PARTICLES] MOBSPAWNER_FLAMES'
   2:
     chance: 40
     execute:
@@ -131,7 +143,9 @@ exampleVip:
       - '[MESSAGE] %prefix%You found &d1M$&7!'
       - '[ACTION] %animation_found1M%'
       - '[GIVE_MONEY] 1000000'
+      - '[PARTICLES] MOBSPAWNER_FLAMES'
   nothing:
     execute:
       - '[TITLE] &c&lYOU HAVE NOT FOUND ANYTHING;none;20;40;20'
       - '[MESSAGE] %prefix%You did not find anything!'
+      - '[PARTICLES] MOBSPAWNER_FLAMES'

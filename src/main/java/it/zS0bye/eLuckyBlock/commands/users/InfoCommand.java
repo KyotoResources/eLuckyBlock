@@ -1,7 +1,7 @@
 package it.zS0bye.eLuckyBlock.commands.users;
 
 import it.zS0bye.eLuckyBlock.commands.BaseCommand;
-import it.zS0bye.eLuckyBlock.database.SQLLuckyBlock;
+import it.zS0bye.eLuckyBlock.database.SQLLuckyBreaks;
 import it.zS0bye.eLuckyBlock.eLuckyBlock;
 import it.zS0bye.eLuckyBlock.utils.FileUtils;
 import it.zS0bye.eLuckyBlock.utils.LangUtils;
@@ -16,28 +16,30 @@ public class InfoCommand extends BaseCommand {
     private final CommandSender sender;
     private String type;
     private eLuckyBlock plugin;
-    private SQLLuckyBlock sql;
+    private SQLLuckyBreaks sql;
 
     public InfoCommand(final String[] args, final CommandSender sender, final String type, final eLuckyBlock plugin) {
         this.args = args;
         this.sender = sender;
         this.type = type;
         this.plugin = plugin;
-        this.sql = plugin.getSqlLuckyBlock();
+        this.sql = plugin.getSqlLuckyBreaks();
         if(args[0].equalsIgnoreCase(getName()))
             execute();
     }
 
     public InfoCommand(final List<String> tab, final CommandSender sender) {
         this.sender = sender;
-        tab.add(usersTab());
+        if(sender.hasPermission("eluckyblock.command.info"))
+        tab.add(getName());
     }
 
     public InfoCommand(final List<String> tab, final String[] args, final CommandSender sender) {
         this.sender = sender;
         if(args[0].equalsIgnoreCase(getName()))
             Bukkit.getOnlinePlayers().forEach(players -> {
-                tab.add(adminsTab(players.getName()));
+                if(sender.hasPermission("eluckyblock.command.info.others"))
+                tab.add(players.getName());
             });
     }
 
@@ -56,7 +58,7 @@ public class InfoCommand extends BaseCommand {
     }
 
     private void users() {
-        if(!sender.hasPermission("luckyblock.command.info")) {
+        if(!sender.hasPermission("eluckyblock.command.info")) {
             LangUtils.INSUFFICIENT_PERMISSIONS.send(sender);
             return;
         }
@@ -81,14 +83,8 @@ public class InfoCommand extends BaseCommand {
 
     }
 
-    private String usersTab() {
-        if(sender.hasPermission("luckyblock.command.info"))
-            return getName();
-        return "";
-    }
-
     private void admins() {
-        if(!sender.hasPermission("luckyblock.command.info.others")) {
+        if(!sender.hasPermission("eluckyblock.command.info.others")) {
             LangUtils.INSUFFICIENT_PERMISSIONS.send(sender);
             return;
         }
@@ -121,9 +117,4 @@ public class InfoCommand extends BaseCommand {
         });
     }
 
-    private String adminsTab(final String players) {
-        if(sender.hasPermission("luckyblock.command.info.others"))
-            return players;
-        return "";
-    }
 }

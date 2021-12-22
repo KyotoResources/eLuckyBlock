@@ -22,7 +22,7 @@ public class ReloadCommand extends BaseCommand {
     }
 
     public ReloadCommand(final List<String> tab, final CommandSender sender) {
-        if(sender.hasPermission("luckyblock.command.reload"))
+        if(sender.hasPermission("eluckyblock.command.reload"))
         tab.add(getName());
     }
 
@@ -33,7 +33,7 @@ public class ReloadCommand extends BaseCommand {
 
     @Override
     protected void execute() {
-        if(!sender.hasPermission("luckyblock.command.reload")) {
+        if(!sender.hasPermission("eluckyblock.command.reload")) {
             LangUtils.INSUFFICIENT_PERMISSIONS.send(sender);
             return;
         }
@@ -48,7 +48,9 @@ public class ReloadCommand extends BaseCommand {
             String LuckyReward = utils.getString(utils.getRewards());
             new RewardUtils(luckyblock, LuckyReward);
         }
+
         LangUtils.RELOAD_ADMINS_CONFIGURATIONS.send(sender);
+        this.plugin.checkHooks();
     }
 
 }

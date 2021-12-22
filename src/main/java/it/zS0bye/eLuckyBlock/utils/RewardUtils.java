@@ -1,8 +1,11 @@
 package it.zS0bye.eLuckyBlock.utils;
 
 import it.zS0bye.eLuckyBlock.eLuckyBlock;
+import it.zS0bye.eLuckyBlock.executors.*;
 import lombok.Getter;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,5 +53,38 @@ public class RewardUtils extends FileUtils {
 
     public int getInt(final String path) {
         return this.rewards.getInt(path);
+    }
+
+    public void sendReward(final Player player, final Location loc) {
+        getStringList(getExecute()).forEach(execute -> {
+            new TitleExecutor(execute, player);
+            new ActionExecutor(execute, player);
+            new BossBarExecutor(execute, player);
+            new BroadcastActionExecutor(execute, player);
+            new BroadcastExecutor(execute, player);
+            new BroadcastTitleExecutor(execute, player);
+            new BroadcastBossBarExecutor(execute, player);
+            new ClearEffectExecutor(execute, player);
+            new ConsoleExecutor(execute, player);
+            new EffectExecutor(execute, player);
+            new MessageExecutor(execute, player);
+            new PlayerExecutor(execute, player);
+            new SoundExecutor(execute, player);
+            new SudoExecutor(execute, player);
+            new SpawnMobExecutor(execute, loc);
+            new ItemExecutor(execute, loc);
+            new GiveXPExecutor(execute, player);
+            new TakeXPExecutor(execute, player);
+            new FireworksExecutor(execute, player, loc);
+            new ParticlesExecutor(execute, player, loc);
+
+            if(ConfigUtils.HOOKS_VAULT.getBoolean()) {
+                new GiveMoneyExecutor(execute, player);
+                new TakeMoneyExecutor(execute, player);
+            }
+
+            if(ConfigUtils.HOOKS_WORLDEDIT.getBoolean())
+                new SchematicExecutor(execute, player, loc);
+        });
     }
 }

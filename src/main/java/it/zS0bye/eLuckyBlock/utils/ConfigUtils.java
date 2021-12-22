@@ -7,26 +7,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum ConfigUtils implements IFileUtils {
-    SETTINGS_PREFIX("Settings.prefix"),
-    CHECK_UPDATE_ENABLED("Settings.check_update.enabled"),
-    CHECK_UPDATE_TYPE("Settings.check_update.type"),
-    HOOKS_PLACEHOLDERAPI("Settings.hooks.PlaceholderAPI"),
-    HOOKS_WORLDGUARD("Settings.hooks.WorldGuard"),
-    HOOKS_VAULT("Settings.hooks.Vault"),
-    DB_TYPE("Storage.type"),
-    DB_NAME("Storage.mysql.database"),
-    DB_HOST("Storage.mysql.hostname"),
-    DB_PORT("Storage.mysql.port"),
-    DB_USER("Storage.mysql.user"),
-    DB_PASSWORD("Storage.mysql.password"),
-    DB_CUSTOMURI("Storage.mysql.advanced.customURI");
+    SETTINGS_PREFIX("Settings.prefix", " &d❏ ₑLuckyBlock ┃ &7"),
+    CHECK_UPDATE_ENABLED("Settings.check_update.enabled", "true"),
+    CHECK_UPDATE_TYPE("Settings.check_update.type", "NORMAL"),
+    HOOKS_PLACEHOLDERAPI("Settings.hooks.PlaceholderAPI", "false"),
+    HOOKS_WORLDGUARD("Settings.hooks.WorldGuard", "false"),
+    HOOKS_WORLDEDIT("Settings.hooks.WorldEdit", "false"),
+    HOOKS_VAULT("Settings.hooks.Vault", "false"),
+    DB_TYPE("Storage.type", "SQLite"),
+    DB_NAME("Storage.mysql.database", "eLuckyBlock"),
+    DB_HOST("Storage.mysql.hostname", "localhost"),
+    DB_PORT("Storage.mysql.port", "3306"),
+    DB_USER("Storage.mysql.user", "root"),
+    DB_PASSWORD("Storage.mysql.password", "MyPassword"),
+    DB_CUSTOMURI("Storage.mysql.advanced.customURI", "jdbc:mysql://%host%:%port%/%database%?useSSL=false");
 
     private final String path;
+    private final String def;
     private final eLuckyBlock plugin;
     private final static int CENTER_PX = 154;
 
-    ConfigUtils(String path) {
+    ConfigUtils(String path, String def) {
         this.path = path;
+        this.def = def;
         this.plugin = eLuckyBlock.getInstance();
     }
 
@@ -37,26 +40,44 @@ public enum ConfigUtils implements IFileUtils {
 
     @Override
     public String getString() {
-        return ColorUtils.getColor(this.plugin.getConfig().getString(path));
+        if(contains())
+            return ColorUtils.getColor(this.plugin.getConfig().getString(path));
+        return ColorUtils.getColor(def);
     }
 
     @Override
     public List<String> getStringList() {
         List<String> list = new ArrayList<>();
-        for (String setList : this.plugin.getConfig().getStringList(path)) {
-            list.add(ColorUtils.getColor(setList));
+        if(contains()) {
+            for (String setList : this.plugin.getConfig().getStringList(path)) {
+                list.add(ColorUtils.getColor(setList));
+            }
+        }
+        if(def.contains(",")) {
+            for (String setList : def.split(",")) {
+                list.add(ColorUtils.getColor(setList));
+            }
         }
         return list;
     }
 
     @Override
     public boolean getBoolean() {
-        return this.plugin.getConfig().getBoolean(path);
+        if(contains())
+            return this.plugin.getConfig().getBoolean(path);
+        return Boolean.parseBoolean(def);
+    }
+
+    @Override
+    public boolean contains() {
+        return this.plugin.getConfig().contains(path);
     }
 
     @Override
     public int getInt() {
-        return this.plugin.getConfig().getInt(path);
+        if(contains())
+            return this.plugin.getConfig().getInt(path);
+        return Integer.parseInt(def);
     }
 
     public String getCustomString() {

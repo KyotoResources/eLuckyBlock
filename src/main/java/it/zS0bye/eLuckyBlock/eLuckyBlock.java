@@ -2,13 +2,11 @@ package it.zS0bye.eLuckyBlock;
 
 import it.zS0bye.eLuckyBlock.commands.MainCommand;
 import it.zS0bye.eLuckyBlock.database.SQLConnection;
-import it.zS0bye.eLuckyBlock.database.SQLLuckyBlock;
+import it.zS0bye.eLuckyBlock.database.SQLLuckyBlocks;
+import it.zS0bye.eLuckyBlock.database.SQLLuckyBreaks;
 import it.zS0bye.eLuckyBlock.files.*;
 import it.zS0bye.eLuckyBlock.hooks.PlaceholderAPI;
-import it.zS0bye.eLuckyBlock.listeners.FireworkListener;
-import it.zS0bye.eLuckyBlock.listeners.JoinListener;
-import it.zS0bye.eLuckyBlock.listeners.LuckyBlockListener;
-import it.zS0bye.eLuckyBlock.listeners.SpongeListener;
+import it.zS0bye.eLuckyBlock.listeners.*;
 import it.zS0bye.eLuckyBlock.updater.UpdateType;
 import it.zS0bye.eLuckyBlock.updater.VandalUpdater;
 import it.zS0bye.eLuckyBlock.utils.*;
@@ -33,8 +31,10 @@ public class eLuckyBlock extends JavaPlugin {
     private AnimationsFile animations;
     private RewardsFile rewards;
     private FireworksFile fireworks;
+    private SchematicsFile schematics;
     private SQLConnection sqlConnection;
-    private SQLLuckyBlock sqlLuckyBlock;
+    private SQLLuckyBreaks sqlLuckyBreaks;
+    private SQLLuckyBlocks sqlLuckyBlocks;
     private Economy economy;
     @Getter
     private static eLuckyBlock instance;
@@ -78,7 +78,7 @@ public class eLuckyBlock extends JavaPlugin {
 
         SQLConnection();
 
-        loadHooks();
+        checkHooks();
 
         loadCommands();
         loadListeners();
@@ -91,6 +91,8 @@ public class eLuckyBlock extends JavaPlugin {
         getLogger().info("");
         getLogger().info(ConsoleUtils.PURPLE + "┃ The Plug-in was started successfully ;)" + ConsoleUtils.RESET);
         getLogger().info("");
+
+        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> this.sqlLuckyBlocks.fixLocations(), 30L, 30L);
 
     }
 
@@ -116,13 +118,14 @@ public class eLuckyBlock extends JavaPlugin {
                         replace("%database%", ConfigUtils.DB_NAME.getString());
                 sqlConnection = new SQLConnection(this, replace, ConfigUtils.DB_USER.getString(), ConfigUtils.DB_PASSWORD.getString());
             }
-            this.sqlLuckyBlock = new SQLLuckyBlock(this);
+            this.sqlLuckyBreaks = new SQLLuckyBreaks(this);
+            this.sqlLuckyBlocks = new SQLLuckyBlocks(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void loadHooks() {
+    public void checkHooks() {
         if(ConfigUtils.HOOKS_PLACEHOLDERAPI.getBoolean()) {
             if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
                 new PlaceholderAPI(this).register();
@@ -135,6 +138,13 @@ public class eLuckyBlock extends JavaPlugin {
         if(ConfigUtils.HOOKS_WORLDGUARD.getBoolean()) {
             if (Bukkit.getPluginManager().getPlugin("WorldGuard") == null) {
                 getLogger().severe("Could not find WorldGuard! This plugin is required.");
+                Bukkit.getPluginManager().disablePlugin(this);
+            }
+        }
+
+        if(ConfigUtils.HOOKS_WORLDEDIT.getBoolean()) {
+            if (Bukkit.getPluginManager().getPlugin("WorldEdit") == null) {
+                getLogger().severe("Could not find WorldEdit! This plugin is required.");
                 Bukkit.getPluginManager().disablePlugin(this);
             }
         }
@@ -170,6 +180,7 @@ public class eLuckyBlock extends JavaPlugin {
         this.animations = new AnimationsFile(this);
         this.rewards = new RewardsFile(this);
         this.fireworks = new FireworksFile(this);
+        this.schematics = new SchematicsFile(this);
     }
 
     private void loadCommands() {
@@ -181,7 +192,9 @@ public class eLuckyBlock extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new JoinListener(this), this);
         Bukkit.getPluginManager().registerEvents(new FireworkListener(), this);
         this.lucky.getConfig().getKeys(false).forEach(luckyblocks -> {
-            Bukkit.getPluginManager().registerEvents(new LuckyBlockListener(this, luckyblocks), this);
+            Bukkit.getPluginManager().registerEvents(new LuckyBlockListener(luckyblocks), this);
+            Bukkit.getPluginManager().registerEvents(new UniqueBlockListener(luckyblocks), this);
+            Bukkit.getPluginManager().registerEvents(new InstantBlockListener(luckyblocks), this);
 
             if (!VersionChecker.getV1_8()
                     && !VersionChecker.getV1_9()

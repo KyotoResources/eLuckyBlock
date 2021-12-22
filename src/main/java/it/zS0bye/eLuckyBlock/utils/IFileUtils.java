@@ -12,6 +12,8 @@ public interface IFileUtils {
 
     boolean getBoolean();
 
+    boolean contains();
+
     int getInt();
 
 }

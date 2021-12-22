@@ -1,5 +1,6 @@
 package it.zS0bye.eLuckyBlock.commands;
 
+import it.zS0bye.eLuckyBlock.commands.admins.GiveCommand;
 import it.zS0bye.eLuckyBlock.commands.admins.ReloadCommand;
 import it.zS0bye.eLuckyBlock.commands.users.AboutCommand;
 import it.zS0bye.eLuckyBlock.commands.users.HelpCommand;
@@ -36,7 +37,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if(!sender.hasPermission("luckyblock.command")) {
+        if(!sender.hasPermission("eluckyblock.command")) {
             new AboutCommand(sender, this.plugin);
             return true;
         }
@@ -70,6 +71,24 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
+        if(args.length == 3) {
+            new GiveCommand(args, sender, this.plugin);
+
+            if(checkArgs(args[0], "give"))
+                new HelpCommand(sender, commandLabel, this.plugin);
+
+            return true;
+        }
+
+        if(args.length == 4) {
+            new GiveCommand(args, sender, this.plugin);
+
+            if(checkArgs(args[0], "give"))
+                new HelpCommand(sender, commandLabel, this.plugin);
+
+            return true;
+        }
+
         new HelpCommand(sender, commandLabel, this.plugin);
 
         return true;
@@ -86,7 +105,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return new ArrayList<>();
         }
 
-        if(!sender.hasPermission("luckyblock.command")) {
+        if(!sender.hasPermission("eluckyblock.command")) {
             return new ArrayList<>();
         }
 
@@ -95,12 +114,19 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             new AboutCommand(commands);
             new ReloadCommand(commands, sender);
             new InfoCommand(commands, sender);
+            new GiveCommand(commands, sender);
             StringUtil.copyPartialMatches(args[0], commands, completions);
         }
 
         if(args.length == 2) {
             new InfoCommand(commands, args, sender);
+            new GiveCommand(commands, args, sender, this.plugin);
             StringUtil.copyPartialMatches(args[1], commands, completions);
+        }
+
+        if(args.length == 3) {
+            new GiveCommand(commands, args, sender, this.plugin);
+            StringUtil.copyPartialMatches(args[2], commands, completions);
         }
 
         Collections.sort(completions);
