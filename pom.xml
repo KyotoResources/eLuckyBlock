@@ -5,8 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>it.zS0bye.eLuckyBlock</groupId>
-    <artifactId>eLuckyBlock</artifactId>
-    <version>1.3</version>
+    <artifactId>ELuckyBlock</artifactId>
+    <version>1.4</version>
+    <packaging>jar</packaging>
 
     <name>eLuckyBlock</name>
 
@@ -97,7 +98,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20210307</version>
+            <version>20211205</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -115,6 +116,11 @@
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
             <version>8.5.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
         </dependency>
     </dependencies>
 </project>

@@ -1,9 +1,9 @@
 package it.zS0bye.eLuckyBlock.commands.users;
 
 import it.zS0bye.eLuckyBlock.commands.BaseCommand;
-import it.zS0bye.eLuckyBlock.eLuckyBlock;
-import it.zS0bye.eLuckyBlock.utils.ColorUtils;
-import it.zS0bye.eLuckyBlock.utils.VersionChecker;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
+import it.zS0bye.eLuckyBlock.utils.StringUtils;
+import it.zS0bye.eLuckyBlock.checker.VersionChecker;
 import net.md_5.bungee.api.chat.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,16 +14,16 @@ import java.util.List;
 public class AboutCommand extends BaseCommand {
 
     private CommandSender sender;
-    private eLuckyBlock plugin;
+    private ELuckyBlock plugin;
 
-    public AboutCommand(final String[] args, final CommandSender sender, final eLuckyBlock plugin) {
+    public AboutCommand(final String[] args, final CommandSender sender, final ELuckyBlock plugin) {
         this.sender = sender;
         this.plugin = plugin;
         if(args[0].equalsIgnoreCase(getName()))
             execute();
     }
 
-    public AboutCommand(final CommandSender sender, final eLuckyBlock plugin) {
+    public AboutCommand(final CommandSender sender, final ELuckyBlock plugin) {
         this.sender = sender;
         this.plugin = plugin;
         execute();
@@ -63,9 +63,9 @@ public class AboutCommand extends BaseCommand {
         String hover = "&#22f82e%nC&#23f340%nl&#24ee52%ni&#26e964%nc&#27e476%nk &#29da9a%nM&#2bd5ac%ne"
                 .replace("&", "")
                 .replace("%n", "&n");
-        notPermsHex().forEach(msg -> sender.sendMessage(ColorUtils.sendCentered(msg)));
-        BaseComponent[] clickLink = TextComponent.fromLegacyText(ColorUtils.sendCentered(resource));
-        BaseComponent[] hoverLink = TextComponent.fromLegacyText(ColorUtils.getColor(hover));
+        notPermsHex().forEach(msg -> sender.sendMessage(StringUtils.sendCentered(msg)));
+        BaseComponent[] clickLink = TextComponent.fromLegacyText(StringUtils.sendCentered(resource));
+        BaseComponent[] hoverLink = TextComponent.fromLegacyText(StringUtils.getColor(hover));
         ComponentBuilder hoverBuilder = new ComponentBuilder("");
         hoverBuilder.append(hoverLink);
         HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverBuilder.create());
@@ -83,9 +83,9 @@ public class AboutCommand extends BaseCommand {
     private void notPermsLegacy(final Player player) {
         String resource = "&d&lCLICK TO OPEN THE RESOURCE";
         String hover = "&a&nClick me!";
-        notPermsLegacy().forEach(msg -> player.sendMessage(ColorUtils.sendCentered(msg)));
-        TextComponent clickLink = new TextComponent(ColorUtils.sendCentered(resource));
-        clickLink.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ColorUtils.getColor(hover)).create()));
+        notPermsLegacy().forEach(msg -> player.sendMessage(StringUtils.sendCentered(msg)));
+        TextComponent clickLink = new TextComponent(StringUtils.sendCentered(resource));
+        clickLink.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(StringUtils.getColor(hover)).create()));
         clickLink.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/eluckyblock.97759/"));
         player.spigot().sendMessage(clickLink);
         player.sendMessage("");

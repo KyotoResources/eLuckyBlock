@@ -1,9 +1,9 @@
 package it.zS0bye.eLuckyBlock.listeners;
 
 import it.zS0bye.eLuckyBlock.database.SQLLuckyBlocks;
-import it.zS0bye.eLuckyBlock.eLuckyBlock;
-import it.zS0bye.eLuckyBlock.utils.CheckLucky;
-import it.zS0bye.eLuckyBlock.utils.LuckyUtils;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
+import it.zS0bye.eLuckyBlock.checker.LuckyChecker;
+import it.zS0bye.eLuckyBlock.files.enums.Lucky;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -14,15 +14,14 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class UniqueBlockListener extends LuckyUtils implements Listener {
+public class UniqueBlockListener implements Listener {
 
     private final String luckyblocks;
     private final SQLLuckyBlocks sqlLuckyBlocks;
 
     public UniqueBlockListener(final String luckyblocks) {
-        super(luckyblocks);
         this.luckyblocks = luckyblocks;
-        this.sqlLuckyBlocks = eLuckyBlock.getInstance().getSqlLuckyBlocks();
+        this.sqlLuckyBlocks = ELuckyBlock.getInstance().getSqlLuckyBlocks();
     }
 
     @EventHandler
@@ -36,7 +35,7 @@ public class UniqueBlockListener extends LuckyUtils implements Listener {
         Location location = block.getLocation();
         String convertLoc = this.sqlLuckyBlocks.convertLoc(location);
 
-        if(new CheckLucky(block, world, region, luckyblocks)
+        if(new LuckyChecker(block, world, region, luckyblocks)
                 .check()) {
             return;
         }
@@ -49,17 +48,17 @@ public class UniqueBlockListener extends LuckyUtils implements Listener {
         List<String> lore = item.getItemMeta().getLore();
 
         if (item.getItemMeta().hasDisplayName()
-        && displayName.equals(getString(getUnique_check_displayName()))) {
+        && displayName.equals(Lucky.UNIQUE_CHECK_NAME.getString(luckyblocks))) {
 
-            if(!contains(getUnique_check_lore())
-            || getStringList(getUnique_check_lore()).size() == 0
+            if(!Lucky.UNIQUE_CHECK_LORE.contains(luckyblocks)
+            || Lucky.UNIQUE_CHECK_LORE.getStringList(luckyblocks).size() == 0
             && !item.getItemMeta().hasLore()) {
                 this.sqlLuckyBlocks.setLocation(convertLoc, luckyblocks);
                 return;
             }
 
             if(item.getItemMeta().hasLore() &&
-                    lore.equals(getStringList(getUnique_check_lore()))) {
+                    lore.equals(Lucky.UNIQUE_CHECK_LORE.getStringList(luckyblocks))) {
                this.sqlLuckyBlocks.setLocation(convertLoc, luckyblocks);
             }
 

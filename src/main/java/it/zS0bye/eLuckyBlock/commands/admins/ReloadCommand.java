@@ -1,10 +1,11 @@
 package it.zS0bye.eLuckyBlock.commands.admins;
 
 import it.zS0bye.eLuckyBlock.commands.BaseCommand;
-import it.zS0bye.eLuckyBlock.eLuckyBlock;
-import it.zS0bye.eLuckyBlock.utils.LangUtils;
-import it.zS0bye.eLuckyBlock.utils.LuckyUtils;
-import it.zS0bye.eLuckyBlock.utils.RewardUtils;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
+import it.zS0bye.eLuckyBlock.files.enums.Config;
+import it.zS0bye.eLuckyBlock.files.enums.Lang;
+import it.zS0bye.eLuckyBlock.files.enums.Rewards;
+import it.zS0bye.eLuckyBlock.hooks.HooksManager;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
@@ -12,9 +13,9 @@ import java.util.List;
 public class ReloadCommand extends BaseCommand {
 
     private CommandSender sender;
-    private eLuckyBlock plugin;
+    private ELuckyBlock plugin;
 
-    public ReloadCommand(final String[] args, final CommandSender sender, final eLuckyBlock plugin) {
+    public ReloadCommand(final String[] args, final CommandSender sender, final ELuckyBlock plugin) {
         this.sender = sender;
         this.plugin = plugin;
         if(args[0].equalsIgnoreCase(getName()))
@@ -34,23 +35,21 @@ public class ReloadCommand extends BaseCommand {
     @Override
     protected void execute() {
         if(!sender.hasPermission("eluckyblock.command.reload")) {
-            LangUtils.INSUFFICIENT_PERMISSIONS.send(sender);
+            Lang.INSUFFICIENT_PERMISSIONS.send(sender);
             return;
         }
-        this.plugin.reloadConfig();
-        this.plugin.getLang().saveDefaultConfig();
-        this.plugin.getLucky().saveDefaultConfig();
-        this.plugin.getAnimations().saveDefaultConfig();
-        this.plugin.getRewards().saveDefaultConfig();
-        this.plugin.getFireworks().saveDefaultConfig();
-        for (String luckyblock : this.plugin.getLucky().getConfig().getKeys(false)) {
-            LuckyUtils utils = new LuckyUtils(luckyblock);
-            String LuckyReward = utils.getString(utils.getRewards());
-            new RewardUtils(luckyblock, LuckyReward);
-        }
 
-        LangUtils.RELOAD_ADMINS_CONFIGURATIONS.send(sender);
-        this.plugin.checkHooks();
+        this.plugin.reloadConfig();
+        for(Config config : Config.values())
+            config.reloadConfig();
+
+        this.plugin.getLang().reload();
+        this.plugin.getLucky().reload();
+        this.plugin.getAnimations().reload();
+        this.plugin.getRewards().reload();
+        this.plugin.getFireworks().reload();
+        new HooksManager(this.plugin);
+        Lang.RELOAD_ADMINS_CONFIGURATIONS.send(sender);
     }
 
 }

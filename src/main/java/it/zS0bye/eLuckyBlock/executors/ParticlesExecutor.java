@@ -1,6 +1,7 @@
 package it.zS0bye.eLuckyBlock.executors;
 
 import it.zS0bye.eLuckyBlock.utils.ConvertUtils;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -28,6 +29,12 @@ public class ParticlesExecutor extends Executors {
 
         String particles = execute
                 .replace(getType(), "");
+
+        if(particles.startsWith("block-")) {
+            String block = particles.split("block-")[1];
+            this.player.playEffect(this.location, Effect.STEP_SOUND, ConvertUtils.getMaterial(block.toUpperCase()));
+            return;
+        }
 
         this.player.playEffect(this.location,
                 ConvertUtils.getParticles(particles),

@@ -1,11 +1,12 @@
 package it.zS0bye.eLuckyBlock.commands;
 
+import it.zS0bye.eLuckyBlock.commands.admins.CItemCommand;
 import it.zS0bye.eLuckyBlock.commands.admins.GiveCommand;
 import it.zS0bye.eLuckyBlock.commands.admins.ReloadCommand;
 import it.zS0bye.eLuckyBlock.commands.users.AboutCommand;
 import it.zS0bye.eLuckyBlock.commands.users.HelpCommand;
 import it.zS0bye.eLuckyBlock.commands.users.InfoCommand;
-import it.zS0bye.eLuckyBlock.eLuckyBlock;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,9 +21,9 @@ import java.util.List;
 
 public class MainCommand implements CommandExecutor, TabCompleter {
 
-    private final eLuckyBlock plugin;
+    private final ELuckyBlock plugin;
 
-    public MainCommand(final eLuckyBlock plugin) {
+    public MainCommand(final ELuckyBlock plugin) {
         this.plugin = plugin;
     }
 
@@ -64,8 +65,10 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
         if(args.length == 2) {
             new InfoCommand(args, sender, "admins", this.plugin);
+            new CItemCommand(args, sender, this.plugin);
 
-            if(checkArgs(args[0], "info"))
+            if(checkArgs(args[0], "info")
+                    && checkArgs(args[0], "citem"))
                 new HelpCommand(sender, commandLabel, this.plugin);
 
             return true;
@@ -115,6 +118,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             new ReloadCommand(commands, sender);
             new InfoCommand(commands, sender);
             new GiveCommand(commands, sender);
+            new CItemCommand(commands, sender);
             StringUtil.copyPartialMatches(args[0], commands, completions);
         }
 

@@ -1,7 +1,7 @@
 name: eLuckyBlock
-main: it.zS0bye.eLuckyBlock.eLuckyBlock
-softdepend: [PlaceholderAPI, WorldGuard, WorldEdit, Vault]
-version: 1.3
+main: it.zS0bye.eLuckyBlock.ELuckyBlock
+softdepend: [PlaceholderAPI, WorldGuard, WorldEdit, Vault, TokenEnchant, TokenManager, UltraPrisonCore]
+version: 1.4
 api-version: 1.13
 author: zS0bye
 description: The LuckyBlock Plugin you needed! For Prison, SkyBlock, etc..
@@ -26,6 +26,7 @@ permissions:
       eluckyblock.command.info: true
       eluckyblock.command.info.others: true
       eluckyblock.command.give: true
+      eluckyblock.command.citem: true
   eluckyblock.command:
     description: Allow to use eLuckyBlock command
     default: op
@@ -40,4 +41,7 @@ permissions:
     default: op
   eluckyblock.command.give:
     description: Allow to use give command
+    default: op
+  eluckyblock.command.citem:
+    description: Allow to use citem command
     default: op

@@ -1,7 +1,7 @@
 package it.zS0bye.eLuckyBlock.listeners;
 
 import it.zS0bye.eLuckyBlock.database.SQLLuckyBreaks;
-import it.zS0bye.eLuckyBlock.eLuckyBlock;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,7 +14,7 @@ public class JoinListener implements Listener {
     private final SQLLuckyBreaks sql;
     private final Map<String, Integer> luckyBreaks;
 
-    public JoinListener(final eLuckyBlock plugin) {
+    public JoinListener(final ELuckyBlock plugin) {
         this.sql = plugin.getSqlLuckyBreaks();
         this.luckyBreaks = plugin.getLuckyBreaks();
     }

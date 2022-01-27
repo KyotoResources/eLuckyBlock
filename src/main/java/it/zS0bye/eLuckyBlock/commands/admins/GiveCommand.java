@@ -1,10 +1,12 @@
 package it.zS0bye.eLuckyBlock.commands.admins;
 
+import it.zS0bye.eLuckyBlock.api.ILuckyBlockAPI;
 import it.zS0bye.eLuckyBlock.commands.BaseCommand;
-import it.zS0bye.eLuckyBlock.eLuckyBlock;
-import it.zS0bye.eLuckyBlock.utils.FileUtils;
-import it.zS0bye.eLuckyBlock.utils.LangUtils;
-import it.zS0bye.eLuckyBlock.utils.LuckyUtils;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
+import it.zS0bye.eLuckyBlock.files.enums.Lucky;
+import it.zS0bye.eLuckyBlock.utils.ItemUtils;
+import it.zS0bye.eLuckyBlock.files.enums.Lang;
+import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -16,10 +18,9 @@ public class GiveCommand extends BaseCommand {
 
     private String[] args;
     private final CommandSender sender;
-    private eLuckyBlock plugin;
-    private LuckyUtils utils;
+    private ELuckyBlock plugin;
 
-    public GiveCommand(final String[] args, final CommandSender sender, final eLuckyBlock plugin) {
+    public GiveCommand(final String[] args, final CommandSender sender, final ELuckyBlock plugin) {
         this.args = args;
         this.sender = sender;
         this.plugin = plugin;
@@ -33,7 +34,7 @@ public class GiveCommand extends BaseCommand {
         tab.add(getName());
     }
 
-    public GiveCommand(final List<String> tab, final String[] args, final CommandSender sender, final eLuckyBlock plugin) {
+    public GiveCommand(final List<String> tab, final String[] args, final CommandSender sender, final ELuckyBlock plugin) {
         this.sender = sender;
         this.plugin = plugin;
         if(!args[0].equalsIgnoreCase(getName())) {
@@ -46,8 +47,7 @@ public class GiveCommand extends BaseCommand {
             });
         if(args.length == 3)
             this.plugin.getLucky().getConfig().getKeys(false).forEach(luckyblocks -> {
-                utils = new LuckyUtils(luckyblocks);
-                if(utils.getBoolean(utils.getUnique_check_enabled()))
+                if(Lucky.UNIQUE_CHECK_ENABLED.getBoolean(luckyblocks))
                 tab.add(luckyblocks);
             });
     }
@@ -60,56 +60,61 @@ public class GiveCommand extends BaseCommand {
     @Override
     protected void execute() {
         if(!sender.hasPermission("eluckyblock.command.give")) {
-            LangUtils.INSUFFICIENT_PERMISSIONS.send(sender);
+            Lang.INSUFFICIENT_PERMISSIONS.send(sender);
             return;
         }
 
         Player other = Bukkit.getPlayerExact(args[1]);
+
+        ILuckyBlockAPI api = ELuckyBlock.getApi();
         if(other == null) {
-            LangUtils.PLAYER_NOT_FOUND.send(sender);
+            Lang.PLAYER_NOT_FOUND.send(sender);
             return;
         }
 
-        utils = new LuckyUtils(args[2]);
         int amount = 1;
 
-        if(!utils.contains(args[2])) {
-            LangUtils.GIVE_ERRORS_NOT_EXIST.send(sender);
+        if(!this.plugin.getLucky().getConfig().contains(args[2])) {
+            Lang.GIVE_ERRORS_NOT_EXIST.send(sender);
             return;
         }
 
-        if(!utils.getBoolean(utils.getUnique_check_enabled())) {
-            LangUtils.GIVE_ERRORS_NOT_UNIQUE.send(sender);
+        if(!Lucky.UNIQUE_CHECK_ENABLED.getBoolean(args[2])) {
+            Lang.GIVE_ERRORS_NOT_UNIQUE.send(sender);
             return;
         }
 
         if(args.length == 4) {
             if(!NumberUtils.isNumber(args[3])) {
-                LangUtils.IS_NOT_NUMBER.send(sender);
+                Lang.IS_NOT_NUMBER.send(sender);
                 return;
             }
             amount = Integer.parseInt(args[3]);
             if(amount <= 0) {
-                LangUtils.ONLY_POSITIVE_NUMBERS.send(sender);
+                Lang.ONLY_POSITIVE_NUMBERS.send(sender);
                 return;
             }
         }
 
-        other.getInventory().addItem(utils.give(amount));
+        if(api.give(args[2], amount) == null) {
+            this.plugin.getLogger().severe(ItemUtils.ExceptionMsg());
+            return;
+        }
 
-        String senderMsg = LangUtils.GIVE_ADMINS_SENDER.getCustomString()
+        other.getInventory().addItem(api.give(args[2], amount));
+        String senderMsg = Lang.GIVE_ADMINS_SENDER.getCustomString()
                 .replace("%luckyblock%", args[2])
                 .replace("%amount%", String.valueOf(amount))
                 .replace("%receiver%", other.getName());
 
-        String receiverMsg = LangUtils.GIVE_ADMINS_RECEIVER.getCustomString()
+        String receiverMsg = Lang.GIVE_ADMINS_RECEIVER.getCustomString()
                 .replace("%luckyblock%", args[2])
                 .replace("%amount%", String.valueOf(amount))
                 .replace("%sender%", sender.getName());
 
 
-        FileUtils.send(senderMsg, sender);
-        FileUtils.send(receiverMsg, other);
+        StringUtils.send(senderMsg, sender);
+        StringUtils.send(receiverMsg, other);
     }
 
 }

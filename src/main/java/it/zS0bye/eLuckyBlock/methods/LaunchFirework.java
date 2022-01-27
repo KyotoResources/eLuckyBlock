@@ -1,6 +1,6 @@
 package it.zS0bye.eLuckyBlock.methods;
 
-import it.zS0bye.eLuckyBlock.eLuckyBlock;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -14,12 +14,12 @@ import java.util.List;
 
 public class LaunchFirework implements Listener {
 
-    private final eLuckyBlock plugin;
+    private final ELuckyBlock plugin;
     private final Location location;
     private final String type;
     private final List<String> colors;
 
-    public LaunchFirework(final eLuckyBlock plugin, final Location location, final String type, final List<String> colors) {
+    public LaunchFirework(final ELuckyBlock plugin, final Location location, final String type, final List<String> colors) {
         this.plugin = plugin;
         this.location = location;
         this.type = type;

@@ -1,7 +1,7 @@
 package it.zS0bye.eLuckyBlock.reflections;
 
-import it.zS0bye.eLuckyBlock.utils.ColorUtils;
-import it.zS0bye.eLuckyBlock.utils.VersionChecker;
+import it.zS0bye.eLuckyBlock.utils.StringUtils;
+import it.zS0bye.eLuckyBlock.checker.VersionChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -17,7 +17,7 @@ public class TitleField {
     private static Class<?> nmsChatSerializer;
     private static Class<?> chatBaseComponent;
 
-    private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<Class<?>, Class<?>>();
+    private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<>();
 
     private final Player player;
     private final String title;
@@ -57,8 +57,8 @@ public class TitleField {
         if (!VersionChecker.getV1_8()
         && !VersionChecker.getV1_9()
         && !VersionChecker.getV1_10()) {
-            String title = ColorUtils.getColor(this.title);
-            String subtitle = ColorUtils.getColor(this.subtitle);
+            String title = StringUtils.getColor(this.title);
+            String subtitle = StringUtils.getColor(this.subtitle);
             this.player.sendTitle(title, subtitle, this.fadein, this.stay, this.fadeout);
             return;
             }
@@ -83,7 +83,7 @@ public class TitleField {
                     sendPacket.invoke(connection, packet);
 
                 Object serialized = nmsChatSerializer.getConstructor(
-                        String.class).newInstance(ColorUtils.getColor(this.title));
+                        String.class).newInstance(StringUtils.getColor(this.title));
                 packet = packetTitle.getConstructor(packetActions,
                         chatBaseComponent).newInstance(actions[0], serialized);
                 sendPacket.invoke(connection, packet);
@@ -91,7 +91,7 @@ public class TitleField {
 
                     serialized = nmsChatSerializer.getConstructor(String.class)
                             .newInstance(
-                                    ColorUtils.getColor(this.subtitle));
+                                    StringUtils.getColor(this.subtitle));
                     packet = packetTitle.getConstructor(packetActions,
                             chatBaseComponent).newInstance(actions[1],
                             serialized);

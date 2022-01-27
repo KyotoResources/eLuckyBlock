@@ -1,6 +1,6 @@
 package it.zS0bye.eLuckyBlock.executors;
 
-import it.zS0bye.eLuckyBlock.utils.ColorUtils;
+import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import org.bukkit.entity.Player;
 
 public class SudoExecutor extends Executors {
@@ -21,7 +21,7 @@ public class SudoExecutor extends Executors {
 
     protected void apply() {
 
-        String sudo = ColorUtils.getPapi(this.player, execute
+        String sudo = StringUtils.getPapi(this.player, execute
                 .replace(getType(), ""));
 
         player.chat(sudo);

@@ -1,6 +1,6 @@
 package it.zS0bye.eLuckyBlock.database;
 
-import it.zS0bye.eLuckyBlock.eLuckyBlock;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +12,7 @@ public class SQLLuckyBreaks {
 
     private final SQLConnection sql;
 
-    public SQLLuckyBreaks(final eLuckyBlock plugin) {
+    public SQLLuckyBreaks(final ELuckyBlock plugin) {
         this.sql = plugin.getSqlConnection();
         this.create();
     }

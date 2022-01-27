@@ -1,6 +1,6 @@
 package it.zS0bye.eLuckyBlock.executors;
 
-import it.zS0bye.eLuckyBlock.utils.ColorUtils;
+import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -22,7 +22,7 @@ public class PlayerExecutor extends Executors {
 
     protected void apply() {
 
-        String command = ColorUtils.getPapi(this.player, execute
+        String command = StringUtils.getPapi(this.player, execute
                 .replace(getType(), ""));
 
         Bukkit.dispatchCommand(player, command);

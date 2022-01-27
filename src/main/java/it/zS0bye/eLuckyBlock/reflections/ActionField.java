@@ -1,7 +1,7 @@
 package it.zS0bye.eLuckyBlock.reflections;
 
-import it.zS0bye.eLuckyBlock.utils.ColorUtils;
-import it.zS0bye.eLuckyBlock.utils.VersionChecker;
+import it.zS0bye.eLuckyBlock.utils.StringUtils;
+import it.zS0bye.eLuckyBlock.checker.VersionChecker;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -25,12 +25,12 @@ public class ActionField {
         if (!VersionChecker.getV1_8()
         && !VersionChecker.getV1_9()
         && !VersionChecker.getV1_10()) {
-            String msg = ColorUtils.getColor(this.msg);
+            String msg = StringUtils.getColor(this.msg);
             this.player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(msg));
             return;
         }
 
-        this.msg = ColorUtils.getColor(this.msg);
+        this.msg = StringUtils.getColor(this.msg);
 
         Class<?> chatSerializer = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0];
         Class<?> chatComponent = getNMSClass("IChatBaseComponent");
@@ -38,7 +38,7 @@ public class ActionField {
 
         try {
 
-            Constructor<?> ConstructorActionbar = null;
+            Constructor<?> ConstructorActionbar;
             ConstructorActionbar = packetActionbar.getDeclaredConstructor(chatComponent, byte.class);
 
             Object actionbar = chatSerializer.getMethod("a", String.class).invoke(chatSerializer, "{\"text\": \"" + this.msg + "\"}");

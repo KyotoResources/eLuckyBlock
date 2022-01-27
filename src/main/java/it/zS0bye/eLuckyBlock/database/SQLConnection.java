@@ -1,26 +1,28 @@
 package it.zS0bye.eLuckyBlock.database;
 
-import it.zS0bye.eLuckyBlock.eLuckyBlock;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.*;
 
 @Getter
 public class SQLConnection {
 
-    private final eLuckyBlock plugin;
+    private final ELuckyBlock plugin;
     protected Connection connection;
     private File file;
 
-    public SQLConnection(final eLuckyBlock plugin, final String URI, final String username, final String password) throws Exception {
+    @SneakyThrows
+    public SQLConnection(final ELuckyBlock plugin, final String URI, final String username, final String password) {
         this.plugin = plugin;
         Class.forName("com.mysql.jdbc.Driver");
         this.connection = DriverManager.getConnection(URI, username, password);
     }
 
-    public SQLConnection(final eLuckyBlock plugin) throws Exception {
+    @SneakyThrows
+    public SQLConnection(final ELuckyBlock plugin) {
         this.plugin = plugin;
         this.file = new File(this.plugin.getDataFolder(), "database.db");
         this.saveFile();
@@ -28,7 +30,8 @@ public class SQLConnection {
         this.connection = DriverManager.getConnection("jdbc:sqlite:"+file.getAbsolutePath());
     }
 
-    public void closeConnection() throws SQLException {
+    @SneakyThrows
+    public void closeConnection() {
         if(this.connection == null) {
             return;
         }
@@ -39,6 +42,7 @@ public class SQLConnection {
         return this.connection != null;
     }
 
+    @SneakyThrows
     public void saveFile() {
 
         if (!this.plugin.getDataFolder().exists()) {
@@ -46,11 +50,7 @@ public class SQLConnection {
         }
 
         if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            file.createNewFile();
         }
     }
 

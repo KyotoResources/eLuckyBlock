@@ -1,10 +1,10 @@
 package it.zS0bye.eLuckyBlock.executors;
 
-import it.zS0bye.eLuckyBlock.eLuckyBlock;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
+import it.zS0bye.eLuckyBlock.files.enums.Animations;
 import it.zS0bye.eLuckyBlock.reflections.TitleField;
 import it.zS0bye.eLuckyBlock.tasks.TitleAnimationTask;
-import it.zS0bye.eLuckyBlock.utils.ColorUtils;
-import org.bukkit.configuration.file.FileConfiguration;
+import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import java.util.Map;
@@ -13,16 +13,14 @@ public class TitleExecutor extends Executors {
 
     private final Map<Player, BukkitTask> titleTask;
     private final Map<Player, Integer> titleTicks;
-    private final FileConfiguration animations;
-    private final eLuckyBlock plugin;
+    private final ELuckyBlock plugin;
     private final String execute;
     private final Player player;
 
     public TitleExecutor(final String execute, final Player player) {
-        this.plugin = eLuckyBlock.getInstance();
+        this.plugin = ELuckyBlock.getInstance();
         this.execute = execute;
         this.player = player;
-        this.animations = plugin.getAnimations().getConfig();
         this.titleTask = plugin.getTitleTask();
         this.titleTicks = plugin.getTitleTicks();
         if(this.execute.startsWith(getType()))
@@ -32,12 +30,11 @@ public class TitleExecutor extends Executors {
     @Override
     protected void startTask(String getAnimation, String subtitle, int fadein, int stay, int fadeout) {
         super.startTask(getAnimation, subtitle, fadein, stay, fadeout);
-        long interval = this.animations.getInt(getAnimation + ".interval");
 
         titleTicks.put(player, 0);
         titleTask.put(this.player,
-                new TitleAnimationTask(this.plugin, this.player, getAnimation, subtitle, fadein, stay, fadeout)
-                        .runTaskTimer(this.plugin, 0L, interval));
+                new TitleAnimationTask(this.plugin, this.player, this.execute, getType(), getAnimation, subtitle, fadein, stay, fadeout)
+                        .runTaskTimerAsynchronously(this.plugin, 0L, Animations.INTERVAL.getInt(getAnimation)));
     }
 
     protected String getType() {
@@ -46,11 +43,11 @@ public class TitleExecutor extends Executors {
 
     protected void apply() {
 
-        String title = ColorUtils.getPapi(this.player, execute
+        String title = StringUtils.getPapi(this.player, execute
                 .replace(getType(), "")
                 .split(";")[0]);
 
-        String subtitle = ColorUtils.getPapi(this.player, execute
+        String subtitle = StringUtils.getPapi(this.player, execute
                 .replace(getType(), "")
                 .split(";")[1]);
         int fadein = Integer.parseInt(execute
@@ -63,8 +60,8 @@ public class TitleExecutor extends Executors {
                 .replace(getType(), "")
                 .split(";")[4]);
 
-        for (String getAnimation : this.animations.getKeys(false)) {
-            if (title.equals("%animation_" + getAnimation + "%")) {
+        for (String getAnimation : Animations.ANIMATIONS.getKeys()) {
+            if (title.contains("%animation_" + getAnimation + "%")) {
                 this.plugin.stopTitleTask(player);
 
                 if (subtitle.equalsIgnoreCase("none")) {

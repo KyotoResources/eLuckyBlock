@@ -1,30 +1,38 @@
 package it.zS0bye.eLuckyBlock;
 
+import it.zS0bye.eLuckyBlock.api.ILuckyBlockAPI;
+import it.zS0bye.eLuckyBlock.api.LuckyBlockAPI;
+import it.zS0bye.eLuckyBlock.checker.VersionChecker;
 import it.zS0bye.eLuckyBlock.commands.MainCommand;
 import it.zS0bye.eLuckyBlock.database.SQLConnection;
 import it.zS0bye.eLuckyBlock.database.SQLLuckyBlocks;
 import it.zS0bye.eLuckyBlock.database.SQLLuckyBreaks;
 import it.zS0bye.eLuckyBlock.files.*;
-import it.zS0bye.eLuckyBlock.hooks.PlaceholderAPI;
+import it.zS0bye.eLuckyBlock.files.enums.Config;
+import it.zS0bye.eLuckyBlock.files.enums.Lang;
+import it.zS0bye.eLuckyBlock.files.enums.Lucky;
+import it.zS0bye.eLuckyBlock.files.enums.Rewards;
+import it.zS0bye.eLuckyBlock.hooks.HooksManager;
 import it.zS0bye.eLuckyBlock.listeners.*;
+import it.zS0bye.eLuckyBlock.rewards.RandomReward;
+import it.zS0bye.eLuckyBlock.rewards.ExcReward;
 import it.zS0bye.eLuckyBlock.updater.UpdateType;
 import it.zS0bye.eLuckyBlock.updater.VandalUpdater;
 import it.zS0bye.eLuckyBlock.utils.*;
+import it.zS0bye.eLuckyBlock.utils.enums.ConsoleUtils;
 import lombok.Getter;
-import net.milkbowl.vault.economy.Economy;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-public class eLuckyBlock extends JavaPlugin {
+public class ELuckyBlock extends JavaPlugin {
 
     private LanguagesFile lang;
     private LuckyBlocksFile lucky;
@@ -35,9 +43,11 @@ public class eLuckyBlock extends JavaPlugin {
     private SQLConnection sqlConnection;
     private SQLLuckyBreaks sqlLuckyBreaks;
     private SQLLuckyBlocks sqlLuckyBlocks;
-    private Economy economy;
+
     @Getter
-    private static eLuckyBlock instance;
+    private static ELuckyBlock instance;
+    @Getter
+    private static ILuckyBlockAPI api;
 
     private final Map<Player, BukkitTask> titleTask = new HashMap<>();
     private final Map<Player, Integer> titleTicks = new HashMap<>();
@@ -50,9 +60,11 @@ public class eLuckyBlock extends JavaPlugin {
     private final Map<Player, Integer> fireworkTicks = new HashMap<>();
     private final Map<Player, BukkitTask> fireworkTask = new HashMap<>();
     private final Map<String, Integer> luckyBreaks = new HashMap<>();
+    private final Map<String, RandomReward<ExcReward>> randomReward = new HashMap<>();
 
     @Override
     public void onEnable() {
+
         instance = this;
 
         getLogger().info(ConsoleUtils.RESET + "");
@@ -71,23 +83,23 @@ public class eLuckyBlock extends JavaPlugin {
         getLogger().info("");
         getLogger().info(ConsoleUtils.PURPLE + "┃ Developed by zS0bye" + ConsoleUtils.RESET);
         getLogger().info(ConsoleUtils.PURPLE + "┃ Current version v" + getDescription().getVersion() + ConsoleUtils.RESET);
-        getLogger().info("");
-        getLogger().info(ConsoleUtils.PURPLE + "┃ Loading resources.." + ConsoleUtils.RESET);
-
         loadFiles();
-
         SQLConnection();
 
-        checkHooks();
+        getLogger().info("");
+        getLogger().info(ConsoleUtils.PURPLE + "┃ Loading Hooks.." + ConsoleUtils.RESET);
+        new HooksManager(this);
+        getLogger().info(ConsoleUtils.PURPLE + "┃ Hooks loaded successfully!" + ConsoleUtils.RESET);
 
         loadCommands();
         loadListeners();
 
         loadUpdater();
 
+        api = new LuckyBlockAPI();
+        addRewards();
         new Metrics(this, 13289);
 
-        getLogger().info(ConsoleUtils.PURPLE + "┃ Resources uploaded successfully!" + ConsoleUtils.RESET);
         getLogger().info("");
         getLogger().info(ConsoleUtils.PURPLE + "┃ The Plug-in was started successfully ;)" + ConsoleUtils.RESET);
         getLogger().info("");
@@ -97,83 +109,36 @@ public class eLuckyBlock extends JavaPlugin {
     }
 
     @Override
+    @SneakyThrows
     public void onDisable() {
-
-        try {
-            this.sqlConnection.closeConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+        this.sqlConnection.closeConnection();
     }
 
     private void SQLConnection() {
+        getLogger().info("");
+        getLogger().info(ConsoleUtils.PURPLE + "┃ Connection to database.." + ConsoleUtils.RESET);
         try {
-            if(ConfigUtils.DB_TYPE.getString().equalsIgnoreCase("SQLite")) {
+            if(Config.DB_TYPE.getString().equalsIgnoreCase("SQLite")) {
                 sqlConnection = new SQLConnection(this);
-            }else if(ConfigUtils.DB_TYPE.getString().equalsIgnoreCase("MySQL")) {
-                String replace = ConfigUtils.DB_CUSTOMURI.getString().
-                        replace("%host%", ConfigUtils.DB_HOST.getString()).
-                        replace("%port%", ConfigUtils.DB_PORT.getString()).
-                        replace("%database%", ConfigUtils.DB_NAME.getString());
-                sqlConnection = new SQLConnection(this, replace, ConfigUtils.DB_USER.getString(), ConfigUtils.DB_PASSWORD.getString());
+            }else if(Config.DB_TYPE.getString().equalsIgnoreCase("MySQL")) {
+                String replace = Config.DB_CUSTOMURI.getString().
+                        replace("%host%", Config.DB_HOST.getString()).
+                        replace("%port%", Config.DB_PORT.getString()).
+                        replace("%database%", Config.DB_NAME.getString());
+                sqlConnection = new SQLConnection(this, replace, Config.DB_USER.getString(), Config.DB_PASSWORD.getString());
             }
             this.sqlLuckyBreaks = new SQLLuckyBreaks(this);
             this.sqlLuckyBlocks = new SQLLuckyBlocks(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public void checkHooks() {
-        if(ConfigUtils.HOOKS_PLACEHOLDERAPI.getBoolean()) {
-            if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-                new PlaceholderAPI(this).register();
-            }else {
-                getLogger().severe("Could not find PlaceholderAPI! This plugin is required.");
-                Bukkit.getPluginManager().disablePlugin(this);
-            }
-        }
-
-        if(ConfigUtils.HOOKS_WORLDGUARD.getBoolean()) {
-            if (Bukkit.getPluginManager().getPlugin("WorldGuard") == null) {
-                getLogger().severe("Could not find WorldGuard! This plugin is required.");
-                Bukkit.getPluginManager().disablePlugin(this);
-            }
-        }
-
-        if(ConfigUtils.HOOKS_WORLDEDIT.getBoolean()) {
-            if (Bukkit.getPluginManager().getPlugin("WorldEdit") == null) {
-                getLogger().severe("Could not find WorldEdit! This plugin is required.");
-                Bukkit.getPluginManager().disablePlugin(this);
-            }
-        }
-
-        if(ConfigUtils.HOOKS_VAULT.getBoolean()) {
-            if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
-                getLogger().severe("Could not find Vault! This plugin is required.");
-                Bukkit.getPluginManager().disablePlugin(this);
-            }
-
-            if (!setupEconomy()) {
-                getLogger().severe("Disabled due to no Vault dependency found!");
-                Bukkit.getPluginManager().disablePlugin(this);
-            }
-        }
-    }
-
-    private boolean setupEconomy()
-    {
-        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
-
-        if (economyProvider != null) {
-            economy = economyProvider.getProvider();
-        }
-
-        return (economy != null);
+        getLogger().info(ConsoleUtils.PURPLE + "┃ Connection successful!" + ConsoleUtils.RESET);
     }
 
     private void loadFiles() {
+        getLogger().info("");
+        getLogger().info(ConsoleUtils.PURPLE + "┃ Loading resources.." + ConsoleUtils.RESET);
+
         saveDefaultConfig();
         this.lang = new LanguagesFile(this);
         this.lucky = new LuckyBlocksFile(this);
@@ -181,16 +146,27 @@ public class eLuckyBlock extends JavaPlugin {
         this.rewards = new RewardsFile(this);
         this.fireworks = new FireworksFile(this);
         this.schematics = new SchematicsFile(this);
+
+        getLogger().info(ConsoleUtils.PURPLE + "┃ Resources uploaded successfully!" + ConsoleUtils.RESET);
     }
 
     private void loadCommands() {
+        getLogger().info("");
+        getLogger().info(ConsoleUtils.PURPLE + "┃ Registering commands.." + ConsoleUtils.RESET);
+
         getCommand("eluckyblock").setExecutor(new MainCommand(this));
         getCommand("eluckyblock").setTabCompleter(new MainCommand(this));
+
+        getLogger().info(ConsoleUtils.PURPLE + "┃ Commands registered successfully!" + ConsoleUtils.RESET);
     }
 
     private void loadListeners() {
+        getLogger().info("");
+        getLogger().info(ConsoleUtils.PURPLE + "┃ Registering events.." + ConsoleUtils.RESET);
+
         Bukkit.getPluginManager().registerEvents(new JoinListener(this), this);
         Bukkit.getPluginManager().registerEvents(new FireworkListener(), this);
+
         this.lucky.getConfig().getKeys(false).forEach(luckyblocks -> {
             Bukkit.getPluginManager().registerEvents(new LuckyBlockListener(luckyblocks), this);
             Bukkit.getPluginManager().registerEvents(new UniqueBlockListener(luckyblocks), this);
@@ -207,17 +183,39 @@ public class eLuckyBlock extends JavaPlugin {
                 Bukkit.getPluginManager().registerEvents(new SpongeListener(luckyblocks), this);
             }
         });
+
+        getLogger().info(ConsoleUtils.PURPLE + "┃ Events registered successfully!" + ConsoleUtils.RESET);
     }
 
     private void loadUpdater() {
-        if(!ConfigUtils.CHECK_UPDATE_ENABLED.getBoolean()) {
+        if(!Config.CHECK_UPDATE_ENABLED.getBoolean()) {
             return;
         }
         String resourceId = "97759";
-        UpdateType updateType = UpdateType.valueOf(ConfigUtils.CHECK_UPDATE_TYPE.getString());
+        UpdateType updateType = UpdateType.valueOf(Config.CHECK_UPDATE_TYPE.getString());
         VandalUpdater vandalUpdater = new VandalUpdater(this, resourceId, updateType);
-        vandalUpdater.setUpdateMessage(LangUtils.UPDATE_NOTIFICATION.getCustomString());
+        vandalUpdater.setUpdateMessage(Lang.UPDATE_NOTIFICATION.getCustomString());
         vandalUpdater.runTaskTimerAsynchronously(this, 20L, 30 * 60 * 20L);
+    }
+
+    private void addRewards() {
+        Lucky.LUCKYBLOCK.getKeys().forEach(luckyblocks -> {
+            if (randomReward.containsKey(luckyblocks))
+                return;
+
+            RandomReward<ExcReward> random = new RandomReward<>();
+
+            for(String reward : Rewards.LUCKYBLOCK.getConfigurationSection(luckyblocks))
+                random.add(Rewards.CHANCE.getInt(luckyblocks, "." + reward),
+                        new ExcReward(Rewards.EXECUTE.getStringList(luckyblocks, "." + reward)));
+
+            randomReward.put(luckyblocks, random);
+        });
+    }
+
+    public void reloadRewards() {
+        randomReward.clear();
+        addRewards();
     }
 
     public void stopTitleTask(final Player p) {

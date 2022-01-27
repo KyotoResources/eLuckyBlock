@@ -1,6 +1,6 @@
 package it.zS0bye.eLuckyBlock.executors;
 
-import it.zS0bye.eLuckyBlock.eLuckyBlock;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -8,13 +8,13 @@ import java.util.logging.Level;
 
 public class SoundExecutor extends Executors {
 
-    private final eLuckyBlock plugin;
+    private final ELuckyBlock plugin;
     private final String execute;
     private final Player player;
     private Sound sound;
 
     public SoundExecutor(final String execute, final Player player) {
-        this.plugin = eLuckyBlock.getInstance();
+        this.plugin = ELuckyBlock.getInstance();
         this.execute = execute;
         this.player = player;
         if (this.execute.startsWith(getType()))
@@ -47,7 +47,7 @@ public class SoundExecutor extends Executors {
             public void run() {
                     player.playSound(player.getLocation(), sound, volume, acute);
             }
-        }.runTaskLater(eLuckyBlock.getInstance(), 1L);
+        }.runTaskLaterAsynchronously(ELuckyBlock.getInstance(), 1L);
 
     }
 }

@@ -1,9 +1,9 @@
 package it.zS0bye.eLuckyBlock.executors;
 
-import it.zS0bye.eLuckyBlock.eLuckyBlock;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
+import it.zS0bye.eLuckyBlock.files.enums.Fireworks;
 import it.zS0bye.eLuckyBlock.methods.LaunchFirework;
 import it.zS0bye.eLuckyBlock.tasks.TimerFireworksTask;
-import it.zS0bye.eLuckyBlock.utils.FireworkUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -15,13 +15,13 @@ public class FireworksExecutor extends Executors {
 
     private final Map<Player, Integer> fireworkTicks;
     private final Map<Player, BukkitTask> fireworkTask;
-    private final eLuckyBlock plugin;
+    private final ELuckyBlock plugin;
     private final String execute;
     private final Player player;
     private final Location location;
 
     public FireworksExecutor(final String execute, final Player player, final Location location) {
-        this.plugin = eLuckyBlock.getInstance();
+        this.plugin = ELuckyBlock.getInstance();
         this.execute = execute;
         this.player = player;
         this.location = location;
@@ -52,19 +52,17 @@ public class FireworksExecutor extends Executors {
         String name = execute
                 .replace(getType(), "");
 
-        FireworkUtils fireworks = new FireworkUtils(name);
-
-        String type = fireworks.getString(fireworks.getType());
-        int times = fireworks.getInt(fireworks.getTimes());
-        int delay = fireworks.getInt(fireworks.getDelay());
-        List<String> colors = fireworks.getStringList(fireworks.getColors());
+        int times = Fireworks.TIMES.getInt(name);
+        List<String> colors = Fireworks.COLORS.getStringList(name);
 
 
         if(times == 0) {
-            new LaunchFirework(this.plugin, this.location, type, colors);
+            this.plugin.stopFireworkTask(this.player);
+            new LaunchFirework(this.plugin, this.location, Fireworks.TYPE.getString(name), colors);
             return;
         }
 
-        startTask(type, colors, delay, times);
+        this.plugin.stopFireworkTask(this.player);
+        startTask(Fireworks.TYPE.getString(name), colors, Fireworks.DELAY.getInt(name), times);
     }
 }

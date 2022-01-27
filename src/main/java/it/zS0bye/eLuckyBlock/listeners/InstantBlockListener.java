@@ -1,7 +1,8 @@
 package it.zS0bye.eLuckyBlock.listeners;
 
-import it.zS0bye.eLuckyBlock.utils.CheckLucky;
-import it.zS0bye.eLuckyBlock.utils.LuckyUtils;
+import it.zS0bye.eLuckyBlock.checker.LuckyChecker;
+import it.zS0bye.eLuckyBlock.files.enums.Lucky;
+import it.zS0bye.eLuckyBlock.methods.OpenLuckyBlock;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -11,12 +12,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class InstantBlockListener extends LuckyUtils implements Listener {
+public class InstantBlockListener implements Listener {
 
     private final String luckyblocks;
 
     public InstantBlockListener(final String luckyblocks) {
-        super(luckyblocks);
         this.luckyblocks = luckyblocks;
     }
 
@@ -31,12 +31,12 @@ public class InstantBlockListener extends LuckyUtils implements Listener {
             return;
         }
 
-        if (new CheckLucky(player, block, world, region, luckyblocks)
+        if (new LuckyChecker(player, block, world, region, luckyblocks)
                 .check()) {
             return;
         }
 
-        if(!getBoolean(getInstant_break())) {
+        if(!Lucky.INSTANT_BREAK.getBoolean(luckyblocks)) {
             return;
         }
 
@@ -48,7 +48,8 @@ public class InstantBlockListener extends LuckyUtils implements Listener {
             return;
         }
 
-        open(luckyblocks, player, block, e);
+        OpenLuckyBlock luckyblock = new OpenLuckyBlock();
+        luckyblock.open(luckyblocks, player, block, e, true);
     }
 
 }

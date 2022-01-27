@@ -1,7 +1,7 @@
 package it.zS0bye.eLuckyBlock.executors;
 
-import it.zS0bye.eLuckyBlock.utils.ColorUtils;
-import it.zS0bye.eLuckyBlock.utils.ConfigUtils;
+import it.zS0bye.eLuckyBlock.utils.StringUtils;
+import it.zS0bye.eLuckyBlock.files.enums.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -23,10 +23,10 @@ public class BroadcastExecutor extends Executors {
 
     protected void apply() {
 
-        String msg = ColorUtils.getPapi(this.player, execute
+        String msg = StringUtils.getPapi(this.player, execute
                 .replace(getType(), "")
                 .replace("%player%", player.getName())
-                .replace("%prefix%", ConfigUtils.SETTINGS_PREFIX.getString()));
+                .replace("%prefix%", Config.SETTINGS_PREFIX.getString()));
 
         Bukkit.getOnlinePlayers().forEach(players ->
                 players.sendMessage(msg));

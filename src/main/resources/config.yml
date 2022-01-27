@@ -5,7 +5,7 @@
 #   888oo,__     o88oo,.__88    .d888`88bo,__,o,"888"88o,   ,8P"`     _88o,,od8Po88oo,.__"888,_ _,88P`88bo,__,o,"888"88o,
 #   """"YUMMM    """"YUMMM "YmmMMMM""  "YUMMMMMP"MMM "MMP" mM"        ""YUMMMP" """"YUMMM  "YMMMMMP"   "YUMMMMMP"MMM "MMP"
 #
-#   Version: 1.3
+#   Version: 1.4
 #   Configuration
 #
 #   Wiki: https://zs0bye.gitbook.io/eluckyblock/plugins/eluckyblock-free
@@ -24,6 +24,9 @@ Settings:
     WorldGuard: false
     WorldEdit: false
     Vault: false
+    TokenEnchant: false
+    TokenManager: false
+    UltraPrisonCore: false
 
 # ------------------
 # Storage Settings

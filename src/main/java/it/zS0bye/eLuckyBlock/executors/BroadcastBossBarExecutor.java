@@ -1,11 +1,11 @@
 package it.zS0bye.eLuckyBlock.executors;
 
-import it.zS0bye.eLuckyBlock.eLuckyBlock;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
+import it.zS0bye.eLuckyBlock.files.enums.Animations;
 import it.zS0bye.eLuckyBlock.reflections.BossBarField;
 import it.zS0bye.eLuckyBlock.tasks.BossBarAnimationTask;
-import it.zS0bye.eLuckyBlock.utils.ColorUtils;
+import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import java.util.Map;
@@ -14,16 +14,14 @@ public class BroadcastBossBarExecutor extends Executors {
 
     private final Map<Player, BukkitTask> bossBarTask;
     private final Map<Player, Integer> bossBarTicks;
-    private final FileConfiguration animations;
-    private final eLuckyBlock plugin;
+    private final ELuckyBlock plugin;
     private final String execute;
     private final Player player;
 
     public BroadcastBossBarExecutor(final String execute, final Player player) {
-        this.plugin = eLuckyBlock.getInstance();
+        this.plugin = ELuckyBlock.getInstance();
         this.execute = execute;
         this.player = player;
-        this.animations = plugin.getLucky().getConfig();
         this.bossBarTask = plugin.getBossBarTask();
         this.bossBarTicks = plugin.getBossBarTicks();
         if(this.execute.startsWith(getType()))
@@ -34,12 +32,10 @@ public class BroadcastBossBarExecutor extends Executors {
     protected void startTask(String getAnimation, Player players, String color, String style, double progress, int times) {
         super.startTask(getAnimation, players, color, style, progress, times);
 
-        long interval = this.animations.getInt(getAnimation + ".interval");
-
         bossBarTicks.put(players, 0);
         bossBarTask.put(players,
-                new BossBarAnimationTask(this.plugin, players, getAnimation, color, style, progress, times)
-                        .runTaskTimer(this.plugin, 0L, interval));
+                new BossBarAnimationTask(this.plugin, players, this.execute, getType(), getAnimation, color, style, progress, times)
+                        .runTaskTimerAsynchronously(this.plugin, 0L, Animations.INTERVAL.getInt(getAnimation)));
 
     }
 
@@ -49,7 +45,7 @@ public class BroadcastBossBarExecutor extends Executors {
 
     protected void apply() {
 
-        String title = ColorUtils.getPapi(this.player, execute
+        String title = StringUtils.getPapi(this.player, execute
                 .replace(getType(), "")
                 .replace("%player%", player.getName())
                 .split(";")[0]);
@@ -71,8 +67,8 @@ public class BroadcastBossBarExecutor extends Executors {
                 .split(";")[4]);
 
         Bukkit.getOnlinePlayers().forEach(players -> {
-            for (String getAnimation : this.animations.getKeys(false)) {
-                if (title.equals("%animation_" + getAnimation + "%")) {
+            for (String getAnimation : Animations.ANIMATIONS.getKeys()) {
+                if (title.contains("%animation_" + getAnimation + "%")) {
                     this.plugin.stopBossBarTask(players);
                     this.plugin.stopBossTimesTask(players);
 

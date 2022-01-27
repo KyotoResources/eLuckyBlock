@@ -1,6 +1,6 @@
 package it.zS0bye.eLuckyBlock.database;
 
-import it.zS0bye.eLuckyBlock.eLuckyBlock;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,7 +16,7 @@ public class SQLLuckyBlocks {
 
     private final SQLConnection sql;
 
-    public SQLLuckyBlocks(final eLuckyBlock plugin) {
+    public SQLLuckyBlocks(final ELuckyBlock plugin) {
         this.sql = plugin.getSqlConnection();
         this.create();
     }

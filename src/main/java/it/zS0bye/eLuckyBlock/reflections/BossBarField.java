@@ -1,8 +1,8 @@
 package it.zS0bye.eLuckyBlock.reflections;
 
-import it.zS0bye.eLuckyBlock.eLuckyBlock;
-import it.zS0bye.eLuckyBlock.utils.ColorUtils;
-import it.zS0bye.eLuckyBlock.utils.VersionChecker;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
+import it.zS0bye.eLuckyBlock.utils.StringUtils;
+import it.zS0bye.eLuckyBlock.checker.VersionChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -11,12 +11,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class BossBarField {
 
-    private final eLuckyBlock plugin;
+    private final ELuckyBlock plugin;
     private final Player player;
     private final String msg;
     private String color = "PURPLE";
@@ -24,10 +23,10 @@ public class BossBarField {
     private final double progress;
     private final int seconds;
 
-    private Map<Player, BukkitTask> BossTimesTask = new HashMap<>();
-    private Map<Player, BossBar> BossTimes = new HashMap<>();
+    private final Map<Player, BukkitTask> BossTimesTask;
+    private final Map<Player, BossBar> BossTimes;
 
-    public BossBarField(final eLuckyBlock plugin, final Player player, final String msg, final double progress, final int seconds) {
+    public BossBarField(final ELuckyBlock plugin, final Player player, final String msg, final double progress, final int seconds) {
         this.plugin = plugin;
         this.player = player;
         this.msg = msg;
@@ -38,7 +37,7 @@ public class BossBarField {
         send();
     }
 
-    public BossBarField(final eLuckyBlock plugin, final Player player, final String msg, final String color, final double progress, final int seconds) {
+    public BossBarField(final ELuckyBlock plugin, final Player player, final String msg, final String color, final double progress, final int seconds) {
         this.plugin = plugin;
         this.player = player;
         this.msg = msg;
@@ -50,7 +49,7 @@ public class BossBarField {
         send();
     }
 
-    public BossBarField(final eLuckyBlock plugin, final Player player, final String msg, final String color, final String style, final double progress, final int seconds) {
+    public BossBarField(final ELuckyBlock plugin, final Player player, final String msg, final String color, final String style, final double progress, final int seconds) {
         this.plugin = plugin;
         this.player = player;
         this.msg = msg;
@@ -70,7 +69,7 @@ public class BossBarField {
         }
 
         if(!BossTimes.containsKey(this.player)) {
-            String msg = ColorUtils.getColor(this.msg);
+            String msg = StringUtils.getColor(this.msg);
             BossBar boss = Bukkit.createBossBar(msg, BarColor.valueOf(this.color), BarStyle.valueOf(this.style));
             BossTimes.put(this.player, boss);
             boss.addPlayer(this.player);

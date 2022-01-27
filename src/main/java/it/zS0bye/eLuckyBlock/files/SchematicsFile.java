@@ -1,21 +1,22 @@
 package it.zS0bye.eLuckyBlock.files;
 
-import it.zS0bye.eLuckyBlock.eLuckyBlock;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 import java.io.*;
 
 @Getter
 public class SchematicsFile {
 
-    private final eLuckyBlock plugin;
+    private final ELuckyBlock plugin;
 
     private String schematic;
     private String pattern;
     private final File file;
     private final File directory;
 
-    public SchematicsFile(eLuckyBlock plugin, final String schematic) {
+    public SchematicsFile(ELuckyBlock plugin, final String schematic) {
         this.plugin = plugin;
         this.schematic = schematic;
         this.directory = new File(this.plugin.getDataFolder(), "schematics");
@@ -24,7 +25,7 @@ public class SchematicsFile {
         this.createDir();
     }
 
-    public SchematicsFile(eLuckyBlock plugin) {
+    public SchematicsFile(ELuckyBlock plugin) {
         this.plugin = plugin;
         this.pattern = "schematics/example.schem";
         this.directory = new File(this.plugin.getDataFolder(), "schematics");
@@ -33,6 +34,7 @@ public class SchematicsFile {
         this.loadSchematics();
     }
 
+    @SneakyThrows
     public void loadSchematics() {
         createDir();
 
@@ -40,12 +42,8 @@ public class SchematicsFile {
            return;
 
         if(!file.exists()) {
-            try {
-                file.createNewFile();
-                plugin.saveResource(pattern, true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            file.createNewFile();
+            plugin.saveResource(pattern, true);
         }
     }
 
