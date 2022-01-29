@@ -45,7 +45,6 @@ public class OpenLuckyBlock {
 
             if (!player.hasPermission(perm)) {
                 e.setCancelled(true);
-
                 if (Lucky.PERMISSION_REQUIRED_MODULES_CHAT.getBoolean(luckyblock)) {
                     Lucky.PERMISSION_REQUIRED_CHAT.send(player, luckyblock);
                 }
@@ -59,7 +58,7 @@ public class OpenLuckyBlock {
                 }
                 if (Lucky.PERMISSION_REQUIRED_MODULES_ACTION.getBoolean(luckyblock)) {
                     new ActionField(player,
-                            Lucky.PERMISSION_REQUIRED_ACTION.getString()
+                            Lucky.PERMISSION_REQUIRED_ACTION.getString(luckyblock)
                                     .replace("%prefix%", Config.SETTINGS_PREFIX.getString()));
                 }
                 return;

@@ -118,7 +118,7 @@ public enum Lang implements IFiles {
 
     @Override
     public void send(final CommandSender sender, final String... var) {
-        if (getCustomString().isEmpty()) {
+        if (getCustomString(var).isEmpty()) {
             return;
         }
         sender.sendMessage(getCustomString());

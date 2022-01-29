@@ -69,8 +69,7 @@ public class BossBarField {
         }
 
         if(!BossTimes.containsKey(this.player)) {
-            String msg = StringUtils.getColor(this.msg);
-            BossBar boss = Bukkit.createBossBar(msg, BarColor.valueOf(this.color), BarStyle.valueOf(this.style));
+            BossBar boss = Bukkit.createBossBar(this.msg, BarColor.valueOf(this.color), BarStyle.valueOf(this.style));
             BossTimes.put(this.player, boss);
             boss.addPlayer(this.player);
             boss.setProgress(this.progress);

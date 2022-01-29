@@ -1,7 +1,10 @@
 package it.zS0bye.eLuckyBlock.listeners;
 
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import it.zS0bye.eLuckyBlock.checker.LuckyChecker;
 import it.zS0bye.eLuckyBlock.files.enums.Lucky;
+import it.zS0bye.eLuckyBlock.hooks.HooksManager;
+import it.zS0bye.eLuckyBlock.hooks.enums.Hooks;
 import it.zS0bye.eLuckyBlock.methods.OpenLuckyBlock;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -14,9 +17,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class InstantBlockListener implements Listener {
 
+    private final ELuckyBlock plugin;
     private final String luckyblocks;
 
     public InstantBlockListener(final String luckyblocks) {
+        this.plugin = ELuckyBlock.getInstance();
         this.luckyblocks = luckyblocks;
     }
 
@@ -27,26 +32,25 @@ public class InstantBlockListener implements Listener {
         String world = player.getWorld().getName();
         Location region = player.getLocation();
 
-        if(block == null) {
+        if(block == null)
             return;
-        }
+
+        if(!Lucky.INSTANT_BREAK.getBoolean(luckyblocks))
+            return;
 
         if (new LuckyChecker(player, block, world, region, luckyblocks)
-                .check()) {
+                .check())
             return;
-        }
 
-        if(!Lucky.INSTANT_BREAK.getBoolean(luckyblocks)) {
+        if(Hooks.PLOTSQUARED.isCheck() &&
+                !HooksManager.checkPlot(player.getUniqueId()))
             return;
-        }
 
-        if(e.getAction() != Action.LEFT_CLICK_BLOCK) {
+        if(e.getAction() != Action.LEFT_CLICK_BLOCK)
             return;
-        }
 
-        if(player.getGameMode() == GameMode.CREATIVE) {
+        if(player.getGameMode() == GameMode.CREATIVE)
             return;
-        }
 
         OpenLuckyBlock luckyblock = new OpenLuckyBlock();
         luckyblock.open(luckyblocks, player, block, e, true);

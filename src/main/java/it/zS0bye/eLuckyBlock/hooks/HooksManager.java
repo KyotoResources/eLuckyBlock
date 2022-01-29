@@ -8,6 +8,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
 import java.io.File;
+import java.util.UUID;
 
 @Getter
 public class HooksManager {
@@ -26,6 +27,7 @@ public class HooksManager {
         Hooks.TOKENENCHANT.load();
         Hooks.TOKENMANAGER.load();
         Hooks.ULTRAPRISONCORE.load();
+        Hooks.PLOTSQUARED.load();
     }
 
     private void PlaceholderAPI() {
@@ -70,6 +72,12 @@ public class HooksManager {
     public static void pasteSchem(final File file, final World world, final Location loc) {
         if(Hooks.WORLDEDIT.isCheck())
             new HWorldEditAPI(file, world, loc).paste();
+    }
+
+    public static boolean checkPlot(final UUID uuid) {
+        if(Hooks.PLOTSQUARED.isCheck())
+            return new HPlotSquaredAPI(uuid).checkPlot();
+        return false;
     }
 
 

@@ -36,13 +36,11 @@ public class UniqueBlockListener implements Listener {
         String convertLoc = this.sqlLuckyBlocks.convertLoc(location);
 
         if(new LuckyChecker(block, world, region, luckyblocks)
-                .check()) {
+                .check())
             return;
-        }
 
-        if(item.getItemMeta() == null) {
+        if(item.getItemMeta() == null)
             return;
-        }
 
         String displayName = item.getItemMeta().getDisplayName();
         List<String> lore = item.getItemMeta().getLore();

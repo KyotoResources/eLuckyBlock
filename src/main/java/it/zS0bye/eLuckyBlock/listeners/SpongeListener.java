@@ -24,13 +24,11 @@ public class SpongeListener implements Listener  {
         Location region = block.getLocation();
 
         if (new LuckyChecker(block, world, region, luckyblocks)
-                .check()) {
+                .check())
             return;
-        }
 
-        if (Lucky.PREVENT_DENY_ABSORB.getBoolean(luckyblocks)) {
+        if (Lucky.PREVENT_DENY_ABSORB.getBoolean(luckyblocks))
             e.setCancelled(true);
-        }
     }
 
 }

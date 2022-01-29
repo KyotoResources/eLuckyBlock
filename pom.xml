@@ -6,7 +6,7 @@
 
     <groupId>it.zS0bye.eLuckyBlock</groupId>
     <artifactId>ELuckyBlock</artifactId>
-    <version>1.4</version>
+    <version>1.4.1</version>
     <packaging>jar</packaging>
 
     <name>eLuckyBlock</name>
@@ -121,6 +121,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
             <version>3.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.plotsquared</groupId>
+            <artifactId>PlotSquared-Core</artifactId>
+            <version>6.4.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

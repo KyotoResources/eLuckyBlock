@@ -25,12 +25,9 @@ public class ActionField {
         if (!VersionChecker.getV1_8()
         && !VersionChecker.getV1_9()
         && !VersionChecker.getV1_10()) {
-            String msg = StringUtils.getColor(this.msg);
-            this.player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(msg));
+            this.player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(this.msg));
             return;
         }
-
-        this.msg = StringUtils.getColor(this.msg);
 
         Class<?> chatSerializer = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0];
         Class<?> chatComponent = getNMSClass("IChatBaseComponent");

@@ -3,6 +3,8 @@ package it.zS0bye.eLuckyBlock.listeners;
 import it.zS0bye.eLuckyBlock.checker.LuckyChecker;
 import it.zS0bye.eLuckyBlock.checker.VersionChecker;
 import it.zS0bye.eLuckyBlock.files.enums.Lucky;
+import it.zS0bye.eLuckyBlock.hooks.HooksManager;
+import it.zS0bye.eLuckyBlock.hooks.enums.Hooks;
 import it.zS0bye.eLuckyBlock.methods.OpenLuckyBlock;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,21 +24,26 @@ public class LuckyBlockListener implements Listener {
 
     @EventHandler
     public void onBreak(BlockBreakEvent e) {
-        Player p = e.getPlayer();
+        Player player = e.getPlayer();
         Block block = e.getBlock();
-        String world = p.getWorld().getName();
-        Location region = p.getLocation();
+        String world = player.getWorld().getName();
+        Location region = player.getLocation();
 
-        if (new LuckyChecker(p, block, world, region, luckyblocks)
-                .check()) {
+        if (e.isCancelled())
             return;
-        }
 
-        if (e.isCancelled()) {
+        if(Lucky.INSTANT_BREAK.getBoolean(luckyblocks))
             return;
-        }
 
-        open(e, p, block);
+        if (new LuckyChecker(player, block, world, region, luckyblocks)
+                .check())
+            return;
+
+        if(Hooks.PLOTSQUARED.isCheck() &&
+                !HooksManager.checkPlot(player.getUniqueId()))
+            return;
+
+        open(e, player, block);
     }
 
     private void open(final BlockBreakEvent e, final Player player, final Block block) {

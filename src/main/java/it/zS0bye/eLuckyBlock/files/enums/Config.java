@@ -21,6 +21,7 @@ public enum Config implements IFiles {
     HOOKS_TOKENENCHANT("Settings.hooks.TokenEnchant", "false"),
     HOOKS_TOKENMANAGER("Settings.hooks.TokenManager", "false"),
     HOOKS_ULTRAPRISONCORE("Settings.hooks.UltraPrisonCore", "false"),
+    HOOKS_PLOTSQUARED("Settings.hooks.PlotSquared", "false"),
     DB_TYPE("Storage.type", "SQLite"),
     DB_NAME("Storage.mysql.database", "eLuckyBlock"),
     DB_HOST("Storage.mysql.hostname", "localhost"),
@@ -117,7 +118,7 @@ public enum Config implements IFiles {
 
     @Override
     public void send(final CommandSender sender, final String... var) {
-        if (getCustomString().isEmpty()) {
+        if (getCustomString(var).isEmpty()) {
             return;
         }
         sender.sendMessage(getCustomString());

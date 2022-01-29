@@ -57,9 +57,7 @@ public class TitleField {
         if (!VersionChecker.getV1_8()
         && !VersionChecker.getV1_9()
         && !VersionChecker.getV1_10()) {
-            String title = StringUtils.getColor(this.title);
-            String subtitle = StringUtils.getColor(this.subtitle);
-            this.player.sendTitle(title, subtitle, this.fadein, this.stay, this.fadeout);
+            this.player.sendTitle(this.title, this.subtitle, this.fadein, this.stay, this.fadeout);
             return;
             }
 
@@ -83,7 +81,7 @@ public class TitleField {
                     sendPacket.invoke(connection, packet);
 
                 Object serialized = nmsChatSerializer.getConstructor(
-                        String.class).newInstance(StringUtils.getColor(this.title));
+                        String.class).newInstance(this.title);
                 packet = packetTitle.getConstructor(packetActions,
                         chatBaseComponent).newInstance(actions[0], serialized);
                 sendPacket.invoke(connection, packet);
@@ -91,7 +89,7 @@ public class TitleField {
 
                     serialized = nmsChatSerializer.getConstructor(String.class)
                             .newInstance(
-                                    StringUtils.getColor(this.subtitle));
+                                    this.subtitle);
                     packet = packetTitle.getConstructor(packetActions,
                             chatBaseComponent).newInstance(actions[1],
                             serialized);
