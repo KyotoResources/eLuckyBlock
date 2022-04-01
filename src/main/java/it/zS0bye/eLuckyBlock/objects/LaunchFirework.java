@@ -1,4 +1,4 @@
-package it.zS0bye.eLuckyBlock.methods;
+package it.zS0bye.eLuckyBlock.objects;
 
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import org.bukkit.Color;
@@ -42,7 +42,7 @@ public class LaunchFirework implements Listener {
         });
         builder.with(FireworkEffect.Type.valueOf(this.type));
         fm.addEffects(builder.build());
-        fm.setPower((int).9);
+        fm.setPower(0);
         firework.setFireworkMeta(fm);
         firework.setMetadata("eLuckyBlock", new FixedMetadataValue(this.plugin, true));
     }

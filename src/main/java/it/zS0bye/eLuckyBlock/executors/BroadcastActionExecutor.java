@@ -8,23 +8,18 @@ import it.zS0bye.eLuckyBlock.files.enums.Config;
 import it.zS0bye.eLuckyBlock.reflections.ActionField;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
-import java.util.Map;
 
 public class BroadcastActionExecutor extends Executors {
 
-    private final Map<Player, BukkitTask> actionTask;
-    private final Map<Player, Integer> actionTicks;
     private final ELuckyBlock plugin;
     private final String execute;
     private final Player player;
+    private ActionAnimationTask task;
 
     public BroadcastActionExecutor(final String execute, final Player player) {
         this.plugin = ELuckyBlock.getInstance();
         this.execute = execute;
         this.player = player;
-        this.actionTask = plugin.getActionTask();
-        this.actionTicks = plugin.getActionTicks();
         if (this.execute.startsWith(getType()))
             apply();
     }
@@ -33,10 +28,11 @@ public class BroadcastActionExecutor extends Executors {
     protected void startTask(String getAnimation, Player players) {
         super.startTask(getAnimation, players);
 
-        actionTicks.put(players, 0);
-        actionTask.put(players,
-                new ActionAnimationTask(this.plugin, players, this.execute, getType(), getAnimation)
-                        .runTaskTimerAsynchronously(this.plugin, 0L, Animations.INTERVAL.getInt(getAnimation)));
+        ActionAnimationTask task = new ActionAnimationTask(players, this.execute, getType(), getAnimation);
+
+        task.getTicks().put(players, 0);
+        task.getTask().put(players,
+                task.runTaskTimerAsynchronously(this.plugin, 0L, Animations.INTERVAL.getInt(getAnimation)));
     }
 
     protected String getType() {
@@ -52,15 +48,16 @@ public class BroadcastActionExecutor extends Executors {
 
 
         Bukkit.getOnlinePlayers().forEach(players -> {
+            this.task = new ActionAnimationTask(players);
             for (String getAnimation : Animations.ANIMATIONS.getKeys()) {
                 if (msg.contains("%animation_" + getAnimation + "%")) {
-                    this.plugin.stopActionTask(players);
+                    this.task.stopTask();
                     startTask(getAnimation, players);
                     return;
                 }
             }
 
-            this.plugin.stopActionTask(players);
+            this.task.stopTask();
             new ActionField(players, msg);
         });
 

@@ -12,18 +12,15 @@ import java.util.Map;
 
 public class BroadcastBossBarExecutor extends Executors {
 
-    private final Map<Player, BukkitTask> bossBarTask;
-    private final Map<Player, Integer> bossBarTicks;
     private final ELuckyBlock plugin;
     private final String execute;
     private final Player player;
+    private BossBarAnimationTask task;
 
     public BroadcastBossBarExecutor(final String execute, final Player player) {
         this.plugin = ELuckyBlock.getInstance();
         this.execute = execute;
         this.player = player;
-        this.bossBarTask = plugin.getBossBarTask();
-        this.bossBarTicks = plugin.getBossBarTicks();
         if(this.execute.startsWith(getType()))
             apply();
     }
@@ -32,10 +29,11 @@ public class BroadcastBossBarExecutor extends Executors {
     protected void startTask(String getAnimation, Player players, String color, String style, double progress, int times) {
         super.startTask(getAnimation, players, color, style, progress, times);
 
-        bossBarTicks.put(players, 0);
-        bossBarTask.put(players,
-                new BossBarAnimationTask(this.plugin, players, this.execute, getType(), getAnimation, color, style, progress, times)
-                        .runTaskTimerAsynchronously(this.plugin, 0L, Animations.INTERVAL.getInt(getAnimation)));
+        BossBarAnimationTask task = new BossBarAnimationTask(this.plugin, players, this.execute, getType(), getAnimation, color, style, progress, times);
+
+        task.getTicks().put(players, 0);
+        task.getTask().put(players,
+                task.runTaskTimerAsynchronously(this.plugin, 0L, Animations.INTERVAL.getInt(getAnimation)));
 
     }
 
@@ -67,18 +65,20 @@ public class BroadcastBossBarExecutor extends Executors {
                 .split(";")[4]);
 
         Bukkit.getOnlinePlayers().forEach(players -> {
+            this.task = new BossBarAnimationTask(this.plugin, players);
+
             for (String getAnimation : Animations.ANIMATIONS.getKeys()) {
                 if (title.contains("%animation_" + getAnimation + "%")) {
-                    this.plugin.stopBossBarTask(players);
-                    this.plugin.stopBossTimesTask(players);
+                    this.task.stopTask();
+                    this.task.stopTimes();
 
                     startTask(getAnimation, players,  color, style, progress, times);
                     return;
                 }
             }
 
-            this.plugin.stopBossBarTask(players);
-            this.plugin.stopBossTimesTask(players);
+            this.task.stopTask();
+            this.task.stopTimes();
             new BossBarField(this.plugin, players, title, color, style, progress, times);
         });
     }

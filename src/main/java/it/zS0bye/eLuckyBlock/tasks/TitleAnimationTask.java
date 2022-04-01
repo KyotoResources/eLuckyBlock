@@ -1,28 +1,34 @@
 package it.zS0bye.eLuckyBlock.tasks;
 
-import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import it.zS0bye.eLuckyBlock.files.enums.Animations;
 import it.zS0bye.eLuckyBlock.reflections.TitleField;
 import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class TitleAnimationTask extends BukkitRunnable {
 
-    private final ELuckyBlock plugin;
     private final Player player;
-    private final String execute;
-    private final String type;
-    private final String animation;
-    private final String subtitle;
-    private final int fadein;
-    private final int stay;
-    private final int fadeout;
-    private final Map<Player, Integer> titleTicks;
+    private String execute;
+    private String type;
+    private String animation;
+    private String subtitle;
+    private int fadein;
+    private int stay;
+    private int fadeout;
 
-    public TitleAnimationTask(final ELuckyBlock plugin, final Player player, final String execute, final String type, final String animation, final String subtitle, final int fadein, final int stay, final int fadeout) {
-        this.plugin = plugin;
+    private final static Map<Player, BukkitTask> task = new HashMap<>();
+    private final static Map<Player, Integer> ticks = new HashMap<>();
+
+    public TitleAnimationTask(final Player player) {
+        this.player = player;
+    }
+
+    public TitleAnimationTask(final Player player, final String execute, final String type, final String animation, final String subtitle, final int fadein, final int stay, final int fadeout) {
         this.player = player;
         this.execute = execute;
         this.type = type;
@@ -31,7 +37,6 @@ public class TitleAnimationTask extends BukkitRunnable {
         this.fadein = fadein;
         this.stay = stay;
         this.fadeout = fadeout;
-        this.titleTicks = this.plugin.getTitleTicks();
     }
 
     @Override
@@ -53,24 +58,40 @@ public class TitleAnimationTask extends BukkitRunnable {
             right = executor[1];
         }
 
-        if (titleTicks.get(player) != title.length) {
-            if (titleTicks.get(player) == 0) {
+        if (ticks.get(player) != title.length) {
+            if (ticks.get(player) == 0) {
                 new TitleField(player,
                         StringUtils.getPapi(this.player, left + title[0] + right),
                         subtitle, fadein, stay, 0);
-            } else if (titleTicks.get(player) == title.length - 1) {
+            } else if (ticks.get(player) == title.length - 1) {
                 new TitleField(player,
-                        StringUtils.getPapi(this.player, left + title[titleTicks.get(player)] + right),
+                        StringUtils.getPapi(this.player, left + title[ticks.get(player)] + right),
                         subtitle, 0, stay, fadeout);
             } else {
                 new TitleField(player,
-                        StringUtils.getPapi(this.player, left + title[titleTicks.get(player)] + right),
+                        StringUtils.getPapi(this.player, left + title[ticks.get(player)] + right),
                         subtitle, 0, stay, 0);
             }
         } else {
-            this.plugin.stopTitleTask(player);
+            stopTask();
         }
-        titleTicks.put(player, titleTicks.get(player) + 1);
+        ticks.put(player, ticks.get(player) + 1);
+    }
+
+    public Map<Player, BukkitTask> getTask() {
+        return task;
+    }
+
+    public Map<Player, Integer> getTicks() {
+        return ticks;
+    }
+
+    public void stopTask() {
+        if(task.containsKey(this.player)) {
+            task.get(this.player).cancel();
+            task.remove(this.player);
+            ticks.put(this.player, 0);
+        }
     }
 
 }

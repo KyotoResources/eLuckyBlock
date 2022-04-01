@@ -4,9 +4,6 @@ import it.zS0bye.eLuckyBlock.api.ILuckyBlockAPI;
 import it.zS0bye.eLuckyBlock.api.LuckyBlockAPI;
 import it.zS0bye.eLuckyBlock.checker.VersionChecker;
 import it.zS0bye.eLuckyBlock.commands.MainCommand;
-import it.zS0bye.eLuckyBlock.database.SQLConnection;
-import it.zS0bye.eLuckyBlock.database.SQLLuckyBlocks;
-import it.zS0bye.eLuckyBlock.database.SQLLuckyBreaks;
 import it.zS0bye.eLuckyBlock.files.*;
 import it.zS0bye.eLuckyBlock.files.enums.Config;
 import it.zS0bye.eLuckyBlock.files.enums.Lang;
@@ -14,23 +11,22 @@ import it.zS0bye.eLuckyBlock.files.enums.Lucky;
 import it.zS0bye.eLuckyBlock.files.enums.Rewards;
 import it.zS0bye.eLuckyBlock.hooks.HooksManager;
 import it.zS0bye.eLuckyBlock.listeners.*;
+import it.zS0bye.eLuckyBlock.mysql.SQLConnection;
+import it.zS0bye.eLuckyBlock.mysql.tables.LuckyTable;
+import it.zS0bye.eLuckyBlock.mysql.tables.ScoreTable;
 import it.zS0bye.eLuckyBlock.rewards.RandomReward;
 import it.zS0bye.eLuckyBlock.rewards.ExcReward;
-import it.zS0bye.eLuckyBlock.updater.UpdateType;
-import it.zS0bye.eLuckyBlock.updater.VandalUpdater;
 import it.zS0bye.eLuckyBlock.utils.*;
 import it.zS0bye.eLuckyBlock.utils.enums.ConsoleUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import me.onlyfire.vandalupdater.UpdateType;
+import me.onlyfire.vandalupdater.VandalUpdater;
 import org.bukkit.Bukkit;
-import org.bukkit.boss.BossBar;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Getter
 public class ELuckyBlock extends JavaPlugin {
@@ -42,25 +38,15 @@ public class ELuckyBlock extends JavaPlugin {
     private FireworksFile fireworks;
     private SchematicsFile schematics;
     private SQLConnection sqlConnection;
-    private SQLLuckyBreaks sqlLuckyBreaks;
-    private SQLLuckyBlocks sqlLuckyBlocks;
+    private LuckyTable luckyTable;
+    private ScoreTable scoreTable;
 
     @Getter
     private static ELuckyBlock instance;
     @Getter
     private static ILuckyBlockAPI api;
 
-    private final Map<Player, BukkitTask> titleTask = new HashMap<>();
-    private final Map<Player, Integer> titleTicks = new HashMap<>();
-    private final Map<Player, BukkitTask> actionTask = new HashMap<>();
-    private final Map<Player, Integer> actionTicks = new HashMap<>();
-    private final Map<Player, BukkitTask> bossBarTask = new HashMap<>();
-    private final Map<Player, Integer> bossBarTicks = new HashMap<>();
-    private final Map<Player, BukkitTask> bossTimesTask = new HashMap<>();
-    private final Map<Player, BossBar> bossTimes = new HashMap<>();
-    private final Map<Player, Integer> fireworkTicks = new HashMap<>();
-    private final Map<Player, BukkitTask> fireworkTask = new HashMap<>();
-    private final Map<String, Integer> luckyBreaks = new HashMap<>();
+    private final Map<String, Integer> luckyScore = new HashMap<>();
     private final Map<String, RandomReward<ExcReward>> randomReward = new HashMap<>();
 
     @Override
@@ -105,7 +91,7 @@ public class ELuckyBlock extends JavaPlugin {
         getLogger().info(ConsoleUtils.PURPLE + "┃ The Plug-in was started successfully ;)" + ConsoleUtils.RESET);
         getLogger().info("");
 
-        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> this.sqlLuckyBlocks.fixLocations(), 30L, 30L);
+        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> this.luckyTable.fixLocations(), 30L, 30L);
 
     }
 
@@ -118,21 +104,13 @@ public class ELuckyBlock extends JavaPlugin {
     private void SQLConnection() {
         getLogger().info("");
         getLogger().info(ConsoleUtils.PURPLE + "┃ Connection to database.." + ConsoleUtils.RESET);
-        try {
             if(Config.DB_TYPE.getString().equalsIgnoreCase("SQLite")) {
                 sqlConnection = new SQLConnection(this);
             }else if(Config.DB_TYPE.getString().equalsIgnoreCase("MySQL")) {
-                String replace = Config.DB_CUSTOMURI.getString().
-                        replace("%host%", Config.DB_HOST.getString()).
-                        replace("%port%", Config.DB_PORT.getString()).
-                        replace("%database%", Config.DB_NAME.getString());
-                sqlConnection = new SQLConnection(this, replace, Config.DB_USER.getString(), Config.DB_PASSWORD.getString());
+                sqlConnection = new SQLConnection();
             }
-            this.sqlLuckyBreaks = new SQLLuckyBreaks(this);
-            this.sqlLuckyBlocks = new SQLLuckyBlocks(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            this.luckyTable = new LuckyTable(this);
+            this.scoreTable = new ScoreTable(this);
         getLogger().info(ConsoleUtils.PURPLE + "┃ Connection successful!" + ConsoleUtils.RESET);
     }
 
@@ -199,7 +177,7 @@ public class ELuckyBlock extends JavaPlugin {
         vandalUpdater.runTaskTimerAsynchronously(this, 20L, 30 * 60 * 20L);
     }
 
-    private void addRewards() {
+    public void addRewards() {
         Lucky.LUCKYBLOCK.getKeys().forEach(luckyblocks -> {
             if (randomReward.containsKey(luckyblocks))
                 return;
@@ -207,59 +185,11 @@ public class ELuckyBlock extends JavaPlugin {
             RandomReward<ExcReward> random = new RandomReward<>();
 
             for(String reward : Rewards.LUCKYBLOCK.getConfigurationSection(luckyblocks))
-                random.add(Rewards.CHANCE.getInt(luckyblocks, "." + reward),
+                random.add(Rewards.CHANCE.getDouble(luckyblocks, "." + reward),
                         new ExcReward(Rewards.EXECUTE.getStringList(luckyblocks, "." + reward)));
 
             randomReward.put(luckyblocks, random);
         });
-    }
-
-    public void reloadRewards() {
-        randomReward.clear();
-        addRewards();
-    }
-
-    public void stopTitleTask(final Player p) {
-        if(titleTask.containsKey(p)) {
-            titleTask.get(p).cancel();
-            titleTask.remove(p);
-            titleTicks.put(p, 0);
-        }
-    }
-
-    public void stopActionTask(final Player p) {
-        if(actionTask.containsKey(p)) {
-            actionTask.get(p).cancel();
-            actionTask.remove(p);
-            actionTicks.put(p, 0);
-        }
-    }
-
-    public void stopBossBarTask(final Player p) {
-        if(bossBarTask.containsKey(p)) {
-            bossBarTask.get(p).cancel();
-            bossBarTask.remove(p);
-            bossBarTicks.put(p, 0);
-        }
-    }
-
-    public void stopBossTimesTask(final Player p) {
-        if(bossTimes.containsKey(p)) {
-            bossTimes.get(p).removePlayer(p);
-            bossTimes.remove(p);
-        }
-        if(bossTimesTask.containsKey(p)) {
-            bossTimesTask.get(p).cancel();
-            bossTimesTask.remove(p);
-        }
-    }
-
-    public void stopFireworkTask(final Player p) {
-        if(fireworkTask.containsKey(p)) {
-            fireworkTask.get(p).cancel();
-            fireworkTask.remove(p);
-            fireworkTicks.put(p, 0);
-        }
     }
 
 }

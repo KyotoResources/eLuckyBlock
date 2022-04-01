@@ -28,7 +28,12 @@ public enum Config implements IFiles {
     DB_PORT("Storage.mysql.port", "3306"),
     DB_USER("Storage.mysql.user", "root"),
     DB_PASSWORD("Storage.mysql.password", "MyPassword"),
-    DB_CUSTOMURI("Storage.mysql.advanced.customURI", "jdbc:mysql://%host%:%port%/%database%?useSSL=false");
+    DB_CUSTOMURI("Storage.mysql.advanced.customURI", "jdbc:mysql://%host%:%port%/%database%?useSSL=false"),
+    DB_MAXIMUM_POOL_SIZE("Storage.pool_settings.maximum_pool_size", ""),
+    DB_MINIMUM_IDLE("Storage.pool_settings.minimum_idle", ""),
+    DB_MAXIMUM_LIFETIME("Storage.pool_settings.maximum_lifetime", ""),
+    DB_KEEPALIVE_TIME("Storage.pool_settings.keepalive_time", ""),
+    DB_CONNECTION_TIMEOUT("Storage.pool_settings.connection_timeout", "");
 
     private final String path;
     private final String def;
@@ -59,7 +64,7 @@ public enum Config implements IFiles {
 
     @Override
     public String getString(final String... var) {
-        if(contains())
+        if(contains(var))
             return StringUtils.getColor(this.config.getString(variables(var).toString()));
         return StringUtils.getColor(def);
     }
@@ -67,7 +72,7 @@ public enum Config implements IFiles {
     @Override
     public List<String> getStringList(final String... var) {
         List<String> list = new ArrayList<>();
-        if(contains()) {
+        if(contains(var)) {
             for (String setList : this.config.getStringList(variables(var).toString())) {
                 list.add(StringUtils.getColor(setList));
             }
@@ -82,7 +87,7 @@ public enum Config implements IFiles {
 
     @Override
     public boolean getBoolean(final String... var) {
-        if(contains())
+        if(contains(var))
             return this.config.getBoolean(variables(var).toString());
         return Boolean.parseBoolean(def);
     }
@@ -94,9 +99,16 @@ public enum Config implements IFiles {
 
     @Override
     public int getInt(final String... var) {
-        if(contains())
-            return this.config.getInt(path);
+        if(contains(var))
+            return this.config.getInt(variables(var).toString());
         return Integer.parseInt(def);
+    }
+
+    @Override
+    public double getDouble(final String... var) {
+        if(contains(var))
+            return this.config.getDouble(variables(var).toString());
+        return Double.parseDouble(def);
     }
 
     @Override
@@ -121,7 +133,7 @@ public enum Config implements IFiles {
         if (getCustomString(var).isEmpty()) {
             return;
         }
-        sender.sendMessage(getCustomString());
+        sender.sendMessage(getCustomString(var));
     }
 
     @Override

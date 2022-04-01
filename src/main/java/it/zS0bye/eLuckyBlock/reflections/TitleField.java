@@ -1,6 +1,5 @@
 package it.zS0bye.eLuckyBlock.reflections;
 
-import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import it.zS0bye.eLuckyBlock.checker.VersionChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,25 +20,10 @@ public class TitleField {
 
     private final Player player;
     private final String title;
-    private String subtitle = "";
-    private int fadein = 20;
-    private int stay = 40;
-    private int fadeout = 20;
-
-    public TitleField(final Player player, final String title) {
-        this.player = player;
-        this.title = title;
-        loadClasses();
-        send();
-    }
-
-    public TitleField(final Player player, final String title, final String subtitle) {
-        this.player = player;
-        this.title = title;
-        this.subtitle = subtitle;
-        loadClasses();
-        send();
-    }
+    private final String subtitle;
+    private final int fadein;
+    private final int stay;
+    private final int fadeout;
 
     public TitleField(final Player player, final String title, final String subtitle, final int fadein, final int stay, final int fadeout) {
         this.player = player;

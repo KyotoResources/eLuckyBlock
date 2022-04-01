@@ -6,23 +6,17 @@ import it.zS0bye.eLuckyBlock.reflections.TitleField;
 import it.zS0bye.eLuckyBlock.tasks.TitleAnimationTask;
 import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
-import java.util.Map;
 
 public class TitleExecutor extends Executors {
 
-    private final Map<Player, BukkitTask> titleTask;
-    private final Map<Player, Integer> titleTicks;
-    private final ELuckyBlock plugin;
     private final String execute;
     private final Player player;
+    private final TitleAnimationTask task;
 
     public TitleExecutor(final String execute, final Player player) {
-        this.plugin = ELuckyBlock.getInstance();
         this.execute = execute;
         this.player = player;
-        this.titleTask = plugin.getTitleTask();
-        this.titleTicks = plugin.getTitleTicks();
+        this.task = new TitleAnimationTask(this.player);
         if(this.execute.startsWith(getType()))
             apply();
     }
@@ -31,10 +25,11 @@ public class TitleExecutor extends Executors {
     protected void startTask(String getAnimation, String subtitle, int fadein, int stay, int fadeout) {
         super.startTask(getAnimation, subtitle, fadein, stay, fadeout);
 
-        titleTicks.put(player, 0);
-        titleTask.put(this.player,
-                new TitleAnimationTask(this.plugin, this.player, this.execute, getType(), getAnimation, subtitle, fadein, stay, fadeout)
-                        .runTaskTimerAsynchronously(this.plugin, 0L, Animations.INTERVAL.getInt(getAnimation)));
+        TitleAnimationTask task = new TitleAnimationTask(this.player, this.execute, getType(), getAnimation, subtitle, fadein, stay, fadeout);
+
+        task.getTicks().put(player, 0);
+        task.getTask().put(this.player,
+                task.runTaskTimerAsynchronously(ELuckyBlock.getInstance(), 0L, Animations.INTERVAL.getInt(getAnimation)));
     }
 
     protected String getType() {
@@ -61,8 +56,9 @@ public class TitleExecutor extends Executors {
                 .split(";")[4]);
 
         for (String getAnimation : Animations.ANIMATIONS.getKeys()) {
+
             if (title.contains("%animation_" + getAnimation + "%")) {
-                this.plugin.stopTitleTask(player);
+                this.task.stopTask();
 
                 if (subtitle.equalsIgnoreCase("none")) {
                     startTask(getAnimation, "", fadein, stay, fadeout);
@@ -74,7 +70,7 @@ public class TitleExecutor extends Executors {
             }
         }
 
-        this.plugin.stopTitleTask(this.player);
+        this.task.stopTask();
 
         if(subtitle.equalsIgnoreCase("none")) {
             new TitleField(this.player, title, "", fadein, stay, fadeout);

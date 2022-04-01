@@ -6,23 +6,19 @@ import it.zS0bye.eLuckyBlock.reflections.BossBarField;
 import it.zS0bye.eLuckyBlock.tasks.BossBarAnimationTask;
 import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
-import java.util.Map;
 
 public class BossBarExecutor extends Executors {
 
-    private final Map<Player, BukkitTask> bossBarTask;
-    private final Map<Player, Integer> bossBarTicks;
     private final ELuckyBlock plugin;
     private final String execute;
     private final Player player;
+    private final BossBarAnimationTask task;
 
     public BossBarExecutor(final String execute, final Player player) {
         this.plugin = ELuckyBlock.getInstance();
         this.execute = execute;
         this.player = player;
-        this.bossBarTask = plugin.getBossBarTask();
-        this.bossBarTicks = plugin.getBossBarTicks();
+        this.task = new BossBarAnimationTask(this.plugin, this.player);
         if(this.execute.startsWith(getType()))
             apply();
     }
@@ -31,10 +27,11 @@ public class BossBarExecutor extends Executors {
     protected void startTask(String getAnimation, String color, String style, double progress, int times) {
         super.startTask(getAnimation, color, style, progress, times);
 
-        bossBarTicks.put(player, 0);
-        bossBarTask.put(this.player,
-                new BossBarAnimationTask(this.plugin, this.player, this.execute, getType(), getAnimation, color, style, progress, times)
-                        .runTaskTimerAsynchronously(this.plugin, 0L, Animations.INTERVAL.getInt(getAnimation)));
+        BossBarAnimationTask task = new BossBarAnimationTask(this.plugin, this.player, this.execute, getType(), getAnimation, color, style, progress, times);
+
+        task.getTicks().put(player, 0);
+        task.getTask().put(this.player,
+                task.runTaskTimerAsynchronously(this.plugin, 0L, Animations.INTERVAL.getInt(getAnimation)));
     }
 
     protected String getType() {
@@ -67,16 +64,16 @@ public class BossBarExecutor extends Executors {
 
         for (String getAnimation : Animations.ANIMATIONS.getKeys()) {
             if (title.contains("%animation_" + getAnimation + "%")) {
-                this.plugin.stopBossBarTask(player);
-                this.plugin.stopBossTimesTask(player);
+                this.task.stopTask();
+                this.task.stopTimes();
 
                 startTask(getAnimation, color, style, progress, times);
                 return;
             }
         }
 
-        this.plugin.stopBossBarTask(this.player);
-        this.plugin.stopBossTimesTask(this.player);
+        this.task.stopTask();
+        this.task.stopTimes();
         new BossBarField(this.plugin, this.player, title, color, style, progress, times);
 
     }

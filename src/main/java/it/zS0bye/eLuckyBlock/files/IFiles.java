@@ -21,6 +21,8 @@ public interface IFiles {
 
     int getInt(final String... var);
 
+    double getDouble(final String... var);
+
     void send(final CommandSender sender, final String... var);
 
     StringBuilder variables(final String... var);

@@ -1,4 +1,4 @@
-package it.zS0bye.eLuckyBlock.database;
+package it.zS0bye.eLuckyBlock.mysql.tables;
 
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import org.bukkit.Bukkit;
@@ -6,106 +6,89 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.concurrent.CompletableFuture;
 
-public class SQLLuckyBlocks {
+public class LuckyTable {
 
-    private final SQLConnection sql;
+    private Connection connection;
 
-    public SQLLuckyBlocks(final ELuckyBlock plugin) {
-        this.sql = plugin.getSqlConnection();
+    public LuckyTable(final ELuckyBlock plugin) {
+
+        if(!plugin.getSqlConnection().hasConnection())
+            return;
+
+        this.connection = plugin.getSqlConnection().getConnection();
         this.create();
     }
 
     protected void create() {
         CompletableFuture.runAsync(() -> {
-            if (!this.sql.hasConnection()) {
-                return;
-            }
             String sql = "CREATE TABLE IF NOT EXISTS luckyblocks(id int AUTO_INCREMENT PRIMARY KEY, Location text NOT NULL, LuckyName text NOT NULL)";
-            try {
-                Statement st = this.sql.getConnection().createStatement();
+            try (Statement st = this.connection.createStatement()) {
                 st.execute(sql);
-            }catch (SQLException throwables) {
+            } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
         });
     }
 
     public CompletableFuture<Boolean> hasNotLocation(final String location) {
+        String sql = "SELECT LuckyName FROM luckyblocks WHERE Location = ?";
         return CompletableFuture.supplyAsync(() -> {
-            PreparedStatement pst = null;
-            ResultSet rs = null;
-            try {
-                pst = this.sql.getConnection().prepareStatement("SELECT LuckyName FROM luckyblocks WHERE Location = ?");
+            try (PreparedStatement pst = this.connection.prepareStatement(sql)) {
                 pst.setString(1, location);
-                rs = pst.executeQuery();
+                ResultSet rs = pst.executeQuery();
                 return !rs.next();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
-            } finally {
-                close(pst, rs);
             }
             return true;
         });
     }
 
     public void setLocation(final String location, final String name) {
+        String sql = "INSERT INTO luckyblocks(Location,LuckyName) VALUES(?,?)";
         CompletableFuture.runAsync(() -> {
-            PreparedStatement pst = null;
-            try {
-                pst = this.sql.getConnection().prepareStatement("INSERT INTO luckyblocks(Location,LuckyName) VALUES(?,?)");
+            try (PreparedStatement pst = this.connection.prepareStatement(sql)) {
                 pst.setString(1, location);
                 pst.setString(2, name);
                 pst.executeUpdate();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
-            } finally {
-                close(pst);
             }
         });
     }
 
     public void remLocation(final String location) {
+        String sql = "DELETE FROM luckyblocks WHERE Location = ?";
         CompletableFuture.runAsync(() -> {
-            PreparedStatement pst = null;
-            try {
-                pst = this.sql.getConnection().prepareStatement("DELETE FROM luckyblocks WHERE Location = ?");
+            try (PreparedStatement pst = this.connection.prepareStatement(sql)) {
                 pst.setString(1, location);
                 pst.executeUpdate();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
-            } finally {
-                close(pst);
             }
         });
     }
 
     public CompletableFuture<String> getLuckyBlock(final String location) {
+        String sql = "SELECT LuckyName FROM luckyblocks WHERE Location = ?";
         CompletableFuture<String> future = new CompletableFuture<>();
         hasNotLocation(location).thenAccept(check -> {
             if(check) {
                 return;
             }
             CompletableFuture.runAsync(() -> {
-                PreparedStatement pst = null;
-                ResultSet rs = null;
-                try {
-                    pst = this.sql.getConnection().prepareStatement("SELECT LuckyName FROM luckyblocks WHERE Location = ?");
+                try (PreparedStatement pst = this.connection.prepareStatement(sql)) {
                     pst.setString(1, location);
-                    rs = pst.executeQuery();
+                    ResultSet rs = pst.executeQuery();
                     if (rs.next()) {
                         future.complete(rs.getString("LuckyName"));
                         remLocation(location);
                     }
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
-                } finally {
-                    close(pst, rs);
                 }
             });
         });
@@ -113,12 +96,10 @@ public class SQLLuckyBlocks {
     }
 
     public void fixLocations() {
+        String sql = "SELECT Location FROM luckyblocks ORDER BY LuckyName";
         CompletableFuture.runAsync(() -> {
-            PreparedStatement pst = null;
-            ResultSet rs = null;
-            try {
-                pst = this.sql.getConnection().prepareStatement("SELECT Location FROM luckyblocks ORDER BY LuckyName");
-                rs = pst.executeQuery();
+            try (PreparedStatement pst = this.connection.prepareStatement(sql)) {
+                ResultSet rs = pst.executeQuery();
                 while (rs.next()) {
                     String location = rs.getString("Location");
                     String world = location.split(", ")[0];
@@ -131,28 +112,9 @@ public class SQLLuckyBlocks {
                 }
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
-            } finally {
-                close(pst, rs);
             }
         });
     }
 
-    private void close(final PreparedStatement pst) {
-        try { pst.close(); } catch (Exception e) { e.printStackTrace();}
-    }
-
-    private void close(final PreparedStatement pst, ResultSet rs) {
-        try { rs.close(); } catch (Exception e) { e.printStackTrace(); }
-        try { pst.close(); } catch (Exception e) { e.printStackTrace();}
-    }
-
-    public String convertLoc(final Location loc) {
-        String world = loc.getWorld().getName();
-        double x = loc.getX();
-        double y = loc.getY();
-        double z = loc.getZ();
-
-        return world + ", " + x + ", " + y + ", " + z;
-    }
 
 }

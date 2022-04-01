@@ -1,9 +1,10 @@
 package it.zS0bye.eLuckyBlock.listeners;
 
-import it.zS0bye.eLuckyBlock.database.SQLLuckyBlocks;
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import it.zS0bye.eLuckyBlock.checker.LuckyChecker;
 import it.zS0bye.eLuckyBlock.files.enums.Lucky;
+import it.zS0bye.eLuckyBlock.mysql.SQLConversion;
+import it.zS0bye.eLuckyBlock.mysql.tables.LuckyTable;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -17,11 +18,11 @@ import java.util.List;
 public class UniqueBlockListener implements Listener {
 
     private final String luckyblocks;
-    private final SQLLuckyBlocks sqlLuckyBlocks;
+    private final LuckyTable luckyTable;
 
     public UniqueBlockListener(final String luckyblocks) {
         this.luckyblocks = luckyblocks;
-        this.sqlLuckyBlocks = ELuckyBlock.getInstance().getSqlLuckyBlocks();
+        this.luckyTable = ELuckyBlock.getInstance().getLuckyTable();
     }
 
     @EventHandler
@@ -33,7 +34,7 @@ public class UniqueBlockListener implements Listener {
         String world = player.getWorld().getName();
         Location region = player.getLocation();
         Location location = block.getLocation();
-        String convertLoc = this.sqlLuckyBlocks.convertLoc(location);
+        String convertLoc = SQLConversion.convertLoc(location);
 
         if(new LuckyChecker(block, world, region, luckyblocks)
                 .check())
@@ -51,13 +52,13 @@ public class UniqueBlockListener implements Listener {
             if(!Lucky.UNIQUE_CHECK_LORE.contains(luckyblocks)
             || Lucky.UNIQUE_CHECK_LORE.getStringList(luckyblocks).size() == 0
             && !item.getItemMeta().hasLore()) {
-                this.sqlLuckyBlocks.setLocation(convertLoc, luckyblocks);
+                this.luckyTable.setLocation(convertLoc, luckyblocks);
                 return;
             }
 
             if(item.getItemMeta().hasLore() &&
                     lore.equals(Lucky.UNIQUE_CHECK_LORE.getStringList(luckyblocks))) {
-               this.sqlLuckyBlocks.setLocation(convertLoc, luckyblocks);
+               this.luckyTable.setLocation(convertLoc, luckyblocks);
             }
 
         }

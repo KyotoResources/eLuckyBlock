@@ -10,11 +10,11 @@ public class FireworkListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onDamage(EntityDamageByEntityEvent e) {
-        if (e.getDamager() instanceof Firework) {
-            Firework firework = (Firework) e.getDamager();
-            if (firework.hasMetadata("eLuckyBlock")) {
-                e.setCancelled(true);
-            }
-        }
+        if (!(e.getDamager() instanceof Firework)) return;
+
+        Firework firework = (Firework) e.getDamager();
+
+        if (!firework.hasMetadata("eLuckyBlock")) return;
+        e.setCancelled(true);
     }
 }

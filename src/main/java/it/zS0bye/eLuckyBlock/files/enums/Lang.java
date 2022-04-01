@@ -56,7 +56,7 @@ public enum Lang implements IFiles {
 
     @Override
     public String getString(final String... var) {
-        if(contains())
+        if(contains(var))
             return StringUtils.getColor(this.lang.getString(variables(var).toString()));
         return StringUtils.getColor(def);
     }
@@ -64,7 +64,7 @@ public enum Lang implements IFiles {
     @Override
     public List<String> getStringList(final String... var) {
         List<String> list = new ArrayList<>();
-        if(!contains()) {
+        if(!contains(var)) {
             if (def.contains(",")) {
                 for (String setList : def.split(",")) {
                     list.add(StringUtils.getColor(setList));
@@ -82,7 +82,7 @@ public enum Lang implements IFiles {
 
     @Override
     public boolean getBoolean(final String... var) {
-        if(contains())
+        if(contains(var))
             return this.lang.getBoolean(variables(var).toString());
         return Boolean.parseBoolean(def);
     }
@@ -94,26 +94,33 @@ public enum Lang implements IFiles {
 
     @Override
     public int getInt(final String... var) {
-        if(contains())
+        if(contains(var))
             return this.lang.getInt(variables(var).toString());
         return Integer.parseInt(def);
     }
 
     @Override
+    public double getDouble(final String... var) {
+        if(contains(var))
+            return this.lang.getDouble(variables(var).toString());
+        return Double.parseDouble(def);
+    }
+
+    @Override
     public String getCustomString(final String... var) {
-        if (getString().startsWith("%prefix%")) {
-            String replace = getString().replace("%prefix%", Config.SETTINGS_PREFIX.getString());
+        if (getString(var).startsWith("%prefix%")) {
+            String replace = getString(var).replace("%prefix%", Config.SETTINGS_PREFIX.getString());
             if (replace.startsWith(Config.SETTINGS_PREFIX.getString() + "%center%")) {
                 String replace2 = replace.replace("%center%", "");
                 return StringUtils.sendCentered(replace2);
             }
             return replace;
         }
-        if(getString().startsWith("%center%")) {
-            String replace = getString().replace("%center%", "");
+        if(getString(var).startsWith("%center%")) {
+            String replace = getString(var).replace("%center%", "");
             return StringUtils.sendCentered(replace);
         }
-        return getString();
+        return getString(var);
     }
 
     @Override
@@ -121,7 +128,7 @@ public enum Lang implements IFiles {
         if (getCustomString(var).isEmpty()) {
             return;
         }
-        sender.sendMessage(getCustomString());
+        sender.sendMessage(getCustomString(var));
     }
 
     @Override

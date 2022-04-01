@@ -7,23 +7,16 @@ import it.zS0bye.eLuckyBlock.tasks.TitleAnimationTask;
 import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
-import java.util.Map;
 
 public class BroadcastTitleExecutor extends Executors {
 
-    private final Map<Player, BukkitTask> titleTask;
-    private final Map<Player, Integer> titleTicks;
-    private final ELuckyBlock plugin;
     private final String execute;
     private final Player player;
+    private TitleAnimationTask task;
 
     public BroadcastTitleExecutor(final String execute, final Player player) {
-        this.plugin = ELuckyBlock.getInstance();
         this.execute = execute;
         this.player = player;
-        this.titleTask = plugin.getTitleTask();
-        this.titleTicks = plugin.getTitleTicks();
         if (this.execute.startsWith(getType()))
             apply();
     }
@@ -32,10 +25,13 @@ public class BroadcastTitleExecutor extends Executors {
     protected void startTask(String getAnimation, Player players, String subtitle, int fadein, int stay, int fadeout) {
         super.startTask(getAnimation, players, subtitle, fadein, stay, fadeout);
 
-        titleTicks.put(players, 0);
-        titleTask.put(players,
-                new TitleAnimationTask(this.plugin, players, this.execute, getType(), getAnimation, subtitle, fadein, stay, fadeout)
-                        .runTaskTimerAsynchronously(this.plugin, 0L, Animations.INTERVAL.getInt(getAnimation)));
+        TitleAnimationTask task = new TitleAnimationTask(players, this.execute, getType(), getAnimation, subtitle, fadein, stay, fadeout);
+
+        task.getTicks().put(players, 0);
+        task.getTask().put(players,
+                task.runTaskTimerAsynchronously(ELuckyBlock.getInstance(), 0L, Animations.INTERVAL.getInt(getAnimation)));
+
+
 
     }
 
@@ -64,9 +60,11 @@ public class BroadcastTitleExecutor extends Executors {
                 .split(";")[4]);
 
         Bukkit.getOnlinePlayers().forEach(players -> {
+            this.task = new TitleAnimationTask(players);
+
             for (String getAnimation : Animations.ANIMATIONS.getKeys()) {
                 if (title.contains("%animation_" + getAnimation + "%")) {
-                    this.plugin.stopTitleTask(players);
+                    this.task.stopTask();
 
                     if (subtitle.equalsIgnoreCase("none")) {
                         startTask(getAnimation, players,  "", fadein, stay, fadeout);
@@ -78,7 +76,7 @@ public class BroadcastTitleExecutor extends Executors {
                 }
             }
 
-            this.plugin.stopTitleTask(players);
+            this.task.stopTask();
 
             if (subtitle.equalsIgnoreCase("none")) {
                 new TitleField(players, title, "", fadein, stay, fadeout);

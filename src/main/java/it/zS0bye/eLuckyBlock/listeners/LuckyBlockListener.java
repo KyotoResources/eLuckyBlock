@@ -5,7 +5,7 @@ import it.zS0bye.eLuckyBlock.checker.VersionChecker;
 import it.zS0bye.eLuckyBlock.files.enums.Lucky;
 import it.zS0bye.eLuckyBlock.hooks.HooksManager;
 import it.zS0bye.eLuckyBlock.hooks.enums.Hooks;
-import it.zS0bye.eLuckyBlock.methods.OpenLuckyBlock;
+import it.zS0bye.eLuckyBlock.objects.OpenLuckyBlock;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

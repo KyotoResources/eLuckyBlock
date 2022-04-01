@@ -8,10 +8,10 @@ import java.util.Map;
 
 public class HPlaceholderAPI extends PlaceholderExpansion {
 
-    private final Map<String, Integer> luckyBreaks;
+    private final Map<String, Integer> luckyScore;
 
     public HPlaceholderAPI(final ELuckyBlock plugin) {
-        this.luckyBreaks = plugin.getLuckyBreaks();
+        this.luckyScore = plugin.getLuckyScore();
     }
 
     @Override
@@ -42,8 +42,8 @@ public class HPlaceholderAPI extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, String params) {
         if (params.equalsIgnoreCase("breaks")) {
-            if(luckyBreaks.containsKey(player.getName())) {
-                return String.valueOf(luckyBreaks.get(player.getName()));
+            if(luckyScore.containsKey(player.getName())) {
+                return String.valueOf(luckyScore.get(player.getName()));
             }
             return "0";
         }

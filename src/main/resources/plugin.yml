@@ -1,7 +1,7 @@
 name: eLuckyBlock
 main: it.zS0bye.eLuckyBlock.ELuckyBlock
 softdepend: [PlaceholderAPI, WorldGuard, WorldEdit, Vault, TokenEnchant, TokenManager, UltraPrisonCore, PlotSquared]
-version: 1.4.1
+version: 1.4.2
 api-version: 1.13
 author: zS0bye
 description: The LuckyBlock Plugin you needed! For Prison, SkyBlock, etc..

@@ -1,29 +1,34 @@
 package it.zS0bye.eLuckyBlock.tasks;
 
-import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import it.zS0bye.eLuckyBlock.files.enums.Animations;
 import it.zS0bye.eLuckyBlock.reflections.ActionField;
 import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class ActionAnimationTask extends BukkitRunnable {
 
-    private final ELuckyBlock plugin;
     private final Player player;
-    private final String execute;
-    private final String type;
-    private final String animation;
-    private final Map<Player, Integer> actionTicks;
+    private String execute;
+    private String type;
+    private String animation;
 
-    public ActionAnimationTask(final ELuckyBlock plugin, final Player player, final String execute, final String type, final String animation) {
-        this.plugin = plugin;
+    private final static Map<Player, BukkitTask> task = new HashMap<>();
+    private final static Map<Player, Integer> ticks = new HashMap<>();
+
+    public ActionAnimationTask(final Player player) {
+        this.player = player;
+    }
+
+    public ActionAnimationTask(final Player player, final String execute, final String type, final String animation) {
         this.player = player;
         this.type = type;
         this.execute = execute;
         this.animation = animation;
-        this.actionTicks = this.plugin.getActionTicks();
     }
 
     @Override
@@ -44,13 +49,29 @@ public class ActionAnimationTask extends BukkitRunnable {
             right = executor[1];
         }
 
-        if (actionTicks.get(player) != action.length) {
+        if (ticks.get(player) != action.length) {
             new ActionField(player,
-                    StringUtils.getPapi(this.player, left + action[actionTicks.get(player)] + right));
+                    StringUtils.getPapi(this.player, left + action[ticks.get(player)] + right));
         } else {
-            this.plugin.stopActionTask(player);
+            stopTask();
         }
-        actionTicks.put(player, actionTicks.get(player) + 1);
+        ticks.put(player, ticks.get(player) + 1);
+    }
+
+    public Map<Player, BukkitTask> getTask() {
+        return task;
+    }
+
+    public Map<Player, Integer> getTicks() {
+        return ticks;
+    }
+
+    public void stopTask() {
+        if(task.containsKey(this.player)) {
+            task.get(this.player).cancel();
+            task.remove(this.player);
+            ticks.put(this.player, 0);
+        }
     }
 
 }

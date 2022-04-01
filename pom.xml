@@ -6,7 +6,7 @@
 
     <groupId>it.zS0bye.eLuckyBlock</groupId>
     <artifactId>ELuckyBlock</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.2</version>
     <packaging>jar</packaging>
 
     <name>eLuckyBlock</name>
@@ -81,9 +81,18 @@
             <id>minecraft-repo</id>
             <url>https://libraries.minecraft.net/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.0.1</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -93,7 +102,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>22.0.0</version>
+            <version>23.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
@@ -115,7 +124,7 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
-            <version>8.5.0.1</version>
+            <version>8.7.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -123,9 +132,14 @@
             <version>3.6.1</version>
         </dependency>
         <dependency>
+            <groupId>com.github.ImOnlyFire.VandalUpdater</groupId>
+            <artifactId>updater</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.plotsquared</groupId>
             <artifactId>PlotSquared-Core</artifactId>
-            <version>6.4.0</version>
+            <version>6.6.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -111,6 +111,11 @@ public enum Lucky implements IFiles {
     }
 
     @Override
+    public double getDouble(final String... var) {
+        return this.config.getDouble(variables(var).toString());
+    }
+
+    @Override
     public void send(final CommandSender sender, final String... var) {
         if (getCustomString(var).isEmpty()) {
             return;

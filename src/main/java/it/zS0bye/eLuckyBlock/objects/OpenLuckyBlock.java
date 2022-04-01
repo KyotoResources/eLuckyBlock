@@ -1,11 +1,12 @@
-package it.zS0bye.eLuckyBlock.methods;
+package it.zS0bye.eLuckyBlock.objects;
 
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import it.zS0bye.eLuckyBlock.api.ILuckyBlockAPI;
-import it.zS0bye.eLuckyBlock.database.SQLLuckyBlocks;
-import it.zS0bye.eLuckyBlock.database.SQLLuckyBreaks;
 import it.zS0bye.eLuckyBlock.files.enums.Config;
 import it.zS0bye.eLuckyBlock.files.enums.Lucky;
+import it.zS0bye.eLuckyBlock.mysql.SQLConversion;
+import it.zS0bye.eLuckyBlock.mysql.tables.LuckyTable;
+import it.zS0bye.eLuckyBlock.mysql.tables.ScoreTable;
 import it.zS0bye.eLuckyBlock.reflections.ActionField;
 import it.zS0bye.eLuckyBlock.reflections.TitleField;
 import org.bukkit.Location;
@@ -24,16 +25,16 @@ import java.util.Set;
 public class OpenLuckyBlock {
 
     private final ELuckyBlock plugin;
-    private final Map<String, Integer> luckyBreaks;
-    private final SQLLuckyBreaks sqlLuckyBreaks;
-    private final SQLLuckyBlocks sqlLuckyBlocks;
+    private final Map<String, Integer> luckyScore;
+    private final ScoreTable scoreTable;
+    private final LuckyTable luckyTable;
     private final Set<Player> checkUnique = new HashSet<>();
 
     public OpenLuckyBlock() {
         this.plugin = ELuckyBlock.getInstance();
-        this.luckyBreaks = plugin.getLuckyBreaks();
-        this.sqlLuckyBreaks = plugin.getSqlLuckyBreaks();
-        this.sqlLuckyBlocks = plugin.getSqlLuckyBlocks();
+        this.luckyScore = plugin.getLuckyScore();
+        this.scoreTable = plugin.getScoreTable();
+        this.luckyTable = plugin.getLuckyTable();
     }
 
     private void open(final String luckyblock, final Player player, final Location loc, final Cancellable e) {
@@ -65,13 +66,13 @@ public class OpenLuckyBlock {
             }
         }
 
-        if(this.luckyBreaks.containsKey(player.getName())) {
-            this.luckyBreaks.put(player.getName(), this.luckyBreaks.get(player.getName()) + 1);
-            this.sqlLuckyBreaks.addLuckyBreaks(player.getName(), this.luckyBreaks.get(player.getName()));
+        if(this.luckyScore.containsKey(player.getName())) {
+            this.luckyScore.put(player.getName(), this.luckyScore.get(player.getName()) + 1);
+            this.scoreTable.addScore(player.getName(), this.luckyScore.get(player.getName()));
         }else {
-            this.sqlLuckyBreaks.getLuckyBreaks(player.getName()).thenAccept(getLuckyBreaks -> {
-                this.luckyBreaks.put(player.getName(), getLuckyBreaks + 1);
-                this.sqlLuckyBreaks.addLuckyBreaks(player.getName(), getLuckyBreaks + 1);
+            this.scoreTable.getScore(player.getName()).thenAccept(score -> {
+                this.luckyScore.put(player.getName(), score + 1);
+                this.scoreTable.addScore(player.getName(), score + 1);
             });
         }
 
@@ -90,8 +91,8 @@ public class OpenLuckyBlock {
             return;
         }
 
-        String convertLoc = sqlLuckyBlocks.convertLoc(loc);
-        sqlLuckyBlocks.getLuckyBlock(convertLoc).thenAccept(luckyLoc -> {
+        String convertLoc = SQLConversion.convertLoc(loc);
+        this.luckyTable.getLuckyBlock(convertLoc).thenAccept(luckyLoc -> {
             if(luckyblock.equals(luckyLoc)) {
                 checkUnique.add(player);
             }

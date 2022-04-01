@@ -1,7 +1,7 @@
 package it.zS0bye.eLuckyBlock.listeners;
 
-import it.zS0bye.eLuckyBlock.database.SQLLuckyBreaks;
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
+import it.zS0bye.eLuckyBlock.mysql.tables.ScoreTable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,19 +11,19 @@ import java.util.Map;
 
 public class JoinListener implements Listener {
 
-    private final SQLLuckyBreaks sql;
-    private final Map<String, Integer> luckyBreaks;
+    private final ScoreTable score;
+    private final Map<String, Integer> luckyScore;
 
     public JoinListener(final ELuckyBlock plugin) {
-        this.sql = plugin.getSqlLuckyBreaks();
-        this.luckyBreaks = plugin.getLuckyBreaks();
+        this.score = plugin.getScoreTable();
+        this.luckyScore = plugin.getLuckyScore();
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-        if(!luckyBreaks.containsKey(player.getName())) {
-            this.sql.getLuckyBreaks(player.getName()).thenAccept(getLuckyBreaks -> luckyBreaks.put(player.getName(), getLuckyBreaks));
-        }
+
+        if(luckyScore.containsKey(player.getName())) return;
+        this.score.getScore(player.getName()).thenAccept(score -> luckyScore.put(player.getName(), score));
     }
 }

@@ -12,18 +12,14 @@ import java.util.Map;
 
 public class ActionExecutor extends Executors {
 
-    private final Map<Player, BukkitTask> actionTask;
-    private final Map<Player, Integer> actionTicks;
-    private final ELuckyBlock plugin;
     private final String execute;
     private final Player player;
+    private final ActionAnimationTask task;
 
     public ActionExecutor(final String execute, final Player player) {
-        this.plugin = ELuckyBlock.getInstance();
         this.execute = execute;
         this.player = player;
-        this.actionTask = plugin.getActionTask();
-        this.actionTicks = plugin.getActionTicks();
+        this.task = new ActionAnimationTask(this.player);
         if (this.execute.startsWith(getType()))
             apply();
     }
@@ -32,10 +28,11 @@ public class ActionExecutor extends Executors {
     protected void startTask(String getAnimation) {
         super.startTask(getAnimation);
 
-        actionTicks.put(player, 0);
-        actionTask.put(this.player,
-                new ActionAnimationTask(this.plugin, this.player, this.execute, getType(), getAnimation)
-                        .runTaskTimerAsynchronously(this.plugin, 0L, Animations.INTERVAL.getInt(getAnimation)));
+        ActionAnimationTask task = new ActionAnimationTask(this.player, this.execute, getType(), getAnimation);
+
+        task.getTicks().put(player, 0);
+        task.getTask().put(this.player,
+                        task.runTaskTimerAsynchronously(ELuckyBlock.getInstance(), 0L, Animations.INTERVAL.getInt(getAnimation)));
 
     }
 
@@ -51,13 +48,13 @@ public class ActionExecutor extends Executors {
 
         for (String getAnimation : Animations.ANIMATIONS.getKeys()) {
             if (msg.contains("%animation_" + getAnimation + "%")) {
-                this.plugin.stopActionTask(player);
+                this.task.stopTask();
                 startTask(getAnimation);
                 return;
             }
         }
 
-        this.plugin.stopActionTask(player);
+        this.task.stopTask();
         new ActionField(player, msg);
 
     }

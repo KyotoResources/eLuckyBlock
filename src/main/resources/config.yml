@@ -5,7 +5,7 @@
 #   888oo,__     o88oo,.__88    .d888`88bo,__,o,"888"88o,   ,8P"`     _88o,,od8Po88oo,.__"888,_ _,88P`88bo,__,o,"888"88o,
 #   """"YUMMM    """"YUMMM "YmmMMMM""  "YUMMMMMP"MMM "MMP" mM"        ""YUMMMP" """"YUMMM  "YMMMMMP"   "YUMMMMMP"MMM "MMP"
 #
-#   Version: 1.4.1
+#   Version: 1.4.2
 #   Configuration
 #
 #   Wiki: https://zs0bye.gitbook.io/eluckyblock/plugins/eluckyblock-free
@@ -41,4 +41,10 @@ Storage:
     user: root
     password: 'MyPassword'
     advanced:
-      customURI: 'jdbc:mysql://%host%:%port%/%database%?useSSL=false'
+      customURI: '?useSSL=false&autoReconnect=true'
+  pool_settings:
+    maximum_pool_size: 10
+    minimum_idle: 10
+    maximum_lifetime: 1800000
+    keepalive_time: 0
+    connection_timeout: 5000

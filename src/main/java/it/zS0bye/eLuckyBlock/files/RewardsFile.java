@@ -54,7 +54,8 @@ public class RewardsFile {
             this.config.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(is, Charsets.UTF_8)));
         for(Rewards rewards : Rewards.values())
             rewards.reloadConfig();
-        this.plugin.reloadRewards();
+        this.plugin.getRandomReward().clear();
+        this.plugin.addRewards();
     }
 
 }
