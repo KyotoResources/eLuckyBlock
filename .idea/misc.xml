@@ -5,7 +5,13 @@
       <item index="0" class="java.lang.String" itemvalue="org.bukkit.event.EventHandler" />
     </list>
   </component>
+<<<<<<< Updated upstream
   <component name="ExternalStorageConfigurationManager" enabled="true" />
+=======
+  <component name="ExcludeFromValidation">
+    <file url="file://$PROJECT_DIR$/src/main/java/it/zS0bye/eLuckyBlock/mysql/SQLConnection.java" />
+  </component>
+>>>>>>> Stashed changes
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
@@ -13,5 +19,11 @@
       </list>
     </option>
   </component>
+<<<<<<< Updated upstream
   <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK" />
+=======
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+>>>>>>> Stashed changes
 </project>

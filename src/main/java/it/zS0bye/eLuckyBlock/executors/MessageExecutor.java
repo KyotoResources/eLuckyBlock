@@ -1,6 +1,7 @@
 package it.zS0bye.eLuckyBlock.executors;
 
-import it.zS0bye.eLuckyBlock.utils.StringUtils;
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
+import it.zS0bye.eLuckyBlock.hooks.HooksManager;
 import it.zS0bye.eLuckyBlock.files.enums.Config;
 import org.bukkit.entity.Player;
 
@@ -8,12 +9,14 @@ public class MessageExecutor extends Executors {
 
     private final String execute;
     private final Player player;
+    private final HooksManager hooks;
 
-    public MessageExecutor(final String execute, final Player player) {
+    public MessageExecutor(final ELuckyBlock plugin, final String execute, final Player player) {
         this.execute = execute;
         this.player = player;
-        if (this.execute.startsWith(getType()))
-            apply();
+        this.hooks = plugin.getHooks();
+        if (!this.execute.startsWith(this.getType())) return;
+        this.apply();
     }
 
     protected String getType() {
@@ -22,8 +25,8 @@ public class MessageExecutor extends Executors {
 
     protected void apply() {
 
-        String msg = StringUtils.getPapi(this.player, execute
-                .replace(getType(), "")
+        final String msg = this.hooks.getPlaceholders(this.player, execute
+                .replace(this.getType(), "")
                 .replace("%prefix%", Config.SETTINGS_PREFIX.getString()));
 
         player.sendMessage(msg);

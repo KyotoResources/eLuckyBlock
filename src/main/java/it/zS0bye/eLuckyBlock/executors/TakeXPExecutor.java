@@ -10,8 +10,8 @@ public class TakeXPExecutor extends Executors {
     public TakeXPExecutor(final String execute, final Player player) {
         this.execute = execute;
         this.player = player;
-        if (this.execute.startsWith(getType()))
-            apply();
+        if (!this.execute.startsWith(this.getType())) return;
+        this.apply();
     }
 
     @Override
@@ -22,12 +22,12 @@ public class TakeXPExecutor extends Executors {
     @Override
     protected void apply() {
 
-        int level = Integer.parseInt(execute
-                .replace(getType(), "")
+        final int level = Integer.parseInt(execute
+                .replace(this.getType(), "")
                 .split(";")[0]);
 
-        int xp = Integer.parseInt(execute
-                .replace(getType(), "")
+        final int xp = Integer.parseInt(execute
+                .replace(this.getType(), "")
                 .split(";")[1]);
 
         if(xp != 0) {
@@ -38,8 +38,7 @@ public class TakeXPExecutor extends Executors {
             player.giveExp(save - xp);
         }
 
-        if(level != 0)
-        player.setLevel(player.getLevel() - level);
+        if(level != 0) player.setLevel(player.getLevel() - level);
     }
 
 }

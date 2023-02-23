@@ -8,127 +8,160 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public enum Lang implements IFiles {
-    PLAYER_NOT_FOUND("player_not_found", "%prefix%&cPlayer not found."),
-    IS_NOT_NUMBER("is_not_number", "%prefix%&cPlease enter a valid number."),
-    ONLY_POSITIVE_NUMBERS("only_positive_numbers", "%prefix%&cThe number entered must be greater than 0, and cannot be negative!"),
-    INSUFFICIENT_PERMISSIONS("insufficient_permissions", "%prefix%&cYou don''t have enough permissions."),
-    UPDATE_NOTIFICATION("update_notification", "%prefix%A new update is available! Download version &d%new%&7 from &dhttps://www.spigotmc.org/resources/eluckyblock.97759/&7, you currently have version &d%old%&7."),
-    HELP_USERS_TEXTS("Help_Command.users.texts", ",&5 ┃ &d%version%,,&5 ┃ &e[] &7⁼ &7Optional,&5 ┃ &c‹› &7⁼ &7Required,,&5 ┃ &f/%command% help &7‑ &dOpen this page.,&5 ┃ &f/%command% about &7‑ &dShow plug-in info.,&5 ┃ &f/%command% reload &7‑ &dReload configurations.,&5 ┃ &f/%command% info &e[player] &7‑ &dShow the breaks LuckyBlocks.,&5 ┃ &f/%command% give &c<player> <lucky> &e[amount] &7‑ &dGive a player some LuckyBlocks.,,&5 ┃ &d%author%, "),
-    RELOAD_ADMINS_CONFIGURATIONS("Reload_Command.admins.configurations", "%prefix%The configurations have been reloaded!"),
-    INFO_USERS_CURRENT_BREAKS("Info_Command.users.current_breaks", "%prefix%You have &d%lbBreaks% &7breaks LuckyBlocks."),
-    INFO_ADMINS_PLAYER_BREAKS("Info_Command.admins.player_breaks", "%prefix%&f%player%&7 has &d%lbBreaks% &7breaks LuckyBlocks."),
-    GIVE_ADMINS_SENDER("Give_Command.admins.sender", "%prefix%You gave &d%luckyblock% x%amount% &7to &d%receiver%&7."),
-    GIVE_ADMINS_RECEIVER("Give_Command.admins.receiver", "%prefix%You received &d%luckyblock% x%amount% &7by &d%sender%&7."),
-    GIVE_ERRORS_NOT_UNIQUE("Give_Command.errors.not_unique", "%prefix%&cYou cannot give a luckyblock that is not unique!"),
-    GIVE_ERRORS_NOT_EXIST("Give_Command.errors.not_exist", "%prefix%&cThis LuckyBlock does not exist!"),
-    CITEM_ADMINS_CREATE("CItem_Command.admins.create", "%prefix%You have added the item \"&b%item%&7\" between the custom items."),
-    CITEM_ADMINS_UPDATE("CItem_Command.admins.update", "%prefix%You have updated the item \"&b%item%&7\" between the custom items.");
+    PLAYER_NOT_FOUND("player_not_found"),
+    NOT_A_PLAYER("not_a_player"),
+    IS_NOT_NUMBER("is_not_number"),
+    ONLY_POSITIVE_NUMBERS("only_positive_numbers"),
+    INSUFFICIENT_PERMISSIONS("insufficient_permissions"),
+    UPDATE_NOTIFICATION("update_notification"),
+    HELP_USERS_TEXTS("Help_Command.users.texts"),
+    RELOAD_CONFIGURATIONS("Reload_Command.configurations"),
+    INPUT_GUI_SUCCESSFULL("Input_GUI.successfull"),
+    INPUT_GUI_ERRORS_REGEX_NOT_VALID("Input_GUI.errors.regex_not_valid"),
+    INPUT_GUI_PATTERNS_PERMISSION("Input_GUI.patterns.permission"),
+    SETTINGS_GUI_TOGGLE("Settings_GUI.toggle"),
+    SETTINGS_GUI_SET_MATERIAL("Settings_GUI.set_material"),
+    SETTINGS_GUI_CANCEL_SAVES("Settings_GUI.cancel_saves"),
+    SETTINGS_GUI_ERRORS_INVALID_MATERIAL("Settings_GUI.errors.invalid_material"),
+    SETTINGS_GUI_STATUS_ENABLED("Settings_GUI.status.enabled"),
+    SETTINGS_GUI_STATUS_DISABLED("Settings_GUI.status.disabled"),
+    INFO_USERS_CURRENT_BREAKS("Info_Command.users.current_breaks"),
+    INFO_ADMINS_PLAYER_BREAKS("Info_Command.admins.player_breaks"),
+    GIVE_ADMINS_SENDER("Give_Command.admins.sender"),
+    GIVE_ADMINS_RECEIVER("Give_Command.admins.receiver"),
+    GIVE_ERRORS_NOT_UNIQUE("Give_Command.errors.not_unique"),
+    GIVE_ERRORS_NOT_EXIST("Give_Command.errors.not_exist"),
+    CITEM_ADMINS_CREATE("CItem_Command.admins.create"),
+    CITEM_ADMINS_UPDATE("CItem_Command.admins.update");
 
     private final ELuckyBlock plugin;
     private final String path;
-    private final String def;
     private FileConfiguration lang;
 
-    Lang(String path, String def) {
+    Lang(final String path) {
         this.path = path;
-        this.def = def;
         this.plugin = ELuckyBlock.getInstance();
-        this.lang = plugin.getLang().getConfig();
+        this.reloadConfig();
     }
 
     @Override
-    public StringBuilder variables(final String... var) {
+    public String getPath() {
+        return this.path;
+    }
+
+    @Override
+    public String variables(final String... var) {
         StringBuilder builder = new StringBuilder();
         for(String texts : var) {
             builder.append(texts);
         }
         builder.append(path);
-        return builder;
+        return builder.toString();
     }
 
     @Override
     public void reloadConfig() {
-        this.lang = this.plugin.getLang().getConfig();
+        this.lang = this.plugin.getLanguagesFile().getConfig();
     }
 
     @Override
     public String getString(final String... var) {
-        if(contains(var))
-            return StringUtils.getColor(this.lang.getString(variables(var).toString()));
-        return StringUtils.getColor(def);
+        return StringUtils.colorize(this.lang.getString(this.variables(var)));
     }
 
     @Override
     public List<String> getStringList(final String... var) {
         List<String> list = new ArrayList<>();
-        if(!contains(var)) {
-            if (def.contains(",")) {
-                for (String setList : def.split(",")) {
-                    list.add(StringUtils.getColor(setList));
-                }
-            }
-            return list;
-        }
-
-        for (String setList : this.lang.getStringList(variables(var).toString())) {
-            list.add(StringUtils.getColor(setList));
-        }
-
+        for (String setList : this.lang.getStringList(this.variables(var))) list.add(StringUtils.colorize(setList));
         return list;
     }
 
     @Override
     public boolean getBoolean(final String... var) {
-        if(contains(var))
-            return this.lang.getBoolean(variables(var).toString());
-        return Boolean.parseBoolean(def);
+        return this.lang.getBoolean(variables(var));
     }
 
     @Override
     public boolean contains(final String... var) {
-        return this.lang.contains(variables(var).toString());
+        return this.lang.contains(variables(var));
     }
 
     @Override
     public int getInt(final String... var) {
-        if(contains(var))
-            return this.lang.getInt(variables(var).toString());
-        return Integer.parseInt(def);
+        return this.lang.getInt(variables(var));
     }
 
     @Override
     public double getDouble(final String... var) {
-        if(contains(var))
-            return this.lang.getDouble(variables(var).toString());
-        return Double.parseDouble(def);
+        return this.lang.getDouble(variables(var));
     }
 
+    @SafeVarargs
     @Override
-    public String getCustomString(final String... var) {
-        if (getString(var).startsWith("%prefix%")) {
-            String replace = getString(var).replace("%prefix%", Config.SETTINGS_PREFIX.getString());
+    public final String getCustomString(final String minVar, final Map<String, String>... placeholders) {
+
+        String target = this.getString(this.convertVar(minVar));
+
+        for (Map<String, String> placeholder : placeholders) {
+            for (String key : placeholder.keySet()) target = target.replace(key, placeholder.get(key));
+        }
+
+        if (target.startsWith("%prefix%")) {
+            final String replace = target.replace("%prefix%", Config.SETTINGS_PREFIX.getString());
             if (replace.startsWith(Config.SETTINGS_PREFIX.getString() + "%center%")) {
-                String replace2 = replace.replace("%center%", "");
-                return StringUtils.sendCentered(replace2);
+                final String replace2 = replace.replace("%center%", "");
+                return StringUtils.center(replace2);
             }
             return replace;
         }
-        if(getString(var).startsWith("%center%")) {
-            String replace = getString(var).replace("%center%", "");
-            return StringUtils.sendCentered(replace);
+        if(target.startsWith("%center%")) {
+            final String replace = target.replace("%center%", "");
+            return StringUtils.center(replace);
         }
-        return getString(var);
+        return target;
     }
 
+    @SafeVarargs
     @Override
-    public void send(final CommandSender sender, final String... var) {
-        if (getCustomString(var).isEmpty()) {
-            return;
+    public final String getCustomString(final Map<String, String>... placeholders) {
+
+        String target = this.getString();
+
+        for (Map<String, String> placeholder : placeholders) {
+            for (String key : placeholder.keySet()) target = target.replace(key, placeholder.get(key));
         }
-        sender.sendMessage(getCustomString(var));
+
+        if (target.startsWith("%prefix%")) {
+            final String replace = target.replace("%prefix%", Config.SETTINGS_PREFIX.getString());
+            if (replace.startsWith(Config.SETTINGS_PREFIX.getString() + "%center%")) {
+                final String replace2 = replace.replace("%center%", "");
+                return StringUtils.center(replace2);
+            }
+            return replace;
+        }
+        if(target.startsWith("%center%")) {
+            final String replace = target.replace("%center%", "");
+            return StringUtils.center(replace);
+        }
+        return target;
+    }
+
+    @SafeVarargs
+    @Override
+    public final void send(final CommandSender sender, final String minVar, final Map<String, String>... placeholders) {
+        if (this.getCustomString(minVar, placeholders).isEmpty()) return;
+        sender.sendMessage(this.getCustomString(minVar, placeholders));
+    }
+
+    @SafeVarargs
+    @Override
+    public final void send(final CommandSender sender, final Map<String, String>... placeholders) {
+        if (this.getCustomString(placeholders).isEmpty()) return;
+        sender.sendMessage(this.getCustomString(placeholders));
     }
 
     @Override
@@ -136,8 +169,13 @@ public enum Lang implements IFiles {
         return this.lang.getKeys(false);
     }
 
+    @SuppressWarnings("all")
     @Override
     public Set<String> getConfigurationSection(final String... var) {
-        return this.lang.getConfigurationSection(variables(var).toString()).getKeys( false);
+        return this.lang.getConfigurationSection(this.variables(var)).getKeys( false);
+    }
+
+    private String[] convertVar(final String var) {
+        return var.split("\\.");
     }
 }

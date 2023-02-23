@@ -11,8 +11,8 @@ public class ClearEffectExecutor extends Executors {
     public ClearEffectExecutor(final String execute, final Player player) {
         this.execute = execute;
         this.player = player;
-        if (this.execute.startsWith(getType()))
-            apply();
+        if (!this.execute.startsWith(this.getType())) return;
+        this.apply();
     }
 
     protected String getType() {
@@ -21,8 +21,8 @@ public class ClearEffectExecutor extends Executors {
 
     protected void apply() {
 
-        String effect = execute
-                .replace(getType(), "");
+        final String effect = execute
+                .replace(this.getType(), "");
 
         if(effect.equalsIgnoreCase("all")) {
             this.player.getActivePotionEffects().forEach(effects ->
@@ -31,6 +31,5 @@ public class ClearEffectExecutor extends Executors {
         }
 
         player.removePotionEffect(ConvertUtils.getPotion(effect));
-
     }
 }

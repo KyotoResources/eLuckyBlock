@@ -2,7 +2,7 @@ package it.zS0bye.eLuckyBlock.reflections;
 
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import it.zS0bye.eLuckyBlock.tasks.BossBarAnimationTask;
-import it.zS0bye.eLuckyBlock.checker.VersionChecker;
+import it.zS0bye.eLuckyBlock.utils.VersionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -35,34 +35,26 @@ public class BossBarField {
 
     public void send() {
 
-        if (VersionChecker.getV1_8()) {
-            return;
-        }
+        if (VersionUtils.checkVersion(1.8)) return;
 
-        if(!task.getTimesMap().containsKey(this.player)) {
-            BossBar boss = Bukkit.createBossBar(this.msg, BarColor.valueOf(this.color), BarStyle.valueOf(this.style));
-            task.getTimesMap().put(this.player, boss);
-            boss.addPlayer(this.player);
-            boss.setProgress(this.progress);
-            boss.setVisible(true);
+        if (task.getTimesMap().containsKey(this.player)) return;
+        final BossBar boss = Bukkit.createBossBar(this.msg, BarColor.valueOf(this.color), BarStyle.valueOf(this.style));
+        task.getTimesMap().put(this.player, boss);
+        boss.addPlayer(this.player);
+        boss.setProgress(this.progress);
+        boss.setVisible(true);
 
-            if (seconds == -1) {
-                return;
-            }
-
-            if (seconds >= 0) {
-                if (!this.task.getTimesTask().containsKey(this.player)) {
-                    this.task.getTimesTask().put(this.player, new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            boss.removePlayer(player);
-                            task.getTimesMap().remove(player);
-                            this.cancel();
-                            task.getTimesTask().remove(player);
-                        }
-                    }.runTaskLater(this.plugin, this.seconds * 20L));
+        if (seconds < 1) return;
+        if (!this.task.getTimesTask().containsKey(this.player)) {
+            this.task.getTimesTask().put(this.player, new BukkitRunnable() {
+                @Override
+                public void run() {
+                    boss.removePlayer(player);
+                    task.getTimesMap().remove(player);
+                    this.cancel();
+                    task.getTimesTask().remove(player);
                 }
-            }
+            }.runTaskLater(this.plugin, this.seconds * 20L));
         }
     }
 }

@@ -12,8 +12,8 @@ public class EffectExecutor extends Executors {
     public EffectExecutor(final String execute, final Player player) {
         this.execute = execute;
         this.player = player;
-        if (this.execute.startsWith(getType()))
-            apply();
+        if (!this.execute.startsWith(this.getType())) return;
+        this.apply();
     }
 
     protected String getType() {
@@ -22,18 +22,17 @@ public class EffectExecutor extends Executors {
 
     protected void apply() {
 
-        String effect = execute
-                .replace(getType(), "")
+        final String effect = execute
+                .replace(this.getType(), "")
                 .split(";")[0]
                 .toUpperCase();
-        int level = Integer.parseInt(execute
-                .replace(getType(), "")
+        final int level = Integer.parseInt(execute
+                .replace(this.getType(), "")
                 .split(";")[1]);
-        int time = Integer.parseInt(execute
-                .replace(getType(), "")
+        final int time = Integer.parseInt(execute
+                .replace(this.getType(), "")
                 .split(";")[2]);
 
         player.addPotionEffect(new PotionEffect(ConvertUtils.getPotion(effect), time, level));
-
     }
 }

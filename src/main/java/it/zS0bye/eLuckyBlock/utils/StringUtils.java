@@ -1,38 +1,37 @@
 package it.zS0bye.eLuckyBlock.utils;
 
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
-import it.zS0bye.eLuckyBlock.files.enums.Config;
+import it.zS0bye.eLuckyBlock.imgs.ChatImg;
+import it.zS0bye.eLuckyBlock.imgs.enums.ImageChar;
 import it.zS0bye.eLuckyBlock.utils.enums.FontUtils;
-import me.clip.placeholderapi.PlaceholderAPI;
+import lombok.SneakyThrows;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StringUtils {
 
-    private final static int CENTER_PX = 154;
-
-    public static String getColor(String message) {
+    public static String colorize(String message) {
         if(message == null) {
             ELuckyBlock.getInstance().getLogger()
                     .log(Level.SEVERE, "There was an error searching for a missing message!");
             return "";
         }
-        Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
+        final Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
         Matcher matcher = pattern.matcher(message);
         while (matcher.find()) {
-            String hexCode = message.substring(matcher.start(), matcher.end());
-            String replaceSharp = hexCode.replace('#', 'x');
+            final String hexCode = message.substring(matcher.start(), matcher.end());
+            final String replaceSharp = hexCode.replace('#', 'x');
 
             char[] ch = replaceSharp.toCharArray();
-            StringBuilder builder = new StringBuilder("");
-            for (char c : ch) {
-                builder.append("&").append(c);
-            }
+            final StringBuilder builder = new StringBuilder();
+            for (char c : ch) builder.append("&").append(c);
 
             message = message.replace(hexCode, builder.toString());
             matcher = pattern.matcher(message);
@@ -40,26 +39,20 @@ public class StringUtils {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-    public static String getPapi(Player p, String message) {
-        if(Config.HOOKS_PLACEHOLDERAPI.getBoolean())
-            return PlaceholderAPI.setPlaceholders(p, getColor(message));
-        return getColor(message);
-    }
-
-    public static String sendCentered(String message){
-        message = getColor(message);
+    public static String center(String message) {
+        message = colorize(message);
 
         int messagePxSize = 0;
         boolean previousCode = false;
         boolean isBold = false;
 
-        for(char c : message.toCharArray()){
+        for(char c : message.toCharArray()) {
             if(c == '§'){
                 previousCode = true;
-            }else if(previousCode){
+            } else if(previousCode) {
                 previousCode = false;
                 isBold = c == 'l' || c == 'L';
-            }else{
+            } else {
                 FontUtils dFI = FontUtils.getDefaultFontInfo(c);
                 messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
                 messagePxSize++;
@@ -67,10 +60,11 @@ public class StringUtils {
         }
 
         int halvedMessageSize = messagePxSize / 2;
-        int toCompensate = CENTER_PX - halvedMessageSize;
+        int toCompensate = 154 - halvedMessageSize;
         int spaceLength = FontUtils.SPACE.getLength() + 1;
         int compensated = 0;
-        StringBuilder sb = new StringBuilder();
+
+        final StringBuilder sb = new StringBuilder();
         while(compensated < toCompensate){
             sb.append(" ");
             compensated += spaceLength;
@@ -78,10 +72,16 @@ public class StringUtils {
         return sb + message;
     }
 
-    public static void send(final String msg, final CommandSender sender) {
-        if (msg.isEmpty()) {
-            return;
-        }
+    public static void send(final CommandSender sender, final String msg) {
+        if (msg.isEmpty()) return;
         sender.sendMessage(msg);
+    }
+
+    @SneakyThrows
+    public static void image(final CommandSender sender, final String[] description) {
+        final InputStream png = ELuckyBlock.getInstance().getResource("luckyblock.png");
+        if(png == null) return;
+        final BufferedImage imageToSend = ImageIO.read(png);
+        new ChatImg(imageToSend, 8, ImageChar.BLOCK.getChar()).appendCenteredText(description).send(sender);
     }
 }

@@ -12,8 +12,8 @@ public class ItemExecutor extends Executors {
     public ItemExecutor(final String execute, final Location location) {
         this.execute = execute;
         this.location = location;
-        if (this.execute.startsWith(getType()))
-            apply();
+        if (!this.execute.startsWith(this.getType())) return;
+        this.apply();
     }
 
     protected String getType() {
@@ -22,22 +22,19 @@ public class ItemExecutor extends Executors {
 
     protected void apply() {
 
-        String material = execute
-                .replace(getType(), "")
+        final String material = execute
+                .replace(this.getType(), "")
                 .split(";")[0]
                 .toUpperCase();
 
-        int durability = Integer.parseInt(execute
-                .replace(getType(), "")
+        final int durability = Integer.parseInt(execute
+                .replace(this.getType(), "")
                 .split(";")[1]);
 
-        ItemStack item = new ItemStack(ConvertUtils.getMaterial(material), (short) durability);
+        final ItemStack item = new ItemStack(ConvertUtils.getMaterial(material), (short) durability);
 
-        if(this.location.getWorld() == null) {
-            return;
-        }
+        if(this.location.getWorld() == null) return;
 
         this.location.getWorld().dropItem(this.location, item);
-
     }
 }

@@ -11,8 +11,8 @@ public class SpawnMobExecutor extends Executors {
     public SpawnMobExecutor(final String execute, final Location location) {
         this.execute = execute;
         this.location = location;
-        if (this.execute.startsWith(getType()))
-            apply();
+        if (!this.execute.startsWith(this.getType())) return;
+        this.apply();
     }
 
     protected String getType() {
@@ -21,15 +21,12 @@ public class SpawnMobExecutor extends Executors {
 
     protected void apply() {
 
-        String mob = execute
-                .replace(getType(), "")
+        final String mob = execute
+                .replace(this.getType(), "")
                 .toUpperCase();
 
-        if(this.location.getWorld() == null) {
-            return;
-        }
+        if(this.location.getWorld() == null) return;
 
         this.location.getWorld().spawnEntity(this.location, EntityType.valueOf(mob));
-
     }
 }

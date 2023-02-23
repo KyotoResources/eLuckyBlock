@@ -3,7 +3,6 @@ package it.zS0bye.eLuckyBlock.utils;
 import com.cryptomorin.xseries.XMaterial;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import it.zS0bye.eLuckyBlock.checker.VersionChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -95,11 +94,7 @@ public class ItemUtils {
 
     public static ItemStack createSkull(String player, int amount, String name, List<String> lore) {
 
-        if(VersionChecker.getV1_8()
-                || VersionChecker.getV1_9()
-                || VersionChecker.getV1_10()
-                || VersionChecker.getV1_11()
-                || VersionChecker.getV1_12()) {
+        if(VersionUtils.legacy()) {
             return legacySkull(player, amount, name, lore);
         }else {
             return latestSkull(Bukkit.getOfflinePlayer(player), amount, name, lore);
@@ -109,11 +104,7 @@ public class ItemUtils {
 
     public static ItemStack createSkull(int amount, String name, List<String> lore, String value) {
 
-        if(VersionChecker.getV1_8()
-                || VersionChecker.getV1_9()
-                || VersionChecker.getV1_10()
-                || VersionChecker.getV1_11()
-                || VersionChecker.getV1_12()) {
+        if(VersionUtils.legacy()) {
             return legacySkull(amount, name, lore, value);
         }else {
             return latestSkull(amount, name, lore, value);

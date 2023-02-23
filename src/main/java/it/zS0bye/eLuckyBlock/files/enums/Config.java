@@ -8,53 +8,57 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public enum Config implements IFiles {
-    SETTINGS_PREFIX("Settings.prefix", " &d❏ ₑLuckyBlock ┃ &7"),
-    CHECK_UPDATE_ENABLED("Settings.check_update.enabled", "true"),
-    CHECK_UPDATE_TYPE("Settings.check_update.type", "NORMAL"),
-    HOOKS_PLACEHOLDERAPI("Settings.hooks.PlaceholderAPI", "false"),
-    HOOKS_WORLDGUARD("Settings.hooks.WorldGuard", "false"),
-    HOOKS_WORLDEDIT("Settings.hooks.WorldEdit", "false"),
-    HOOKS_VAULT("Settings.hooks.Vault", "false"),
-    HOOKS_TOKENENCHANT("Settings.hooks.TokenEnchant", "false"),
-    HOOKS_TOKENMANAGER("Settings.hooks.TokenManager", "false"),
-    HOOKS_ULTRAPRISONCORE("Settings.hooks.UltraPrisonCore", "false"),
-    HOOKS_PLOTSQUARED("Settings.hooks.PlotSquared", "false"),
-    DB_TYPE("Storage.type", "SQLite"),
-    DB_NAME("Storage.mysql.database", "eLuckyBlock"),
-    DB_HOST("Storage.mysql.hostname", "localhost"),
-    DB_PORT("Storage.mysql.port", "3306"),
-    DB_USER("Storage.mysql.user", "root"),
-    DB_PASSWORD("Storage.mysql.password", "MyPassword"),
-    DB_CUSTOMURI("Storage.mysql.advanced.customURI", "jdbc:mysql://%host%:%port%/%database%?useSSL=false"),
-    DB_MAXIMUM_POOL_SIZE("Storage.pool_settings.maximum_pool_size", ""),
-    DB_MINIMUM_IDLE("Storage.pool_settings.minimum_idle", ""),
-    DB_MAXIMUM_LIFETIME("Storage.pool_settings.maximum_lifetime", ""),
-    DB_KEEPALIVE_TIME("Storage.pool_settings.keepalive_time", ""),
-    DB_CONNECTION_TIMEOUT("Storage.pool_settings.connection_timeout", "");
+    SETTINGS_PREFIX("Settings.prefix"),
+    SETTINGS_LOCALE("Settings.locale"),
+    CHECK_UPDATE_ENABLED("Settings.check_update.enabled"),
+    CHECK_UPDATE_TYPE("Settings.check_update.type"),
+    HOOKS_PLACEHOLDERAPI("Settings.hooks.PlaceholderAPI"),
+    HOOKS_WORLDGUARD("Settings.hooks.WorldGuard"),
+    HOOKS_WORLDEDIT("Settings.hooks.WorldEdit"),
+    HOOKS_VAULT("Settings.hooks.Vault"),
+    HOOKS_TOKENENCHANT("Settings.hooks.TokenEnchant"),
+    HOOKS_TOKENMANAGER("Settings.hooks.TokenManager"),
+    HOOKS_PLOTSQUARED("Settings.hooks.PlotSquared"),
+    DB_TYPE("Storage.type"),
+    DB_NAME("Storage.mysql.database"),
+    DB_HOST("Storage.mysql.hostname"),
+    DB_PORT("Storage.mysql.port"),
+    DB_USER("Storage.mysql.user"),
+    DB_PASSWORD("Storage.mysql.password"),
+    DB_CUSTOMURI("Storage.mysql.advanced.customURI"),
+    DB_MAXIMUM_POOL_SIZE("Storage.pool_settings.maximum_pool_size"),
+    DB_MINIMUM_IDLE("Storage.pool_settings.minimum_idle"),
+    DB_MAXIMUM_LIFETIME("Storage.pool_settings.maximum_lifetime"),
+    DB_KEEPALIVE_TIME("Storage.pool_settings.keepalive_time"),
+    DB_CONNECTION_TIMEOUT("Storage.pool_settings.connection_timeout");
 
     private final String path;
-    private final String def;
     private final ELuckyBlock plugin;
     private FileConfiguration config;
 
-    Config(String path, String def) {
+    Config(final String path) {
         this.path = path;
-        this.def = def;
         this.plugin = ELuckyBlock.getInstance();
-        this.config = this.plugin.getConfig();
+        this.reloadConfig();
     }
 
     @Override
-    public StringBuilder variables(final String... var) {
+    public String variables(final String... var) {
         StringBuilder builder = new StringBuilder();
         for(String texts : var) {
             builder.append(texts);
         }
         builder.append(path);
-        return builder;
+        return builder.toString();
+    }
+
+    @Override
+    public String getPath() {
+        return this.path;
     }
 
     @Override
@@ -64,76 +68,98 @@ public enum Config implements IFiles {
 
     @Override
     public String getString(final String... var) {
-        if(contains(var))
-            return StringUtils.getColor(this.config.getString(variables(var).toString()));
-        return StringUtils.getColor(def);
+        return StringUtils.colorize(this.config.getString(this.variables(var)));
     }
 
     @Override
     public List<String> getStringList(final String... var) {
         List<String> list = new ArrayList<>();
-        if(contains(var)) {
-            for (String setList : this.config.getStringList(variables(var).toString())) {
-                list.add(StringUtils.getColor(setList));
-            }
-        }
-        if(def.contains(",")) {
-            for (String setList : def.split(",")) {
-                list.add(StringUtils.getColor(setList));
-            }
-        }
+        for (String setList : this.config.getStringList(this.variables(var))) list.add(StringUtils.colorize(setList));
         return list;
     }
 
     @Override
     public boolean getBoolean(final String... var) {
-        if(contains(var))
-            return this.config.getBoolean(variables(var).toString());
-        return Boolean.parseBoolean(def);
+        return this.config.getBoolean(this.variables(var));
     }
 
     @Override
     public boolean contains(final String... var) {
-        return this.config.contains(variables(var).toString());
+        return this.config.contains(this.variables(var));
     }
 
     @Override
     public int getInt(final String... var) {
-        if(contains(var))
-            return this.config.getInt(variables(var).toString());
-        return Integer.parseInt(def);
+        return this.config.getInt(this.variables(var));
     }
 
     @Override
     public double getDouble(final String... var) {
-        if(contains(var))
-            return this.config.getDouble(variables(var).toString());
-        return Double.parseDouble(def);
+        return this.config.getDouble(this.variables(var));
     }
 
+    @SafeVarargs
     @Override
-    public String getCustomString(final String... var) {
-        if (getString(var).startsWith("%prefix%")) {
-            String replace = getString(var).replace("%prefix%", SETTINGS_PREFIX.getString());
+    public final String getCustomString(final String minVar, final Map<String, String>... placeholders) {
+
+        String target = this.getString(this.convertVar(minVar));
+
+        for (Map<String, String> placeholder : placeholders) {
+            for (String key : placeholder.keySet()) target = target.replace(key, placeholder.get(key));
+        }
+
+        if (target.startsWith("%prefix%")) {
+            final String replace = target.replace("%prefix%", SETTINGS_PREFIX.getString());
             if (replace.startsWith(SETTINGS_PREFIX.getString() + "%center%")) {
-                String replace2 = replace.replace("%center%", "");
-                return StringUtils.sendCentered(replace2);
+                final String replace2 = replace.replace("%center%", "");
+                return StringUtils.center(replace2);
             }
             return replace;
         }
-        if(getString(var).startsWith("%center%")) {
-            String replace = getString(var).replace("%center%", "");
-            return StringUtils.sendCentered(replace);
+        if(target.startsWith("%center%")) {
+            final String replace = target.replace("%center%", "");
+            return StringUtils.center(replace);
         }
-        return getString();
+        return target;
     }
 
+    @SafeVarargs
     @Override
-    public void send(final CommandSender sender, final String... var) {
-        if (getCustomString(var).isEmpty()) {
-            return;
+    public final String getCustomString(final Map<String, String>... placeholders) {
+
+        String target = this.getString();
+
+        for (Map<String, String> placeholder : placeholders) {
+            for (String key : placeholder.keySet()) target = target.replace(key, placeholder.get(key));
         }
-        sender.sendMessage(getCustomString(var));
+
+        if (target.startsWith("%prefix%")) {
+            final String replace = target.replace("%prefix%", SETTINGS_PREFIX.getString());
+            if (replace.startsWith(SETTINGS_PREFIX.getString() + "%center%")) {
+                final String replace2 = replace.replace("%center%", "");
+                return StringUtils.center(replace2);
+            }
+            return replace;
+        }
+        if(target.startsWith("%center%")) {
+            final String replace = target.replace("%center%", "");
+            return StringUtils.center(replace);
+        }
+        return target;
+    }
+
+    @SafeVarargs
+    @Override
+    public final void send(final CommandSender sender, final String minVar, final Map<String, String>... placeholders) {
+        if (this.getCustomString(minVar, placeholders).isEmpty()) return;
+        sender.sendMessage(this.getCustomString(minVar, placeholders));
+    }
+
+    @SafeVarargs
+    @Override
+    public final void send(final CommandSender sender, final Map<String, String>... placeholders) {
+        if (this.getCustomString(placeholders).isEmpty()) return;
+        sender.sendMessage(this.getCustomString(placeholders));
     }
 
     @Override
@@ -141,9 +167,14 @@ public enum Config implements IFiles {
         return this.config.getKeys(false);
     }
 
+    @SuppressWarnings("all")
     @Override
     public Set<String> getConfigurationSection(final String... var) {
-        return this.config.getConfigurationSection(variables(var).toString()).getKeys( false);
+        return this.config.getConfigurationSection(this.variables(var)).getKeys( false);
+    }
+
+    private String[] convertVar(final String var) {
+        return var.split("\\.");
     }
 
 }

@@ -1,0 +1,79 @@
+#
+#  .,::::::       :::      ...    :::  .,-:::::  :::  .  .-:.     ::-.:::::::.   :::         ...       .,-:::::  :::  .
+#  ;;;;''''       ;;;      ;;     ;;;,;;;'````'  ;;; .;;,.';;.   ;;;;' ;;;'';;'  ;;;      .;;;;;;;.  ,;;;'````'  ;;; .;;,.
+#   [[cccc        [[[     [['     [[[[[[         [[[[[/'    '[[,[[['   [[[__[[\. [[[     ,[[     \[[,[[[         [[[[[/'
+#   $$""""        $$'     $$      $$$$$$        _$$$$,        c$$"     $$""""Y$$ $$'     $$$,     $$$$$$        _$$$$,
+#   888oo,__     o88oo,.__88    .d888`88bo,__,o,"888"88o,   ,8P"`     _88o,,od8Po88oo,.__"888,_ _,88P`88bo,__,o,"888"88o,
+#   """"YUMMM    """"YUMMM "YmmMMMM""  "YUMMMMMP"MMM "MMP" mM"        ""YUMMMP" """"YUMMM  "YMMMMMP"   "YUMMMMMP"MMM "MMP"
+#
+#   Version: 2.0
+#   Messages - it_IT [Italiano]
+#
+#   Wiki: https://zs0bye.gitbook.io/eluckyblock/plugins/eluckyblock-free
+#
+
+
+# ------------------
+# General Messages
+player_not_found: '%prefix%&cPlayer not found.'
+is_not_number: '%prefix%&cPlease enter a valid number.'
+only_positive_numbers: '%prefix%&cThe number entered must be greater than 0, and cannot be negative!'
+insufficient_permissions: '%prefix%&cYou don''t have enough permissions.'
+update_notification: '%prefix%A new update is available! Download version &d%new%&7 from &dhttps://www.spigotmc.org/resources/eluckyblock.97759/&7, you currently have version &d%old%&7.'
+
+
+# ------------------
+# Help Command Messages
+Help_Command:
+  users:
+    texts:
+      - ''
+      - '&5 ┃ &d%version%'
+      - ''
+      - '&5 ┃ &e[] &7⁼ &7Optional'
+      - '&5 ┃ &c‹› &7⁼ &7Required'
+      - ''
+      - '&5 ┃ &f/%command% help &7‑ &dOpen this page.'
+      - '&5 ┃ &f/%command% about &7‑ &dShow plug-in info.'
+      - '&5 ┃ &f/%command% reload &7‑ &dReload configurations.'
+      - '&5 ┃ &f/%command% info &e[player] &7‑ &dShow the breaks LuckyBlocks.'
+      - '&5 ┃ &f/%command% give &c<player> <lucky> &e[amount] &7‑ &dGive a player some LuckyBlocks.'
+      - '&5 ┃ &f/%command% citem &c<name> &7- &dAdd a custom item that you have in your main hand.'
+      - ''
+      - '&5 ┃ &d%author%'
+      - ''
+
+
+# ------------------
+# Reload Command Messages
+Reload_Command:
+  admins:
+    configurations: '%prefix%The configurations have been reloaded!'
+
+
+# ------------------
+# Info Command Messages
+Info_Command:
+  users:
+    current_breaks: '%prefix%You have &d%lbBreaks% &7breaks LuckyBlocks.'
+  admins:
+    player_breaks: '%prefix%&f%player%&7 has &d%lbBreaks% &7breaks LuckyBlocks.'
+
+
+# ------------------
+# Give Command Messages
+Give_Command:
+  admins:
+    sender: '%prefix%You gave &d%luckyblock% x%amount% &7to &d%receiver%&7.'
+    receiver: '%prefix%You received &d%luckyblock% x%amount% &7by &d%sender%&7.'
+  errors:
+    not_unique: '%prefix%&cYou cannot give a luckyblock that is not unique!'
+    not_exist: '%prefix%&cThis LuckyBlock does not exist!'
+
+
+# ------------------
+# CItem Command Messages
+CItem_Command:
+  admins:
+    create: '%prefix%You have added the item "&b%item%&7" between the custom items.'
+    update: '%prefix%You have updated the item "&b%item%&7" between the custom items.'

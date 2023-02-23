@@ -2,8 +2,8 @@ package it.zS0bye.eLuckyBlock.tasks;
 
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import it.zS0bye.eLuckyBlock.files.enums.Animations;
+import it.zS0bye.eLuckyBlock.hooks.HooksManager;
 import it.zS0bye.eLuckyBlock.reflections.BossBarField;
-import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -16,6 +16,7 @@ public class BossBarAnimationTask extends BukkitRunnable {
 
     private final ELuckyBlock plugin;
     private final Player player;
+    private final HooksManager hooks;
     private String execute;
     private String type;
     private String animation;
@@ -32,6 +33,7 @@ public class BossBarAnimationTask extends BukkitRunnable {
     public BossBarAnimationTask(final ELuckyBlock plugin, final Player player) {
         this.plugin = plugin;
         this.player = player;
+        this.hooks = plugin.getHooks();
     }
 
     public BossBarAnimationTask(final ELuckyBlock plugin, final Player player, final String execute, final String type, final String animation, final String color, final String style, final double progress, final int times) {
@@ -44,22 +46,23 @@ public class BossBarAnimationTask extends BukkitRunnable {
         this.style = style;
         this.progress = progress;
         this.times = times;
+        this.hooks = plugin.getHooks();
     }
 
     @Override
     public void run() {
 
-        String[] executor = this.execute
+        final String[] executor = this.execute
                 .replace(this.type, "")
                 .split(";")[0]
                 .split("%animation_" + this.animation + "%");
-        String[] bossbar = Animations.TEXTS.getStringList(animation).toArray(new String[0]);
+        final String[] bossbar = Animations.TEXTS.getStringList(animation).toArray(new String[0]);
 
         String left = "";
         String right = "";
-        if(executor.length == 1) {
-            left = executor[0];
-        }
+
+        if(executor.length == 1) left = executor[0];
+
         if(executor.length == 2) {
             left = executor[0];
             right = executor[1];
@@ -68,15 +71,13 @@ public class BossBarAnimationTask extends BukkitRunnable {
         if (ticks.get(player) != bossbar.length) {
             if (ticks.get(player) == 0) {
                 new BossBarField(this.plugin, player,
-                        StringUtils.getPapi(this.player, bossbar[0]),
+                        this.hooks.getPlaceholders(this.player, bossbar[0]),
                         color, style, progress, times);
-            }else {
-                if(timesMap.containsKey(player)) {
-                    timesMap.get(player).setTitle(StringUtils.getPapi(this.player, left + bossbar[ticks.get(player)] + right));
-                }
+            } else {
+                if(timesMap.containsKey(player)) timesMap.get(player).setTitle(this.hooks.getPlaceholders(this.player, left + bossbar[ticks.get(player)] + right));
             }
         } else {
-            stopTask();
+            this.stopTask();
         }
         ticks.put(player, ticks.get(player) + 1);
     }
@@ -98,11 +99,10 @@ public class BossBarAnimationTask extends BukkitRunnable {
     }
 
     public void stopTask() {
-        if(task.containsKey(this.player)) {
-            task.get(this.player).cancel();
-            task.remove(this.player);
-            ticks.put(this.player, 0);
-        }
+        if(!task.containsKey(this.player)) return;
+        task.get(this.player).cancel();
+        task.remove(this.player);
+        ticks.put(this.player, 0);
     }
 
     public void stopTimes() {

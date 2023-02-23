@@ -2,38 +2,37 @@ package it.zS0bye.eLuckyBlock.executors;
 
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import it.zS0bye.eLuckyBlock.files.enums.Animations;
+import it.zS0bye.eLuckyBlock.hooks.HooksManager;
 import it.zS0bye.eLuckyBlock.tasks.ActionAnimationTask;
-import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import it.zS0bye.eLuckyBlock.files.enums.Config;
 import it.zS0bye.eLuckyBlock.reflections.ActionField;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
-import java.util.Map;
 
 public class ActionExecutor extends Executors {
 
+    private final ELuckyBlock plugin;
     private final String execute;
     private final Player player;
-    private final ActionAnimationTask task;
+    private final HooksManager hooks;
 
-    public ActionExecutor(final String execute, final Player player) {
+    public ActionExecutor(final ELuckyBlock plugin, final String execute, final Player player) {
+        this.plugin = plugin;
         this.execute = execute;
         this.player = player;
-        this.task = new ActionAnimationTask(this.player);
-        if (this.execute.startsWith(getType()))
-            apply();
+        this.hooks = plugin.getHooks();
+        if (!this.execute.startsWith(this.getType())) return;
+        this.apply();
     }
 
     @Override
-    protected void startTask(String getAnimation) {
-        super.startTask(getAnimation);
+    protected void startTask(final Player player, final String animation) {
+        super.startTask(player, animation);
 
-        ActionAnimationTask task = new ActionAnimationTask(this.player, this.execute, getType(), getAnimation);
+        final ActionAnimationTask task = new ActionAnimationTask(this.plugin, player, this.execute, this.getType(), animation);
 
         task.getTicks().put(player, 0);
-        task.getTask().put(this.player,
-                        task.runTaskTimerAsynchronously(ELuckyBlock.getInstance(), 0L, Animations.INTERVAL.getInt(getAnimation)));
-
+        task.getTask().put(player, task.runTaskTimerAsynchronously(this.plugin, 0L, Animations.INTERVAL.getInt(animation)));
     }
 
     protected String getType() {
@@ -42,20 +41,30 @@ public class ActionExecutor extends Executors {
 
     protected void apply() {
 
-        String msg = StringUtils.getPapi(this.player, execute
-                .replace(getType(), "")
+        final String msg = this.hooks.getPlaceholders(this.player, execute
+                .replace(this.getType(), "")
                 .replace("%prefix%", Config.SETTINGS_PREFIX.getString()));
 
-        for (String getAnimation : Animations.ANIMATIONS.getKeys()) {
-            if (msg.contains("%animation_" + getAnimation + "%")) {
-                this.task.stopTask();
-                startTask(getAnimation);
+        if(msg.startsWith("@")) {
+            Bukkit.getOnlinePlayers().forEach(players -> this.run(players, msg));
+            return;
+        }
+
+        this.run(this.player, msg);
+    }
+
+    private void run(final Player player, String msg) {
+        msg = msg.replaceFirst("@", "");
+        final ActionAnimationTask task = new ActionAnimationTask(this.plugin, player);
+        for (final String animation : Animations.ANIMATIONS.getKeys()) {
+            if (msg.contains("%animation_" + animation + "%")) {
+                task.stopTask();
+                this.startTask(player, animation);
                 return;
             }
         }
 
-        this.task.stopTask();
+        task.stopTask();
         new ActionField(player, msg);
-
     }
 }

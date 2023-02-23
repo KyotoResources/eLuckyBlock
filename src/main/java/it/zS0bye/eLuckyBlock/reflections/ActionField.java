@@ -1,7 +1,7 @@
 package it.zS0bye.eLuckyBlock.reflections;
 
-import it.zS0bye.eLuckyBlock.utils.StringUtils;
-import it.zS0bye.eLuckyBlock.checker.VersionChecker;
+import it.zS0bye.eLuckyBlock.utils.VersionUtils;
+import lombok.SneakyThrows;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -12,70 +12,45 @@ import java.lang.reflect.Constructor;
 public class ActionField {
 
     private final Player player;
-    private String msg;
+    private final String msg;
 
     public ActionField(final Player player, final String msg) {
         this.player = player;
         this.msg = msg;
-        send();
+        this.send();
     }
 
-    public void send() {
+    @SneakyThrows
+    private void send() {
 
-        if (!VersionChecker.getV1_8()
-        && !VersionChecker.getV1_9()
-        && !VersionChecker.getV1_10()) {
+        if (!VersionUtils.checkVersion(1.8, 1.9, 1.10)) {
             this.player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(this.msg));
             return;
         }
 
-        Class<?> chatSerializer = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0];
-        Class<?> chatComponent = getNMSClass("IChatBaseComponent");
-        Class<?> packetActionbar = getNMSClass("PacketPlayOutChat");
+        final Class<?> chatSerializer = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0];
+        final Class<?> chatComponent = getNMSClass("IChatBaseComponent");
+        final Class<?> packetActionbar = getNMSClass("PacketPlayOutChat");
 
-        try {
+        Constructor<?> ConstructorActionbar;
+        ConstructorActionbar = packetActionbar.getDeclaredConstructor(chatComponent, byte.class);
 
-            Constructor<?> ConstructorActionbar;
-            ConstructorActionbar = packetActionbar.getDeclaredConstructor(chatComponent, byte.class);
-
-            Object actionbar = chatSerializer.getMethod("a", String.class).invoke(chatSerializer, "{\"text\": \"" + this.msg + "\"}");
-            Object packet = ConstructorActionbar.newInstance(actionbar, (byte) 2);
-            sendPacket(player, packet);
-
-        } catch (Exception ex) {
-
-            ex.printStackTrace();
-        }
+        final Object actionbar = chatSerializer.getMethod("a", String.class).invoke(chatSerializer, "{\"text\": \"" + this.msg + "\"}");
+        final Object packet = ConstructorActionbar.newInstance(actionbar, (byte) 2);
+        this.sendPacket(packet);
     }
 
-    public static void sendPacket(Player player, Object packet) {
-
-        try {
-
-            Object handle = player.getClass().getMethod("getHandle").invoke(player);
-            Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
-            playerConnection.getClass().getMethod("sendPacket", getNMSClass("Packet")).invoke(playerConnection, packet);
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
+    @SneakyThrows
+    private void sendPacket(final Object packet) {
+        Object handle = this.player.getClass().getMethod("getHandle").invoke(this.player);
+        Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
+        playerConnection.getClass().getMethod("sendPacket", getNMSClass("Packet")).invoke(playerConnection, packet);
     }
 
-    public static Class<?> getNMSClass(String name) {
-
-        String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-
-        try {
-
-            return Class.forName("net.minecraft.server." + version + "." + name);
-
-        } catch (ClassNotFoundException e) {
-
-            e.printStackTrace();
-            return null;
-        }
+    @SneakyThrows
+    private Class<?> getNMSClass(final String name) {
+        final String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        return Class.forName("net.minecraft.server." + version + "." + name);
     }
-
 
 }

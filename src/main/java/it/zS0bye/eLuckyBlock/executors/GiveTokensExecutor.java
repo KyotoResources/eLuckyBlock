@@ -1,5 +1,6 @@
 package it.zS0bye.eLuckyBlock.executors;
 
+import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import it.zS0bye.eLuckyBlock.hooks.HooksManager;
 import org.bukkit.entity.Player;
 
@@ -7,12 +8,14 @@ public class GiveTokensExecutor extends Executors {
 
     private final String execute;
     private final Player player;
+    private final HooksManager hooks;
 
-    public GiveTokensExecutor(final String execute, final Player player) {
+    public GiveTokensExecutor(final ELuckyBlock plugin, final String execute, final Player player) {
         this.execute = execute;
         this.player = player;
-        if (this.execute.startsWith(getType()))
-            apply();
+        this.hooks = plugin.getHooks();
+        if (!this.execute.startsWith(this.getType())) return;
+        this.apply();
     }
 
 
@@ -24,9 +27,9 @@ public class GiveTokensExecutor extends Executors {
     @Override
     protected void apply() {
 
-        double tokens = Double.parseDouble(execute
-                .replace(getType(), ""));
+        final double tokens = Double.parseDouble(execute
+                .replace(this.getType(), ""));
 
-        HooksManager.giveTokens(player, tokens);
+        this.hooks.giveTokens(player, tokens);
     }
 }

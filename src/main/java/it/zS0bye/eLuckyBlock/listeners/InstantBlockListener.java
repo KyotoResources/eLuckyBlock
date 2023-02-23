@@ -1,9 +1,7 @@
 package it.zS0bye.eLuckyBlock.listeners;
 
 import it.zS0bye.eLuckyBlock.checker.LuckyChecker;
-import it.zS0bye.eLuckyBlock.files.enums.Lucky;
-import it.zS0bye.eLuckyBlock.hooks.HooksManager;
-import it.zS0bye.eLuckyBlock.hooks.enums.Hooks;
+import it.zS0bye.eLuckyBlock.files.enums.LuckyFile;
 import it.zS0bye.eLuckyBlock.objects.OpenLuckyBlock;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -32,16 +30,16 @@ public class InstantBlockListener implements Listener {
         if(block == null)
             return;
 
-        if(!Lucky.INSTANT_BREAK.getBoolean(luckyblocks))
+        if(!LuckyFile.INSTANT_BREAK.getBoolean(luckyblocks))
             return;
 
         if (new LuckyChecker(player, block, world, region, luckyblocks)
                 .check())
             return;
 
-        if(Hooks.PLOTSQUARED.isCheck() &&
-                !HooksManager.checkPlot(player.getUniqueId()))
-            return;
+//        if(Hooks.PLOTSQUARED.isCheck() &&
+//                !HooksManager.checkPlot(player.getUniqueId()))
+//            return;
 
         if(e.getAction() != Action.LEFT_CLICK_BLOCK)
             return;
