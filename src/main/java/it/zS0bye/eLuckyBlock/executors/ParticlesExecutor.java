@@ -15,8 +15,8 @@ public class ParticlesExecutor extends Executors {
         this.execute = execute;
         this.player = player;
         this.location = location;
-        if (!this.execute.startsWith(this.getType())) return;
-        this.apply();
+        if (this.execute.startsWith(getType()))
+            apply();
     }
 
     @Override
@@ -27,8 +27,8 @@ public class ParticlesExecutor extends Executors {
     @Override
     protected void apply() {
 
-        final String particles = execute
-                .replace(this.getType(), "");
+        String particles = execute
+                .replace(getType(), "");
 
         if(particles.startsWith("block-")) {
             String block = particles.split("block-")[1];
@@ -39,5 +39,6 @@ public class ParticlesExecutor extends Executors {
         this.player.playEffect(this.location,
                 ConvertUtils.getParticles(particles),
                 ConvertUtils.getParticles(particles).getData());
+
     }
 }

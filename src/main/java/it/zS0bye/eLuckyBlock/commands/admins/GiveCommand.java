@@ -1,60 +1,53 @@
-package it.zS0bye.eLuckyBlock.commands.subcmds;
+package it.zS0bye.eLuckyBlock.commands.admins;
 
 import it.zS0bye.eLuckyBlock.api.ILuckyBlockAPI;
 import it.zS0bye.eLuckyBlock.commands.BaseCommand;
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
-import it.zS0bye.eLuckyBlock.files.LuckyBlocksFile;
-import it.zS0bye.eLuckyBlock.files.enums.LuckyFile;
+import it.zS0bye.eLuckyBlock.files.enums.Lucky;
 import it.zS0bye.eLuckyBlock.utils.ItemUtils;
 import it.zS0bye.eLuckyBlock.files.enums.Lang;
 import it.zS0bye.eLuckyBlock.utils.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class GiveSubCMD extends BaseCommand {
+public class GiveCommand extends BaseCommand {
 
-    private final String command;
-    private final String permission;
     private String[] args;
     private final CommandSender sender;
     private ELuckyBlock plugin;
 
-    public GiveSubCMD(final String command, final String[] args, final CommandSender sender, final ELuckyBlock plugin) {
-        this.command = command;
-        this.permission = this.command + ".command." + this.getName();
+    public GiveCommand(final String[] args, final CommandSender sender, final ELuckyBlock plugin) {
         this.args = args;
         this.sender = sender;
         this.plugin = plugin;
-        if(!args[0].equalsIgnoreCase(this.getName())) return;
-        this.execute();
+        if(args[0].equalsIgnoreCase(getName()))
+            execute();
     }
 
-    public GiveSubCMD(final String command, final List<String> tab, final CommandSender sender) {
-        this.command = command;
-        this.permission = this.command + ".command." + this.getName();
+    public GiveCommand(final List<String> tab, final CommandSender sender) {
         this.sender = sender;
-        if(!sender.hasPermission(this.permission)) return;
+        if(sender.hasPermission("eluckyblock.command.give"))
         tab.add(getName());
     }
 
-    public GiveSubCMD(final String command, final List<String> tab, final String[] args, final CommandSender sender, final ELuckyBlock plugin) {
-        this.command = command;
-        this.permission = this.command + ".command." + this.getName();
+    public GiveCommand(final List<String> tab, final String[] args, final CommandSender sender, final ELuckyBlock plugin) {
         this.sender = sender;
         this.plugin = plugin;
-        if(!args[0].equalsIgnoreCase(this.getName())) return;
+        if(!args[0].equalsIgnoreCase(getName())) {
+            return;
+        }
         if(args.length == 2)
             Bukkit.getOnlinePlayers().forEach(players -> {
-                if(!sender.hasPermission(this.permission)) return;
+                if(sender.hasPermission("eluckyblock.command.give"))
                 tab.add(players.getName());
             });
         if(args.length == 3)
-            LuckyBlocksFile.getFiles(this.plugin).forEach(luckyblocks -> {
-                if(!LuckyFile.UNIQUE_CHECK_ENABLED.getBoolean(luckyblocks)) return;
+            this.plugin.getLucky().getConfig().getKeys(false).forEach(luckyblocks -> {
+                if(Lucky.UNIQUE_CHECK_ENABLED.getBoolean(luckyblocks))
                 tab.add(luckyblocks);
             });
     }
@@ -66,7 +59,7 @@ public class GiveSubCMD extends BaseCommand {
 
     @Override
     protected void execute() {
-        if(!sender.hasPermission(this.permission)) {
+        if(!sender.hasPermission("eluckyblock.command.give")) {
             Lang.INSUFFICIENT_PERMISSIONS.send(sender);
             return;
         }
@@ -81,12 +74,12 @@ public class GiveSubCMD extends BaseCommand {
 
         int amount = 1;
 
-        if(!LuckyBlocksFile.getFiles(this.plugin).contains(args[2])) {
+        if(!this.plugin.getLucky().getConfig().contains(args[2])) {
             Lang.GIVE_ERRORS_NOT_EXIST.send(sender);
             return;
         }
 
-        if(!LuckyFile.UNIQUE_CHECK_ENABLED.getBoolean(args[2])) {
+        if(!Lucky.UNIQUE_CHECK_ENABLED.getBoolean(args[2])) {
             Lang.GIVE_ERRORS_NOT_UNIQUE.send(sender);
             return;
         }
@@ -120,8 +113,8 @@ public class GiveSubCMD extends BaseCommand {
                 .replace("%sender%", sender.getName());
 
 
-        StringUtils.send(sender, senderMsg);
-        StringUtils.send(other, receiverMsg);
+        StringUtils.send(senderMsg, sender);
+        StringUtils.send(receiverMsg, other);
     }
 
 }

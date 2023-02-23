@@ -17,24 +17,25 @@ public class FireworksExecutor extends Executors {
     private final Location location;
     private final TimerFireworksTask task;
 
-    public FireworksExecutor(final ELuckyBlock plugin, final String execute, final Player player, final Location location) {
-        this.plugin = plugin;
+    public FireworksExecutor(final String execute, final Player player, final Location location) {
+        this.plugin = ELuckyBlock.getInstance();
         this.execute = execute;
         this.player = player;
         this.location = location;
         this.task = new TimerFireworksTask(this.plugin, this.player);
-        if (!this.execute.startsWith(this.getType())) return;
-        this.apply();
+        if (this.execute.startsWith(getType()))
+            apply();
     }
 
     @Override
-    protected void startTask(final String type, final List<String> colors, final int delay, final int times) {
+    protected void startTask(String type, List<String> colors, int delay, int times) {
         super.startTask(type, colors, delay, times);
 
-        final TimerFireworksTask task = new TimerFireworksTask(this.plugin, this.player, this.location, type, colors, times);
+        TimerFireworksTask task = new TimerFireworksTask(this.plugin, this.player, this.location, type, colors, times);
 
         task.getTicks().put(this.player, 0);
-        task.getTask().put(this.player, task.runTaskTimer(this.plugin, delay, 20L));
+        task.getTask().put(this.player,
+                task.runTaskTimer(this.plugin, delay, 20L));
     }
 
     @Override
@@ -45,11 +46,11 @@ public class FireworksExecutor extends Executors {
     @Override
     protected void apply() {
 
-        final String name = execute
-                .replace(this.getType(), "");
+        String name = execute
+                .replace(getType(), "");
 
-        final int times = Fireworks.TIMES.getInt(name);
-        final List<String> colors = Fireworks.COLORS.getStringList(name);
+        int times = Fireworks.TIMES.getInt(name);
+        List<String> colors = Fireworks.COLORS.getStringList(name);
 
 
         if(times == 0) {
@@ -59,6 +60,6 @@ public class FireworksExecutor extends Executors {
         }
 
         this.task.stopTask();
-        this.startTask(Fireworks.TYPE.getString(name), colors, Fireworks.DELAY.getInt(name), times);
+        startTask(Fireworks.TYPE.getString(name), colors, Fireworks.DELAY.getInt(name), times);
     }
 }

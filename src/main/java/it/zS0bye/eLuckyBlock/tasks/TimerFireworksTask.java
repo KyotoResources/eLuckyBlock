@@ -40,7 +40,9 @@ public class TimerFireworksTask extends BukkitRunnable {
     @Override
     public void run() {
 
-        if(ticks.get(player) >= times) this.stopTask();
+        if(ticks.get(player) >= times) {
+            stopTask();
+        }
         new LaunchFirework(plugin, location, type, colors);
         ticks.put(player, ticks.get(player)+1);
 
@@ -55,9 +57,10 @@ public class TimerFireworksTask extends BukkitRunnable {
     }
 
     public void stopTask() {
-        if(!task.containsKey(this.player)) return;
-        task.get(this.player).cancel();
-        task.remove(this.player);
-        ticks.put(this.player, 0);
+        if(task.containsKey(this.player)) {
+            task.get(this.player).cancel();
+            task.remove(this.player);
+            ticks.put(this.player, 0);
+        }
     }
 }

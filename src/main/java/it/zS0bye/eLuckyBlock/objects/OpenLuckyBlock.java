@@ -3,7 +3,7 @@ package it.zS0bye.eLuckyBlock.objects;
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import it.zS0bye.eLuckyBlock.api.ILuckyBlockAPI;
 import it.zS0bye.eLuckyBlock.files.enums.Config;
-import it.zS0bye.eLuckyBlock.files.enums.LuckyFile;
+import it.zS0bye.eLuckyBlock.files.enums.Lucky;
 import it.zS0bye.eLuckyBlock.mysql.SQLConversion;
 import it.zS0bye.eLuckyBlock.mysql.tables.LuckyTable;
 import it.zS0bye.eLuckyBlock.mysql.tables.ScoreTable;
@@ -39,27 +39,27 @@ public class OpenLuckyBlock {
 
     private void open(final String luckyblock, final Player player, final Location loc, final Cancellable e) {
 
-        if (LuckyFile.PERMISSION_REQUIRED_ENABLED.getBoolean(luckyblock)) {
+        if (Lucky.PERMISSION_REQUIRED_ENABLED.getBoolean(luckyblock)) {
 
-            Permission perm = new Permission(LuckyFile.PERMISSION_REQUIRED.getString(luckyblock), PermissionDefault.OP);
+            Permission perm = new Permission(Lucky.PERMISSION_REQUIRED.getString(luckyblock), PermissionDefault.OP);
             perm.addParent("luckyblock.*", true);
 
             if (!player.hasPermission(perm)) {
                 e.setCancelled(true);
-                if (LuckyFile.PERMISSION_REQUIRED_MODULES_CHAT.getBoolean(luckyblock)) {
-                    LuckyFile.PERMISSION_REQUIRED_CHAT.send(player, luckyblock);
+                if (Lucky.PERMISSION_REQUIRED_MODULES_CHAT.getBoolean(luckyblock)) {
+                    Lucky.PERMISSION_REQUIRED_CHAT.send(player, luckyblock);
                 }
-                if (LuckyFile.PERMISSION_REQUIRED_MODULES_TITLE.getBoolean(luckyblock)) {
+                if (Lucky.PERMISSION_REQUIRED_MODULES_TITLE.getBoolean(luckyblock)) {
                     new TitleField(player,
-                            LuckyFile.PERMISSION_REQUIRED_TITLE.getString(luckyblock),
-                            LuckyFile.PERMISSION_REQUIRED_TITLE_SUBTITLE.getString(luckyblock),
-                            LuckyFile.PERMISSION_REQUIRED_TITLE_FADEIN.getInt(luckyblock),
-                            LuckyFile.PERMISSION_REQUIRED_TITLE_STAY.getInt(luckyblock),
-                            LuckyFile.PERMISSION_REQUIRED_TITLE_FADEOUT.getInt(luckyblock));
+                            Lucky.PERMISSION_REQUIRED_TITLE.getString(luckyblock),
+                            Lucky.PERMISSION_REQUIRED_TITLE_SUBTITLE.getString(luckyblock),
+                            Lucky.PERMISSION_REQUIRED_TITLE_FADEIN.getInt(luckyblock),
+                            Lucky.PERMISSION_REQUIRED_TITLE_STAY.getInt(luckyblock),
+                            Lucky.PERMISSION_REQUIRED_TITLE_FADEOUT.getInt(luckyblock));
                 }
-                if (LuckyFile.PERMISSION_REQUIRED_MODULES_ACTION.getBoolean(luckyblock)) {
+                if (Lucky.PERMISSION_REQUIRED_MODULES_ACTION.getBoolean(luckyblock)) {
                     new ActionField(player,
-                            LuckyFile.PERMISSION_REQUIRED_ACTION.getString(luckyblock)
+                            Lucky.PERMISSION_REQUIRED_ACTION.getString(luckyblock)
                                     .replace("%prefix%", Config.SETTINGS_PREFIX.getString()));
                 }
                 return;
@@ -84,7 +84,7 @@ public class OpenLuckyBlock {
 
         Location loc = block.getLocation();
 
-        if(!LuckyFile.UNIQUE_CHECK_ENABLED.getBoolean(luckyblock)) {
+        if(!Lucky.UNIQUE_CHECK_ENABLED.getBoolean(luckyblock)) {
             if(instant)
                 block.setType(Material.AIR);
             open(luckyblock, player, block.getLocation(), e);

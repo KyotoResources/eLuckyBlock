@@ -2,7 +2,7 @@ package it.zS0bye.eLuckyBlock.listeners;
 
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import it.zS0bye.eLuckyBlock.checker.LuckyChecker;
-import it.zS0bye.eLuckyBlock.files.enums.LuckyFile;
+import it.zS0bye.eLuckyBlock.files.enums.Lucky;
 import it.zS0bye.eLuckyBlock.mysql.SQLConversion;
 import it.zS0bye.eLuckyBlock.mysql.tables.LuckyTable;
 import org.bukkit.Location;
@@ -47,17 +47,17 @@ public class UniqueBlockListener implements Listener {
         List<String> lore = item.getItemMeta().getLore();
 
         if (item.getItemMeta().hasDisplayName()
-        && displayName.equals(LuckyFile.UNIQUE_CHECK_NAME.getString(luckyblocks))) {
+        && displayName.equals(Lucky.UNIQUE_CHECK_NAME.getString(luckyblocks))) {
 
-            if(!LuckyFile.UNIQUE_CHECK_LORE.contains(luckyblocks)
-            || LuckyFile.UNIQUE_CHECK_LORE.getStringList(luckyblocks).size() == 0
+            if(!Lucky.UNIQUE_CHECK_LORE.contains(luckyblocks)
+            || Lucky.UNIQUE_CHECK_LORE.getStringList(luckyblocks).size() == 0
             && !item.getItemMeta().hasLore()) {
                 this.luckyTable.setLocation(convertLoc, luckyblocks);
                 return;
             }
 
             if(item.getItemMeta().hasLore() &&
-                    lore.equals(LuckyFile.UNIQUE_CHECK_LORE.getStringList(luckyblocks))) {
+                    lore.equals(Lucky.UNIQUE_CHECK_LORE.getStringList(luckyblocks))) {
                this.luckyTable.setLocation(convertLoc, luckyblocks);
             }
 

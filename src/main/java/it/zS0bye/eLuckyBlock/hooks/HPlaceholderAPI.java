@@ -1,23 +1,18 @@
 package it.zS0bye.eLuckyBlock.hooks;
 
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
-import it.zS0bye.eLuckyBlock.utils.StringUtils;
-import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 public class HPlaceholderAPI extends PlaceholderExpansion {
 
-    private Map<String, Integer> luckyScore;
+    private final Map<String, Integer> luckyScore;
 
     public HPlaceholderAPI(final ELuckyBlock plugin) {
         this.luckyScore = plugin.getLuckyScore();
     }
-
-    public HPlaceholderAPI() {}
 
     @Override
     public boolean canRegister(){
@@ -54,9 +49,5 @@ public class HPlaceholderAPI extends PlaceholderExpansion {
         }
 
         return null;
-    }
-
-    public String getPlaceholders(final Player player, String text) {
-        return StringUtils.colorize(PlaceholderAPI.setPlaceholders(player, text));
     }
 }

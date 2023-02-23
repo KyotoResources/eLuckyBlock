@@ -1,21 +1,18 @@
 package it.zS0bye.eLuckyBlock.executors;
 
-import it.zS0bye.eLuckyBlock.ELuckyBlock;
-import it.zS0bye.eLuckyBlock.hooks.HooksManager;
+import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import org.bukkit.entity.Player;
 
 public class SudoExecutor extends Executors {
 
     private final String execute;
     private final Player player;
-    private final HooksManager hooks;
 
-    public SudoExecutor(final ELuckyBlock plugin, final String execute, final Player player) {
+    public SudoExecutor(final String execute, final Player player) {
         this.execute = execute;
         this.player = player;
-        this.hooks = plugin.getHooks();
-        if (!this.execute.startsWith(this.getType())) return;
-        this.apply();
+        if (this.execute.startsWith(getType()))
+            apply();
     }
 
     protected String getType() {
@@ -24,9 +21,10 @@ public class SudoExecutor extends Executors {
 
     protected void apply() {
 
-        final String sudo = this.hooks.getPlaceholders(this.player, execute
-                .replace(this.getType(), ""));
+        String sudo = StringUtils.getPapi(this.player, execute
+                .replace(getType(), ""));
 
         player.chat(sudo);
+
     }
 }

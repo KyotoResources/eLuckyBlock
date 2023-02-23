@@ -1,4 +1,4 @@
-package it.zS0bye.eLuckyBlock.commands.subcmds;
+package it.zS0bye.eLuckyBlock.commands.users;
 
 import it.zS0bye.eLuckyBlock.commands.BaseCommand;
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
@@ -7,28 +7,28 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
-public class HelpSubCMD extends BaseCommand {
+public class HelpCommand extends BaseCommand {
 
     private CommandSender sender;
     private String command;
     private ELuckyBlock plugin;
 
-    public HelpSubCMD(final CommandSender sender, final String command, final ELuckyBlock plugin) {
+    public HelpCommand(final CommandSender sender, final String command, final ELuckyBlock plugin) {
         this.sender = sender;
         this.command = command;
         this.plugin = plugin;
-        this.execute();
+        execute();
     }
 
-    public HelpSubCMD(final String[] args, final CommandSender sender, final String command, final ELuckyBlock plugin) {
+    public HelpCommand(final String[] args, final CommandSender sender, final String command, final ELuckyBlock plugin) {
         this.sender = sender;
         this.command = command;
         this.plugin = plugin;
-        if(!args[0].equalsIgnoreCase(this.getName())) return;
-        this.execute();
+        if(args[0].equalsIgnoreCase(getName()))
+            execute();
     }
 
-    public HelpSubCMD(final List<String> tab) {
+    public HelpCommand(final List<String> tab) {
         tab.add(getName());
     }
 

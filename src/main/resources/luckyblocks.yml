@@ -5,12 +5,11 @@
 #   888oo,__     o88oo,.__88    .d888`88bo,__,o,"888"88o,   ,8P"`     _88o,,od8Po88oo,.__"888,_ _,88P`88bo,__,o,"888"88o,
 #   """"YUMMM    """"YUMMM "YmmMMMM""  "YUMMMMMP"MMM "MMP" mM"        ""YUMMMP" """"YUMMM  "YMMMMMP"   "YUMMMMMP"MMM "MMP"
 #
-#   Version: 2.0
+#   Version: 1.4.2
 #   LuckyBlocks
 #
 #   Wiki: https://zs0bye.gitbook.io/eluckyblock/plugins/eluckyblock-free
 #
-
 
 exampleNormal:
   # Material ids 1.8+ are supported.
@@ -28,6 +27,8 @@ exampleNormal:
   #                               Example to use this material, material: base64-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmNmYjRlYmMzYmE0ZmVjMDRkODk3OGExNjYwYmI3Yzk4ZTk2MzQyZmYyYTIzOGFkYTlkZjJmNzRiZjAzMmI0MCJ9fX0=)
   # ------ NEW ------
   material: SPONGE
+  # Ignore "data" if you have server version 1.13+
+  data: 0
 
   # "instant_break" allows you to break a luckyblock with just one click!
   instant_break: false
@@ -61,8 +62,7 @@ exampleNormal:
   permission_required:
     enabled: false
 
-  prevents:
-    enabled: true
+  prevent:
     # - deny_pickup: Remove the luckyblock drop as soon as you destroy it.
     # - deny_absorb: If you put a sponge as a material, it will not be absorbed by the water,
     #                This option ONLY supports 1.13+.
@@ -110,7 +110,7 @@ exampleVip:
       fade-out: 20
     action: '%prefix%You can''t break this luckyblock!'
 
-  prevents:
+  prevent:
     deny_pickup: true
     deny_absorb: true
     blocked_worlds:

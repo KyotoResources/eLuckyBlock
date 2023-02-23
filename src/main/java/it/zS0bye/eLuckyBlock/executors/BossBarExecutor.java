@@ -2,10 +2,9 @@ package it.zS0bye.eLuckyBlock.executors;
 
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import it.zS0bye.eLuckyBlock.files.enums.Animations;
-import it.zS0bye.eLuckyBlock.hooks.HooksManager;
 import it.zS0bye.eLuckyBlock.reflections.BossBarField;
 import it.zS0bye.eLuckyBlock.tasks.BossBarAnimationTask;
-import org.bukkit.Bukkit;
+import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import org.bukkit.entity.Player;
 
 public class BossBarExecutor extends Executors {
@@ -13,25 +12,26 @@ public class BossBarExecutor extends Executors {
     private final ELuckyBlock plugin;
     private final String execute;
     private final Player player;
-    private final HooksManager hooks;
+    private final BossBarAnimationTask task;
 
-    public BossBarExecutor(final ELuckyBlock plugin, final String execute, final Player player) {
-        this.plugin = plugin;
+    public BossBarExecutor(final String execute, final Player player) {
+        this.plugin = ELuckyBlock.getInstance();
         this.execute = execute;
         this.player = player;
-        this.hooks = plugin.getHooks();
-        if(!this.execute.startsWith(getType())) return;
-        this.apply();
+        this.task = new BossBarAnimationTask(this.plugin, this.player);
+        if(this.execute.startsWith(getType()))
+            apply();
     }
 
     @Override
-    protected void startTask(final Player player, final String animation, final String color, final String style, final double progress, final int times) {
-        super.startTask(player, animation, color, style, progress, times);
+    protected void startTask(String getAnimation, String color, String style, double progress, int times) {
+        super.startTask(getAnimation, color, style, progress, times);
 
-        final BossBarAnimationTask task = new BossBarAnimationTask(this.plugin, player, this.execute, getType(), animation, color, style, progress, times);
+        BossBarAnimationTask task = new BossBarAnimationTask(this.plugin, this.player, this.execute, getType(), getAnimation, color, style, progress, times);
 
         task.getTicks().put(player, 0);
-        task.getTask().put(player, task.runTaskTimerAsynchronously(this.plugin, 0L, Animations.INTERVAL.getInt(animation)));
+        task.getTask().put(this.player,
+                task.runTaskTimerAsynchronously(this.plugin, 0L, Animations.INTERVAL.getInt(getAnimation)));
     }
 
     protected String getType() {
@@ -40,52 +40,41 @@ public class BossBarExecutor extends Executors {
 
     protected void apply() {
 
-        final String title = this.hooks.getPlaceholders(this.player, execute
-                .replace(this.getType(), "")
+        String title = StringUtils.getPapi(this.player, execute
+                .replace(getType(), "")
                 .split(";")[0]);
 
-        final String color = execute
-                .replace(this.getType(), "")
+        String color = execute
+                .replace(getType(), "")
                 .split(";")[1]
                 .toUpperCase();
 
-        final String style = execute
-                .replace(this.getType(), "")
+        String style = execute
+                .replace(getType(), "")
                 .split(";")[2]
                 .toUpperCase();
 
-        final double progress = Double.parseDouble(execute
-                .replace(this.getType(), "")
+        double progress = Double.parseDouble(execute
+                .replace(getType(), "")
                 .split(";")[3]);
 
-        final int times = Integer.parseInt(execute
-                .replace(this.getType(), "")
+        int times = Integer.parseInt(execute
+                .replace(getType(), "")
                 .split(";")[4]);
 
-        if(title.startsWith("@")) {
-            Bukkit.getOnlinePlayers().forEach(players -> this.run(players, title, color, style, progress, times));
-            return;
-        }
+        for (String getAnimation : Animations.ANIMATIONS.getKeys()) {
+            if (title.contains("%animation_" + getAnimation + "%")) {
+                this.task.stopTask();
+                this.task.stopTimes();
 
-        this.run(this.player, title, color, style, progress, times);
-    }
-
-    private void run(final Player player, String title, final String color, final String style, final double progress, final int times) {
-        title = title.replaceFirst("@", "");
-
-        final BossBarAnimationTask task = new BossBarAnimationTask(this.plugin, player);
-        for (final String animation : Animations.ANIMATIONS.getKeys()) {
-            if (title.contains("%animation_" + animation + "%")) {
-                task.stopTask();
-                task.stopTimes();
-
-                this.startTask(player, animation, color, style, progress, times);
+                startTask(getAnimation, color, style, progress, times);
                 return;
             }
         }
 
-        task.stopTask();
-        task.stopTimes();
+        this.task.stopTask();
+        this.task.stopTimes();
         new BossBarField(this.plugin, this.player, title, color, style, progress, times);
+
     }
 }

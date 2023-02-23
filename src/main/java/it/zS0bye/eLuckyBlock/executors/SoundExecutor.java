@@ -1,9 +1,9 @@
 package it.zS0bye.eLuckyBlock.executors;
 
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import java.util.logging.Level;
 
 public class SoundExecutor extends Executors {
@@ -13,12 +13,12 @@ public class SoundExecutor extends Executors {
     private final Player player;
     private Sound sound;
 
-    public SoundExecutor(final ELuckyBlock plugin, final String execute, final Player player) {
-        this.plugin = plugin;
+    public SoundExecutor(final String execute, final Player player) {
+        this.plugin = ELuckyBlock.getInstance();
         this.execute = execute;
         this.player = player;
-        if (!this.execute.startsWith(this.getType())) return;
-        this.apply();
+        if (this.execute.startsWith(getType()))
+            apply();
     }
 
     protected String getType() {
@@ -28,20 +28,26 @@ public class SoundExecutor extends Executors {
     protected void apply() {
 
          try {
-             this.sound = Sound.valueOf(execute
-                     .replace(this.getType(), "")
+             sound = Sound.valueOf(execute
+                     .replace(getType(), "")
                      .split(";")[0]);
          }catch (IllegalArgumentException e) {
              this.plugin.getLogger().log(Level.SEVERE, "The sound you entered in the configuration is not compatible with the server version, or it is not an existing sound! Reason: " + e.getMessage());
          }
 
-        final int acute = Integer.parseInt(execute
-                .replace(this.getType(), "")
+        int acute = Integer.parseInt(execute
+                .replace(getType(), "")
                 .split(";")[1]);
-        final int volume = Integer.parseInt(execute
-                .replace(this.getType(), "")
+        int volume = Integer.parseInt(execute
+                .replace(getType(), "")
                 .split(";")[2]);
 
-        Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> this.player.playSound(this.player.getLocation(), this.sound, volume, acute), 1L);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                    player.playSound(player.getLocation(), sound, volume, acute);
+            }
+        }.runTaskLaterAsynchronously(ELuckyBlock.getInstance(), 1L);
+
     }
 }

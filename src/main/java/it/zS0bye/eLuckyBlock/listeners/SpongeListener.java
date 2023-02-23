@@ -1,22 +1,34 @@
 package it.zS0bye.eLuckyBlock.listeners;
 
-import it.zS0bye.eLuckyBlock.ELuckyBlock;
-import it.zS0bye.eLuckyBlock.LuckyBlock;
+import it.zS0bye.eLuckyBlock.checker.LuckyChecker;
+import it.zS0bye.eLuckyBlock.files.enums.Lucky;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SpongeAbsorbEvent;
 
-public class SpongeListener extends LuckyBlock implements Listener  {
+public class SpongeListener implements Listener  {
 
-    public SpongeListener(final ELuckyBlock plugin, final String luckyblocks) {
-        super(plugin, luckyblocks);
+    private final String luckyblocks;
+
+    public SpongeListener(final String luckyblocks) {
+        this.luckyblocks = luckyblocks;
     }
 
     @EventHandler
-    public void preventWet(final SpongeAbsorbEvent e) {
+    public void preventWet(SpongeAbsorbEvent e) {
 
-        if(!isLuckyBlock(e.getBlock()) || !canAbsorb(e)) return;
-        e.setCancelled(true);
+        Block block = e.getBlock();
+        String world = block.getWorld().getName();
+        Location region = block.getLocation();
+
+        if (new LuckyChecker(block, world, region, luckyblocks)
+                .check())
+            return;
+
+        if (Lucky.PREVENT_DENY_ABSORB.getBoolean(luckyblocks))
+            e.setCancelled(true);
     }
 
 }

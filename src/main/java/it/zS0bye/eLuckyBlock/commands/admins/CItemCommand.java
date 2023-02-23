@@ -1,4 +1,4 @@
-package it.zS0bye.eLuckyBlock.commands.subcmds;
+package it.zS0bye.eLuckyBlock.commands.admins;
 
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import it.zS0bye.eLuckyBlock.commands.BaseCommand;
@@ -6,35 +6,30 @@ import it.zS0bye.eLuckyBlock.files.CItemsFile;
 import it.zS0bye.eLuckyBlock.files.enums.Lang;
 import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class CItemSubCMD extends BaseCommand {
+public class CItemCommand extends BaseCommand {
 
-    private final String command;
-    private final String permission;
     private String[] args;
     private final CommandSender sender;
     private ELuckyBlock plugin;
 
-    public CItemSubCMD(final String command, final String[] args, final CommandSender sender, final ELuckyBlock plugin) {
-        this.command = command;
-        this.permission = this.command + ".command." + this.getName();
+    public CItemCommand(final String[] args, final CommandSender sender, final ELuckyBlock plugin) {
         this.args = args;
         this.sender = sender;
         this.plugin = plugin;
-        if(!args[0].equalsIgnoreCase(this.getName())) return;
-        this.execute();
+        if(args[0].equalsIgnoreCase(getName()))
+            execute();
     }
 
-    public CItemSubCMD(final String command, final List<String> tab, final CommandSender sender) {
-        this.command = command;
-        this.permission = this.command + ".command." + this.getName();
+    public CItemCommand(final List<String> tab, final CommandSender sender) {
         this.sender = sender;
-        if(!sender.hasPermission(this.permission)) return;
-        tab.add(getName());
+        if(sender.hasPermission("eluckyblock.command.citem"))
+            tab.add(getName());
     }
 
     @Override
@@ -44,14 +39,14 @@ public class CItemSubCMD extends BaseCommand {
 
     @Override
     protected void execute() {
-        if(!sender.hasPermission(this.permission)) {
+        if(!sender.hasPermission("eluckyblock.command.citem")) {
             Lang.INSUFFICIENT_PERMISSIONS.send(sender);
             return;
         }
 
-        final Player player = (Player) sender;
-        final CItemsFile file = new CItemsFile(this.plugin, args[1]);
-        final ItemStack item = player.getInventory().getItemInMainHand();
+        Player player = (Player) sender;
+        CItemsFile file = new CItemsFile(this.plugin, args[1]);
+        ItemStack item = player.getInventory().getItemInMainHand();
 
         if(file.getFile().exists()) {
             String update = Lang.CITEM_ADMINS_UPDATE.getCustomString()
@@ -62,7 +57,7 @@ public class CItemSubCMD extends BaseCommand {
                 update = Lang.CITEM_ADMINS_UPDATE.getCustomString()
                         .replace("%item%", item.getItemMeta().getDisplayName());
             file.create(player.getInventory().getItemInMainHand());
-            StringUtils.send(player, update);
+            StringUtils.send(update, player);
             return;
         }
 
@@ -75,6 +70,6 @@ public class CItemSubCMD extends BaseCommand {
                     .replace("%item%", item.getItemMeta().getDisplayName());
 
         file.create(player.getInventory().getItemInMainHand());
-        StringUtils.send(player, create);
+        StringUtils.send(create, player);
     }
 }

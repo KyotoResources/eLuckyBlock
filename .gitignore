@@ -1,5 +1,2 @@
-.idea/
-META-INF/
-*.iml
 # Project exclude paths
 /target/

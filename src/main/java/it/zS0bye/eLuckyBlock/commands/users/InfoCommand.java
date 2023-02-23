@@ -1,4 +1,4 @@
-package it.zS0bye.eLuckyBlock.commands.subcmds;
+package it.zS0bye.eLuckyBlock.commands.users;
 
 import it.zS0bye.eLuckyBlock.commands.BaseCommand;
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
@@ -10,43 +10,35 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
-public class InfoSubCMD extends BaseCommand {
+public class InfoCommand extends BaseCommand {
 
-    private final String command;
-    private final String permission;
     private String[] args;
     private final CommandSender sender;
     private String type;
     private ELuckyBlock plugin;
     private ScoreTable score;
 
-    public InfoSubCMD(final String command, final String[] args, final CommandSender sender, final String type, final ELuckyBlock plugin) {
-        this.command = command;
-        this.permission = this.command + ".command." + this.getName();
+    public InfoCommand(final String[] args, final CommandSender sender, final String type, final ELuckyBlock plugin) {
         this.args = args;
         this.sender = sender;
         this.type = type;
         this.plugin = plugin;
         this.score = plugin.getScoreTable();
-        if(!args[0].equalsIgnoreCase(this.getName())) return;
-        this.execute();
+        if(args[0].equalsIgnoreCase(getName()))
+            execute();
     }
 
-    public InfoSubCMD(final String command, final List<String> tab, final CommandSender sender) {
-        this.command = command;
-        this.permission = this.command + ".command." + this.getName();
+    public InfoCommand(final List<String> tab, final CommandSender sender) {
         this.sender = sender;
-        if(!sender.hasPermission(this.permission)) return;
+        if(sender.hasPermission("eluckyblock.command.info"))
         tab.add(getName());
     }
 
-    public InfoSubCMD(final String command, final List<String> tab, final String[] args, final CommandSender sender) {
-        this.command = command;
-        this.permission = this.command + ".command." + this.getName();
+    public InfoCommand(final List<String> tab, final String[] args, final CommandSender sender) {
         this.sender = sender;
         if(args[0].equalsIgnoreCase(getName()))
             Bukkit.getOnlinePlayers().forEach(players -> {
-                if(!sender.hasPermission(this.permission + ".others")) return;
+                if(sender.hasPermission("eluckyblock.command.info.others"))
                 tab.add(players.getName());
             });
     }
@@ -58,13 +50,15 @@ public class InfoSubCMD extends BaseCommand {
 
     @Override
     protected void execute() {
-        if(type.equals("users")) users();
+        if(type.equals("users"))
+            users();
 
-        if(type.equals("admins")) admins();
+        if(type.equals("admins"))
+            admins();
     }
 
     private void users() {
-        if(!sender.hasPermission(this.permission)) {
+        if(!sender.hasPermission("eluckyblock.command.info")) {
             Lang.INSUFFICIENT_PERMISSIONS.send(sender);
             return;
         }
@@ -75,7 +69,7 @@ public class InfoSubCMD extends BaseCommand {
             String text = Lang.INFO_USERS_CURRENT_BREAKS.getCustomString()
                     .replace("%lbBreaks%", String.valueOf(luckyBreaks));
 
-            StringUtils.send(sender, text);
+            StringUtils.send(text, sender);
             return;
         }
 
@@ -83,14 +77,14 @@ public class InfoSubCMD extends BaseCommand {
             String text = Lang.INFO_USERS_CURRENT_BREAKS.getCustomString()
                     .replace("%lbBreaks%", String.valueOf(score));
 
-            StringUtils.send(sender, text);
+            StringUtils.send(text, sender);
         });
 
 
     }
 
     private void admins() {
-        if(!sender.hasPermission(this.permission + ".others")) {
+        if(!sender.hasPermission("eluckyblock.command.info.others")) {
             Lang.INSUFFICIENT_PERMISSIONS.send(sender);
             return;
         }
@@ -103,7 +97,7 @@ public class InfoSubCMD extends BaseCommand {
                     .replace("%lbBreaks%", String.valueOf(luckyBreaks))
                     .replace("%player%", args[1]);
 
-            StringUtils.send(sender, text);
+            StringUtils.send(text, sender);
             return;
         }
 
@@ -118,7 +112,7 @@ public class InfoSubCMD extends BaseCommand {
                         .replace("%lbBreaks%", String.valueOf(score))
                         .replace("%player%", args[1]);
 
-                StringUtils.send(sender, text);
+                StringUtils.send(text, sender);
             });
         });
     }

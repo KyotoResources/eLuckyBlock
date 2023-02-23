@@ -1,6 +1,11 @@
 package it.zS0bye.eLuckyBlock.commands;
 
-import it.zS0bye.eLuckyBlock.commands.subcmds.*;
+import it.zS0bye.eLuckyBlock.commands.admins.CItemCommand;
+import it.zS0bye.eLuckyBlock.commands.admins.GiveCommand;
+import it.zS0bye.eLuckyBlock.commands.admins.ReloadCommand;
+import it.zS0bye.eLuckyBlock.commands.users.AboutCommand;
+import it.zS0bye.eLuckyBlock.commands.users.HelpCommand;
+import it.zS0bye.eLuckyBlock.commands.users.InfoCommand;
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,11 +22,9 @@ import java.util.List;
 public class MainCommand implements CommandExecutor, TabCompleter {
 
     private final ELuckyBlock plugin;
-    private final String command;
 
     public MainCommand(final ELuckyBlock plugin) {
         this.plugin = plugin;
-        this.command = "eluckyblock";
     }
 
     private boolean checkArgs(final String args, final String check) {
@@ -31,65 +34,65 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, Command cmd, @NotNull String commandLabel, String[] args) {
 
-        if(!cmd.getName().equalsIgnoreCase(this.command)) return true;
+        if(!cmd.getName().equalsIgnoreCase("eluckyblock")) {
+            return true;
+        }
 
-        if(!sender.hasPermission(this.command + ".command")) {
-            new AboutSubCMD(sender, this.plugin);
+        if(!sender.hasPermission("eluckyblock.command")) {
+            new AboutCommand(sender, this.plugin);
             return true;
         }
 
         if(args.length == 0) {
-            new HelpSubCMD(sender, commandLabel, this.plugin);
+            new HelpCommand(sender, commandLabel, this.plugin);
             return true;
         }
 
         if(args.length == 1) {
-            new HelpSubCMD(args, sender, commandLabel, this.plugin);
-            new AboutSubCMD(args, sender, this.plugin);
-            new ReloadSubCMD(this.command, args, sender, this.plugin);
-            new InfoSubCMD(this.command, args, sender, "users", this.plugin);
+            new HelpCommand(args, sender, commandLabel, this.plugin);
+            new AboutCommand(args, sender, this.plugin);
+            new ReloadCommand(args, sender, this.plugin);
+            new InfoCommand(args, sender, "users", this.plugin);
 
             if(checkArgs(args[0], "help")
             && checkArgs(args[0], "about")
             && checkArgs(args[0], "reload")
             && checkArgs(args[0], "info"))
-                new HelpSubCMD(sender, commandLabel, this.plugin);
+                new HelpCommand(sender, commandLabel, this.plugin);
 
             return true;
         }
 
         if(args.length == 2) {
-            new InfoSubCMD(this.command, args, sender, "admins", this.plugin);
-            new CItemSubCMD(this.command, args, sender, this.plugin);
-            new CreateSubCMD(this.command, args, sender, this.plugin);
+            new InfoCommand(args, sender, "admins", this.plugin);
+            new CItemCommand(args, sender, this.plugin);
 
             if(checkArgs(args[0], "info")
-                    && checkArgs(args[0], "citem")
-                    && checkArgs(args[0], "create"))
-                new HelpSubCMD(sender, commandLabel, this.plugin);
+                    && checkArgs(args[0], "citem"))
+                new HelpCommand(sender, commandLabel, this.plugin);
 
             return true;
         }
 
         if(args.length == 3) {
-            new GiveSubCMD(this.command, args, sender, this.plugin);
+            new GiveCommand(args, sender, this.plugin);
 
             if(checkArgs(args[0], "give"))
-                new HelpSubCMD(sender, commandLabel, this.plugin);
+                new HelpCommand(sender, commandLabel, this.plugin);
 
             return true;
         }
 
         if(args.length == 4) {
-            new GiveSubCMD(this.command, args, sender, this.plugin);
+            new GiveCommand(args, sender, this.plugin);
 
             if(checkArgs(args[0], "give"))
-                new HelpSubCMD(sender, commandLabel, this.plugin);
+                new HelpCommand(sender, commandLabel, this.plugin);
 
             return true;
         }
 
-        new HelpSubCMD(sender, commandLabel, this.plugin);
+        new HelpCommand(sender, commandLabel, this.plugin);
 
         return true;
     }
@@ -101,29 +104,32 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         List<String> completions = new ArrayList<>();
         List<String> commands = new ArrayList<>();
 
-        if(!cmd.getName().equalsIgnoreCase(this.command)) return new ArrayList<>();
+        if(!cmd.getName().equalsIgnoreCase("eluckyblock")) {
+            return new ArrayList<>();
+        }
 
-        if(!sender.hasPermission(this.command + ".command")) return new ArrayList<>();
+        if(!sender.hasPermission("eluckyblock.command")) {
+            return new ArrayList<>();
+        }
 
         if (args.length == 1) {
-            new HelpSubCMD(commands);
-            new AboutSubCMD(commands);
-            new ReloadSubCMD(this.command, commands, sender);
-            new InfoSubCMD(this.command, commands, sender);
-            new GiveSubCMD(this.command, commands, sender);
-            new CItemSubCMD(this.command, commands, sender);
-            new CreateSubCMD(this.command, commands, sender);
+            new HelpCommand(commands);
+            new AboutCommand(commands);
+            new ReloadCommand(commands, sender);
+            new InfoCommand(commands, sender);
+            new GiveCommand(commands, sender);
+            new CItemCommand(commands, sender);
             StringUtil.copyPartialMatches(args[0], commands, completions);
         }
 
         if(args.length == 2) {
-            new InfoSubCMD(this.command, commands, args, sender);
-            new GiveSubCMD(this.command, commands, args, sender, this.plugin);
+            new InfoCommand(commands, args, sender);
+            new GiveCommand(commands, args, sender, this.plugin);
             StringUtil.copyPartialMatches(args[1], commands, completions);
         }
 
         if(args.length == 3) {
-            new GiveSubCMD(this.command, commands, args, sender, this.plugin);
+            new GiveCommand(commands, args, sender, this.plugin);
             StringUtil.copyPartialMatches(args[2], commands, completions);
         }
 
