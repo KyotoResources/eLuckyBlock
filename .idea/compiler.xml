@@ -2,25 +2,15 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-<<<<<<< Updated upstream
-=======
-      <profile default="true" name="Default" enabled="true" />
->>>>>>> Stashed changes
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-<<<<<<< Updated upstream
-        <module name="ELuckyBlock" />
-      </profile>
-    </annotationProcessing>
-=======
         <module name="eLuckyBlock" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="eLuckyBlock" target="1.8" />
     </bytecodeTargetLevel>
->>>>>>> Stashed changes
   </component>
 </project>
