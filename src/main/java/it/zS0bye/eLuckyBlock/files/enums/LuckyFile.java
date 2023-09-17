@@ -37,8 +37,12 @@ public enum LuckyFile {
         return builder.toString();
     }
 
+    public String getPath() {
+        return this.path;
+    }
+
     public FileConfiguration getConfig(final String luckyblock) {
-        return FileManager.getFiles().get(luckyblock);
+        return FileManager.getFiles().get(luckyblock.toLowerCase());
     }
 
     public String getString(final String luckyblock, final String... var) {
@@ -81,6 +85,10 @@ public enum LuckyFile {
 
     public int getInt(final String luckyblock, final String... var) {
         return this.getConfig(luckyblock).getInt(this.variables(var));
+    }
+
+    public double getDouble(final String luckyblock, final String... var) {
+        return this.getConfig(luckyblock).getDouble(this.variables(var));
     }
 
     public void send(final CommandSender sender, final String luckyblock, final String... var) {

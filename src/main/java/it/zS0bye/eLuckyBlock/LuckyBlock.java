@@ -5,16 +5,19 @@ import com.cryptomorin.xseries.XMaterial;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTListCompound;
+import it.zS0bye.eLuckyBlock.executors.SendExecutors;
 import it.zS0bye.eLuckyBlock.files.enums.LuckyFile;
 import it.zS0bye.eLuckyBlock.mysql.SQLConversion;
-import it.zS0bye.eLuckyBlock.utils.VersionUtils;
+import it.zS0bye.eLuckyBlock.mysql.tables.ScoreTable;
+import it.zS0bye.eLuckyBlock.rewards.ExcReward;
+import it.zS0bye.eLuckyBlock.rewards.RandomReward;
 import lombok.Getter;
 import org.apache.commons.lang.math.NumberUtils;
+import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.SpongeAbsorbEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -23,13 +26,15 @@ import java.util.*;
 public class LuckyBlock {
 
     private final ELuckyBlock plugin;
+    private final Player player;
     private final String name;
+    private final ScoreTable score;
+
     private final String material;
     private final boolean instant_break;
     private final boolean unique_check;
     private final String unique_name;
     private final List<String> unique_lore;
-    private final String rewards;
     private final boolean prevents;
     private final boolean deny_pickup;
     private final boolean deny_absorb;
@@ -37,15 +42,18 @@ public class LuckyBlock {
     private final List<String> worlds_list;
     private final List<String> allowed_gamemodes;
 
-    public LuckyBlock(final ELuckyBlock plugin, final String name) {
+    private final static Map<String, RandomReward<ExcReward>> randomMap = new HashMap<>();
+
+    public LuckyBlock(final ELuckyBlock plugin, final Player player, final String name) {
         this.plugin = plugin;
+        this.player = player;
         this.name = name;
+        this.score = this.plugin.getScoreTable();
         this.material = LuckyFile.MATERIAL.getString(name);
         this.instant_break = LuckyFile.INSTANT_BREAK.getBoolean(name);
         this.unique_check = LuckyFile.UNIQUE_CHECK_ENABLED.getBoolean(name);
         this.unique_name = LuckyFile.UNIQUE_CHECK_NAME.getString(name);
         this.unique_lore = LuckyFile.UNIQUE_CHECK_LORE.getStringList(name);
-        this.rewards = LuckyFile.REWARDS.getString(name);
         this.prevents = LuckyFile.PREVENTIONS_ENABLED.getBoolean(name);
         this.deny_pickup = LuckyFile.PREVENTIONS_DENY_PICKUP.getBoolean(name);
         this.deny_absorb = LuckyFile.PREVENTIONS_DENY_ABSORB.getBoolean(name);
@@ -74,6 +82,7 @@ public class LuckyBlock {
         return unique_block.contains(block);
     }
 
+    @SuppressWarnings("deprecation")
     private XMaterial getMaterial() {
 
         if(this.material.contains(":")) {
@@ -122,37 +131,24 @@ public class LuckyBlock {
         return XMaterial.STONE;
     }
 
-    private boolean stayWorlds(final String world) {
+    private boolean stayWorlds() {
+        if(!this.prevents || this.worlds_list.isEmpty()) return false;
+        final String world = this.player.getWorld().getName();
         if(this.worlds_type.equalsIgnoreCase("blacklist")) return this.worlds_list.contains(world);
         if(this.worlds_type.equalsIgnoreCase("whitelist")) return !this.worlds_list.contains(world);
         return false;
     }
 
-//    public boolean stayPlots(final Player player) {
-//        if(!Hooks.PLOTSQUARED.isCheck()) return false;
-//        return HooksManager.checkPlot(player.getUniqueId());
-//    }
-
-    public boolean canPickup(final BlockBreakEvent event) {
-        if (!this.deny_pickup) return false;
-        if (VersionUtils.checkVersion(1.8, 1.9, 1.10, 1.11)) {
-            event.getBlock().setType(Material.AIR);
-            return true;
-        }
-        event.setDropItems(false);
-        return true;
+    public boolean canAbsorb() {
+        return this.prevents && !this.deny_absorb;
     }
 
-    public boolean canAbsorb(final SpongeAbsorbEvent event) {
-        if(!this.deny_absorb) return false;
-        event.setCancelled(true);
-        return true;
-    }
-
-    public boolean canGameMode(final Player player) {
-        if(player.hasPermission("eluckyblock.bypass.gamemode")) return false;
-        if(this.allowed_gamemodes.contains("*")) return false;
-        return !this.allowed_gamemodes.contains(player.getGameMode().name());
+    public boolean canGameMode() {
+        if(this.player.hasPermission("eluckyblock.bypass.gamemode")
+                || !this.prevents
+                || this.allowed_gamemodes.isEmpty()
+                || this.allowed_gamemodes.contains("*")) return false;
+        return !this.allowed_gamemodes.contains(this.player.getGameMode().name());
     }
 
     public ItemStack give(final int amount) {
@@ -162,6 +158,42 @@ public class LuckyBlock {
         final NBTItem nbtItem = new NBTItem(item);
         nbtItem.setString("eLuckyBlock", this.name);
         return nbtItem.getItem();
+    }
+
+    public void open(final Block block, final boolean instant) {
+        if(!this.isLuckyBlock(block)) return;
+        if(this.canGameMode() || this.stayWorlds()) return;
+        if(instant) {
+            if(!this.instant_break) return;
+            block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType());
+            block.setType(Material.AIR);
+        }
+        if(this.prevents && this.deny_pickup) block.setType(Material.AIR);
+        this.forceOpen(block.getLocation());
+    }
+
+    public void forceOpen(final Location location) {
+        if (!randomMap.containsKey(this.name)) return;
+        randomMap.get(this.name).getRandomValue().getCommands().forEach(executor -> SendExecutors.send(this.plugin, executor, player, location));
+        this.score.addScore(this.player.getName());
+    }
+
+    public static void addRewards(final ELuckyBlock plugin) {
+        plugin.getLuckyblocks().forEach(luckyblock -> {
+            if (randomMap.containsKey(luckyblock)) return;
+            final RandomReward<ExcReward> random = new RandomReward<>();
+            for (final String reward : LuckyFile.REWARDS.getConfigurationSection(luckyblock)) {
+                final String path = LuckyFile.REWARDS.getPath() + "." + reward;
+                random.add(LuckyFile.REWARDS_CHANCE.getDouble(luckyblock, path), new ExcReward(LuckyFile.REWARDS_EXECUTORS.getStringList(luckyblock, path)));
+            }
+            randomMap.put(luckyblock, random);
+        });
+    }
+
+    public static List<LuckyBlock> getLuckyBlocks(final ELuckyBlock plugin, final Player player) {
+        final List<LuckyBlock> luckyblocks = new ArrayList<>();
+        plugin.getLuckyblocks().forEach(luckyblock -> luckyblocks.add(new LuckyBlock(plugin, player, luckyblock)));
+        return luckyblocks;
     }
 
 }

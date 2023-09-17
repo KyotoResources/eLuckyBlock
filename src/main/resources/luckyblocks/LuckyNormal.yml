@@ -94,6 +94,7 @@ Preventions:
     type: BLACKLIST
 
     # List of worlds.
+    # You can disable this option by setting: "list: []"
     list:
       - 'blworld1'
 

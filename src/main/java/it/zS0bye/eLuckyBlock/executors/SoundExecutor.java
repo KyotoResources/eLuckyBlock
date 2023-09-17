@@ -1,23 +1,24 @@
 package it.zS0bye.eLuckyBlock.executors;
 
+import com.cryptomorin.xseries.XSound;
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import java.util.logging.Level;
+
+import java.util.Optional;
 
 public class SoundExecutor extends Executors {
 
     private final ELuckyBlock plugin;
-    private final String execute;
     private final Player player;
-    private Sound sound;
+    private String execute;
 
     public SoundExecutor(final ELuckyBlock plugin, final String execute, final Player player) {
         this.plugin = plugin;
-        this.execute = execute;
         this.player = player;
-        if (!this.execute.startsWith(this.getType())) return;
+        if (!execute.startsWith(this.getType())) return;
+        this.execute = execute.replace(this.getType(), "");
         this.apply();
     }
 
@@ -27,21 +28,24 @@ public class SoundExecutor extends Executors {
 
     protected void apply() {
 
-         try {
-             this.sound = Sound.valueOf(execute
-                     .replace(this.getType(), "")
-                     .split(";")[0]);
-         }catch (IllegalArgumentException e) {
-             this.plugin.getLogger().log(Level.SEVERE, "The sound you entered in the configuration is not compatible with the server version, or it is not an existing sound! Reason: " + e.getMessage());
-         }
+        final String sound = this.execute.split(";")[0];
+        final int acute = Integer.parseInt(this.execute.split(";")[1]);
+        final int volume = Integer.parseInt(this.execute.split(";")[2]);
 
-        final int acute = Integer.parseInt(execute
-                .replace(this.getType(), "")
-                .split(";")[1]);
-        final int volume = Integer.parseInt(execute
-                .replace(this.getType(), "")
-                .split(";")[2]);
+        if(sound.startsWith("@")) {
+            Bukkit.getOnlinePlayers().forEach(players -> this.run(players, sound, volume, acute));
+            return;
+        }
 
-        Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> this.player.playSound(this.player.getLocation(), this.sound, volume, acute), 1L);
+        this.run(this.player, sound, volume, acute);
+    }
+
+    private void run(final Player player, final String sound, final int volume, final int acute) {
+        final Optional<XSound> xsound = XSound.matchXSound(sound);
+        if(!xsound.isPresent() || !xsound.get().isSupported()) return;
+        final Sound playsound = xsound.get().parseSound();
+        if(playsound == null) return;
+        Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () ->
+                this.player.playSound(player.getLocation(), playsound, volume, acute), 1L);
     }
 }

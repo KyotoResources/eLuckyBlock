@@ -4,21 +4,13 @@ import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 public class SendExecutors {
 
-    @SafeVarargs
-    public static void send(final ELuckyBlock plugin, final List<String> executors, final Player player, final Location location, final Map<String, String>... placeholders) {
-        if(executors.isEmpty()) return;
-        executors.forEach(executor -> {
-
-            for (Map<String, String> placeholder : placeholders) {
-                for (String key : placeholder.keySet())
-                    executor = executor.replace(key, placeholder.get(key));
-            }
-
+    public static void send(final ELuckyBlock plugin, String executor, final Player player, final Location location, final Map<String, String> placeholders) {
+            for (String key : placeholders.keySet()) executor = executor.replace(key, placeholders.get(key));
             new TitleExecutor(plugin, executor, player);
             new ActionExecutor(plugin, executor, player);
             new BossBarExecutor(plugin, executor, player);
@@ -27,8 +19,6 @@ public class SendExecutors {
             new PlayerExecutor(plugin, executor, player);
             new SoundExecutor(plugin, executor, player);
             new SudoExecutor(plugin, executor, player);
-            new GiveTokensExecutor(plugin, executor, player);
-            new TakeTokensExecutor(plugin, executor, player);
             new GiveMoneyExecutor(plugin, executor, player);
             new TakeMoneyExecutor(plugin, executor, player);
 
@@ -44,7 +34,10 @@ public class SendExecutors {
             new EffectExecutor(executor, player);
             new GiveXPExecutor(executor, player);
             new TakeXPExecutor(executor, player);
-        });
+    }
+
+    public static void send(final ELuckyBlock plugin, final String executors, final Player player, final Location location) {
+        send(plugin, executors, player, location, new HashMap<>());
     }
 
 }

@@ -1,7 +1,7 @@
 package it.zS0bye.eLuckyBlock.tasks;
 
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
-import it.zS0bye.eLuckyBlock.objects.LaunchFirework;
+import it.zS0bye.eLuckyBlock.LaunchFirework;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;

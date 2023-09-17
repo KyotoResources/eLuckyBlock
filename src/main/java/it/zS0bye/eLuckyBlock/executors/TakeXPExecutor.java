@@ -4,13 +4,13 @@ import org.bukkit.entity.Player;
 
 public class TakeXPExecutor extends Executors {
 
-    private final String execute;
     private final Player player;
+    private String execute;
 
     public TakeXPExecutor(final String execute, final Player player) {
-        this.execute = execute;
         this.player = player;
-        if (!this.execute.startsWith(this.getType())) return;
+        if (!execute.startsWith(this.getType())) return;
+        this.execute = execute.replace(this.getType(), "");
         this.apply();
     }
 
@@ -22,23 +22,16 @@ public class TakeXPExecutor extends Executors {
     @Override
     protected void apply() {
 
-        final int level = Integer.parseInt(execute
-                .replace(this.getType(), "")
-                .split(";")[0]);
+        final int level = Integer.parseInt(execute.split(";")[0]);
+        final int xp = Integer.parseInt(execute.split(";")[1]);
 
-        final int xp = Integer.parseInt(execute
-                .replace(this.getType(), "")
-                .split(";")[1]);
-
-        if(xp != 0) {
-            int save = player.getTotalExperience();
-            player.setTotalExperience(0);
-            player.setLevel(0);
-            player.setExp(0);
-            player.giveExp(save - xp);
-        }
-
-        if(level != 0) player.setLevel(player.getLevel() - level);
+        if (level != 0) player.setLevel(player.getLevel() - level);
+        if (xp == 0) return;
+        int save = player.getTotalExperience();
+        player.setTotalExperience(0);
+        player.setLevel(0);
+        player.setExp(0);
+        player.giveExp(save - xp);
     }
 
 }

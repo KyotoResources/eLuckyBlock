@@ -1,5 +1,6 @@
 package it.zS0bye.eLuckyBlock.commands.subcmds;
 
+import it.zS0bye.eLuckyBlock.LuckyBlock;
 import it.zS0bye.eLuckyBlock.commands.BaseCommand;
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import it.zS0bye.eLuckyBlock.files.enums.*;
@@ -57,13 +58,8 @@ public class ReloadSubCMD extends BaseCommand {
             for(final Fireworks firework : Fireworks.values()) firework.reloadConfig();
         }
 
-        if(this.plugin.getGuisFile().reload()) {
-            for(final GUI gui : GUI.values()) gui.reloadConfig();
-        }
-
-        this.plugin.getLuckyConfig().clear();
-        this.plugin.loadLuckyblocks();
-
+        this.plugin.loadLuckyBlocks(true);
+        LuckyBlock.addRewards(this.plugin);
         Lang.RELOAD_CONFIGURATIONS.send(sender);
     }
 

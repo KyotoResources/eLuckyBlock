@@ -10,6 +10,10 @@ import lombok.SneakyThrows;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 
 @Getter
 public class SQLConnection {
@@ -23,9 +27,9 @@ public class SQLConnection {
     @SneakyThrows
     public SQLConnection() {
         this.config = new HikariConfig();
-        this.config.setJdbcUrl("jdbc:mysql://" + Config.DB_HOST.getString() + ":" + Config.DB_PORT.getString() + "/" + Config.DB_NAME.getString() + Config.DB_CUSTOMURI.getString());
-        this.config.setUsername(Config.DB_USER.getString());
-        this.config.setPassword(Config.DB_PASSWORD.getString());
+        this.config.setJdbcUrl("jdbc:mysql://" + Config.DB_HOST.getStringNoColor() + ":" + Config.DB_PORT.getStringNoColor() + "/" + Config.DB_NAME.getStringNoColor() + Config.DB_CUSTOMURI.getStringNoColor());
+        this.config.setUsername(Config.DB_USER.getStringNoColor());
+        this.config.setPassword(Config.DB_PASSWORD.getStringNoColor());
         this.config.setMaximumPoolSize(Config.DB_MAXIMUM_POOL_SIZE.getInt());
         this.config.setMinimumIdle(Config.DB_MINIMUM_IDLE.getInt());
         this.config.setMaxLifetime(Config.DB_MAXIMUM_LIFETIME.getInt());
@@ -43,7 +47,6 @@ public class SQLConnection {
     public SQLConnection(final ELuckyBlock plugin) {
         this.plugin = plugin;
         this.file = new File(this.plugin.getDataFolder(), "database.db");
-        this.saveFile();
 
         Class.forName("org.sqlite.JDBC");
         this.connection = DriverManager.getConnection("jdbc:sqlite:"+file.getAbsolutePath());
@@ -51,23 +54,30 @@ public class SQLConnection {
 
     @SneakyThrows
     public void closeConnection() {
-        if(this.connection.isClosed())
-            return;
+        if(this.connection.isClosed()) return;
         this.connection.close();
     }
 
-    public boolean hasConnection() {
-        return this.connection != null;
+    @SneakyThrows
+    public boolean hasClosedConnection() {
+        return this.connection == null || this.connection.isClosed();
     }
 
-    @SneakyThrows
-    public void saveFile() {
-
-        if (!this.plugin.getDataFolder().exists())
-            this.plugin.getDataFolder().mkdirs();
-
-        if (!file.exists())
-            file.createNewFile();
+    public void saves(final String sql, final Object... values) {
+        CompletableFuture.supplyAsync(() -> {
+            try (final PreparedStatement pst = this.connection.prepareStatement(sql)) {
+                for (int i = 0; i < values.length; i++) {
+//                    System.out.println("index - " + (i + 1) + " oggetto: " + values[i]);
+                    pst.setObject(i + 1, values[i]);
+                }
+                pst.executeUpdate();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            } finally {
+                this.closeConnection();
+            }
+            return Executors.newFixedThreadPool(1);
+        });
     }
 
 }

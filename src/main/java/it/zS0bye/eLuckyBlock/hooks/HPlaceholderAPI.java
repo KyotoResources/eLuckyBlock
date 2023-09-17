@@ -1,23 +1,23 @@
 package it.zS0bye.eLuckyBlock.hooks;
 
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
+import it.zS0bye.eLuckyBlock.mysql.tables.ScoreTable;
 import it.zS0bye.eLuckyBlock.utils.StringUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import java.util.Map;
 
 public class HPlaceholderAPI extends PlaceholderExpansion {
 
-    private Map<String, Integer> luckyScore;
+    private final ELuckyBlock plugin;
+    private final ScoreTable score;
 
     public HPlaceholderAPI(final ELuckyBlock plugin) {
-        this.luckyScore = plugin.getLuckyScore();
+        this.plugin = plugin;
+        this.score = this.plugin.getScoreTable();
     }
-
-    public HPlaceholderAPI() {}
 
     @Override
     public boolean canRegister(){
@@ -36,27 +36,24 @@ public class HPlaceholderAPI extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return "1.0.0";
+        return this.plugin.getDescription().getVersion();
     }
 
     @Override
     public boolean persist() {
-        return true; //
+        return true;
     }
 
     @Override
-    public String onRequest(OfflinePlayer player, String params) {
+    public String onRequest(final OfflinePlayer player, final String params) {
         if (params.equalsIgnoreCase("breaks")) {
-            if(luckyScore.containsKey(player.getName())) {
-                return String.valueOf(luckyScore.get(player.getName()));
-            }
-            return "0";
+            return this.score.getScoreMap(player.getName()) + "";
         }
 
         return null;
     }
 
-    public String getPlaceholders(final Player player, String text) {
+    public String replacePlaceholders(final Player player, String text) {
         return StringUtils.colorize(PlaceholderAPI.setPlaceholders(player, text));
     }
 }

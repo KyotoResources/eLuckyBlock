@@ -1,9 +1,7 @@
 package it.zS0bye.eLuckyBlock.commands.subcmds;
 
-import it.zS0bye.eLuckyBlock.api.ILuckyBlockAPI;
 import it.zS0bye.eLuckyBlock.commands.BaseCommand;
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
-import it.zS0bye.eLuckyBlock.files.LuckyBlocksFile;
 import it.zS0bye.eLuckyBlock.files.enums.LuckyFile;
 import it.zS0bye.eLuckyBlock.utils.ItemUtils;
 import it.zS0bye.eLuckyBlock.files.enums.Lang;
@@ -52,11 +50,11 @@ public class GiveSubCMD extends BaseCommand {
                 if(!sender.hasPermission(this.permission)) return;
                 tab.add(players.getName());
             });
-        if(args.length == 3)
-            LuckyBlocksFile.getFiles(this.plugin).forEach(luckyblocks -> {
-                if(!LuckyFile.UNIQUE_CHECK_ENABLED.getBoolean(luckyblocks)) return;
-                tab.add(luckyblocks);
-            });
+//        if(args.length == 3)
+//            LuckyBlocksFile.getFiles(this.plugin).forEach(luckyblocks -> {
+//                if(!LuckyFile.UNIQUE_CHECK_ENABLED.getBoolean(luckyblocks)) return;
+//                tab.add(luckyblocks);
+//            });
     }
 
     @Override
@@ -73,7 +71,6 @@ public class GiveSubCMD extends BaseCommand {
 
         Player other = Bukkit.getPlayerExact(args[1]);
 
-        ILuckyBlockAPI api = ELuckyBlock.getApi();
         if(other == null) {
             Lang.PLAYER_NOT_FOUND.send(sender);
             return;
@@ -81,10 +78,10 @@ public class GiveSubCMD extends BaseCommand {
 
         int amount = 1;
 
-        if(!LuckyBlocksFile.getFiles(this.plugin).contains(args[2])) {
-            Lang.GIVE_ERRORS_NOT_EXIST.send(sender);
-            return;
-        }
+//        if(!LuckyBlocksFile.getFiles(this.plugin).contains(args[2])) {
+//            Lang.GIVE_ERRORS_NOT_EXIST.send(sender);
+//            return;
+//        }
 
         if(!LuckyFile.UNIQUE_CHECK_ENABLED.getBoolean(args[2])) {
             Lang.GIVE_ERRORS_NOT_UNIQUE.send(sender);
@@ -103,12 +100,12 @@ public class GiveSubCMD extends BaseCommand {
             }
         }
 
-        if(api.give(args[2], amount) == null) {
-            this.plugin.getLogger().severe(ItemUtils.ExceptionMsg());
-            return;
-        }
-
-        other.getInventory().addItem(api.give(args[2], amount));
+//        if(api.give(args[2], amount) == null) {
+//            this.plugin.getLogger().severe(ItemUtils.ExceptionMsg());
+//            return;
+//        }
+//
+//        other.getInventory().addItem(api.give(args[2], amount));
         String senderMsg = Lang.GIVE_ADMINS_SENDER.getCustomString()
                 .replace("%luckyblock%", args[2])
                 .replace("%amount%", String.valueOf(amount))

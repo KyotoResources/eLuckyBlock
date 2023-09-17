@@ -5,13 +5,13 @@ import org.bukkit.entity.EntityType;
 
 public class SpawnMobExecutor extends Executors {
 
-    private final String execute;
     private final Location location;
+    private String execute;
 
     public SpawnMobExecutor(final String execute, final Location location) {
-        this.execute = execute;
         this.location = location;
-        if (!this.execute.startsWith(this.getType())) return;
+        if (!execute.startsWith(this.getType())) return;
+        this.execute = execute.replace(this.getType(), "");
         this.apply();
     }
 
@@ -20,13 +20,7 @@ public class SpawnMobExecutor extends Executors {
     }
 
     protected void apply() {
-
-        final String mob = execute
-                .replace(this.getType(), "")
-                .toUpperCase();
-
         if(this.location.getWorld() == null) return;
-
-        this.location.getWorld().spawnEntity(this.location, EntityType.valueOf(mob));
+        this.location.getWorld().spawnEntity(this.location, EntityType.valueOf(this.execute.toUpperCase()));
     }
 }

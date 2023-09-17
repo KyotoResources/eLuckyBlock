@@ -9,14 +9,15 @@ import java.util.logging.Level;
 public class CItemExecutor extends Executors {
 
     private final ELuckyBlock plugin;
-    private final String execute;
     private final Location location;
+    private String execute;
 
     public CItemExecutor(final ELuckyBlock plugin, final String execute, final Location location) {
         this.plugin = plugin;
         this.execute = execute;
         this.location = location;
-        if (!this.execute.startsWith(this.getType())) return;
+        if (!execute.startsWith(this.getType())) return;
+        this.execute = execute.replace(this.getType(), "");
         this.apply();
     }
 
@@ -28,10 +29,7 @@ public class CItemExecutor extends Executors {
     @Override
     protected void apply() {
 
-        final String citem = execute
-                .replace(this.getType(), "");
-
-        final CItemsFile file = new CItemsFile(this.plugin, citem);
+        final CItemsFile file = new CItemsFile(this.plugin, this.execute);
 
         if(!file.getFile().exists()) {
             this.plugin.getLogger().log(Level.SEVERE, "The custom item you entered is invalid!");
@@ -39,7 +37,6 @@ public class CItemExecutor extends Executors {
         }
 
         if(this.location.getWorld() == null) return;
-
         this.location.getWorld().dropItem(this.location, file.getItem());
     }
 }

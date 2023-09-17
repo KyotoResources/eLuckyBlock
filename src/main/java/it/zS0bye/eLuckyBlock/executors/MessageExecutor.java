@@ -7,15 +7,15 @@ import org.bukkit.entity.Player;
 
 public class MessageExecutor extends Executors {
 
-    private final String execute;
     private final Player player;
     private final HooksManager hooks;
+    private String execute;
 
     public MessageExecutor(final ELuckyBlock plugin, final String execute, final Player player) {
-        this.execute = execute;
         this.player = player;
         this.hooks = plugin.getHooks();
-        if (!this.execute.startsWith(this.getType())) return;
+        if (!execute.startsWith(this.getType())) return;
+        this.execute = execute.replace(this.getType(), "");
         this.apply();
     }
 
@@ -24,11 +24,6 @@ public class MessageExecutor extends Executors {
     }
 
     protected void apply() {
-
-        final String msg = this.hooks.getPlaceholders(this.player, execute
-                .replace(this.getType(), "")
-                .replace("%prefix%", Config.SETTINGS_PREFIX.getString()));
-
-        player.sendMessage(msg);
+        player.sendMessage(this.hooks.getPlaceholders(this.player, execute.replace("%prefix%", Config.SETTINGS_PREFIX.getString())));
     }
 }

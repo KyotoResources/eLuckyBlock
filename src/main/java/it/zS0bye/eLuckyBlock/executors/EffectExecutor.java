@@ -6,13 +6,13 @@ import org.bukkit.potion.PotionEffect;
 
 public class EffectExecutor extends Executors {
 
-    private final String execute;
     private final Player player;
+    private String execute;
 
     public EffectExecutor(final String execute, final Player player) {
-        this.execute = execute;
         this.player = player;
-        if (!this.execute.startsWith(this.getType())) return;
+        if (!execute.startsWith(this.getType())) return;
+        this.execute = execute.replace(this.getType(), "");
         this.apply();
     }
 
@@ -21,18 +21,9 @@ public class EffectExecutor extends Executors {
     }
 
     protected void apply() {
-
-        final String effect = execute
-                .replace(this.getType(), "")
-                .split(";")[0]
-                .toUpperCase();
-        final int level = Integer.parseInt(execute
-                .replace(this.getType(), "")
-                .split(";")[1]);
-        final int time = Integer.parseInt(execute
-                .replace(this.getType(), "")
-                .split(";")[2]);
-
+        final String effect = execute.split(";")[0].toUpperCase();
+        final int level = Integer.parseInt(execute.split(";")[1]);
+        final int time = Integer.parseInt(execute.split(";")[2]);
         player.addPotionEffect(new PotionEffect(ConvertUtils.getPotion(effect), time, level));
     }
 }

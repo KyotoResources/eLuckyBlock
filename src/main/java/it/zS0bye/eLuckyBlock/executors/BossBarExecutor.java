@@ -11,16 +11,16 @@ import org.bukkit.entity.Player;
 public class BossBarExecutor extends Executors {
 
     private final ELuckyBlock plugin;
-    private final String execute;
     private final Player player;
     private final HooksManager hooks;
+    private String execute;
 
     public BossBarExecutor(final ELuckyBlock plugin, final String execute, final Player player) {
         this.plugin = plugin;
-        this.execute = execute;
         this.player = player;
         this.hooks = plugin.getHooks();
-        if(!this.execute.startsWith(getType())) return;
+        if(!execute.startsWith(getType())) return;
+        this.execute = execute.replace(this.getType(), "");
         this.apply();
     }
 
@@ -40,27 +40,11 @@ public class BossBarExecutor extends Executors {
 
     protected void apply() {
 
-        final String title = this.hooks.getPlaceholders(this.player, execute
-                .replace(this.getType(), "")
-                .split(";")[0]);
-
-        final String color = execute
-                .replace(this.getType(), "")
-                .split(";")[1]
-                .toUpperCase();
-
-        final String style = execute
-                .replace(this.getType(), "")
-                .split(";")[2]
-                .toUpperCase();
-
-        final double progress = Double.parseDouble(execute
-                .replace(this.getType(), "")
-                .split(";")[3]);
-
-        final int times = Integer.parseInt(execute
-                .replace(this.getType(), "")
-                .split(";")[4]);
+        final String title = this.hooks.getPlaceholders(this.player, execute.split(";")[0]);
+        final String color = execute.split(";")[1].toUpperCase();
+        final String style = execute.split(";")[2].toUpperCase();
+        final double progress = Double.parseDouble(execute.split(";")[3]);
+        final int times = Integer.parseInt(execute.split(";")[4]);
 
         if(title.startsWith("@")) {
             Bukkit.getOnlinePlayers().forEach(players -> this.run(players, title, color, style, progress, times));
@@ -72,16 +56,14 @@ public class BossBarExecutor extends Executors {
 
     private void run(final Player player, String title, final String color, final String style, final double progress, final int times) {
         title = title.replaceFirst("@", "");
-
         final BossBarAnimationTask task = new BossBarAnimationTask(this.plugin, player);
         for (final String animation : Animations.ANIMATIONS.getKeys()) {
-            if (title.contains("%animation_" + animation + "%")) {
-                task.stopTask();
-                task.stopTimes();
+            if (!title.contains("%animation_" + animation + "%")) continue;
+            task.stopTask();
+            task.stopTimes();
 
-                this.startTask(player, animation, color, style, progress, times);
-                return;
-            }
+            this.startTask(player, animation, color, style, progress, times);
+            return;
         }
 
         task.stopTask();

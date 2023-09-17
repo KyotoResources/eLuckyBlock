@@ -10,23 +10,19 @@ import org.bukkit.entity.Player;
 public class SchematicExecutor extends Executors {
 
     private final ELuckyBlock plugin;
-    private final String execute;
     private final Player player;
     private final Location location;
     private final HooksManager hooks;
+    private String execute;
 
     public SchematicExecutor(final ELuckyBlock plugin, final String execute, final Player player, final Location location) {
         this.plugin = plugin;
-        this.execute = execute;
         this.player = player;
         this.location = location;
         this.hooks = plugin.getHooks();
-        if (!this.execute.startsWith(this.getType())) return;
-        if (!VersionUtils.legacy()) {
-            this.apply();
-            return;
-        }
-        this.plugin.getLogger().severe("The \"[SCHEMATIC]\" executor only works with WorldEdit 7+!");
+        if (!execute.startsWith(this.getType())) return;
+        this.execute = execute.replace(getType(), "");
+        this.apply();
     }
 
     @Override
@@ -36,6 +32,11 @@ public class SchematicExecutor extends Executors {
 
     @Override
     protected void apply() {
+
+        if (VersionUtils.legacy()) {
+            this.plugin.getLogger().severe("The \"[SCHEMATIC]\" executor only works with WorldEdit 7+!");
+            return;
+        }
 
         final String schematic = this.hooks.getPlaceholders(this.player, execute
                 .replace(getType(), ""));

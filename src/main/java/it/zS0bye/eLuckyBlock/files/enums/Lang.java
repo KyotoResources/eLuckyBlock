@@ -40,7 +40,7 @@ public enum Lang implements IFiles {
 
     private final ELuckyBlock plugin;
     private final String path;
-    private FileConfiguration lang;
+    private FileConfiguration config;
 
     Lang(final String path) {
         this.path = path;
@@ -65,114 +65,98 @@ public enum Lang implements IFiles {
 
     @Override
     public void reloadConfig() {
-        this.lang = this.plugin.getLanguagesFile().getConfig();
+        this.config = this.plugin.getLanguagesFile().getConfig();
     }
 
     @Override
     public String getString(final String... var) {
-        return StringUtils.colorize(this.lang.getString(this.variables(var)));
+        return StringUtils.colorize(this.config.getString(this.variables(var)));
+    }
+
+    @Override
+    public String getStringNoColor(final String... var) {
+        return this.config.getString(this.variables(var));
     }
 
     @Override
     public List<String> getStringList(final String... var) {
         List<String> list = new ArrayList<>();
-        for (String setList : this.lang.getStringList(this.variables(var))) list.add(StringUtils.colorize(setList));
+        for (String setList : this.config.getStringList(this.variables(var))) list.add(StringUtils.colorize(setList));
         return list;
     }
 
     @Override
     public boolean getBoolean(final String... var) {
-        return this.lang.getBoolean(variables(var));
+        return this.config.getBoolean(variables(var));
     }
 
     @Override
     public boolean contains(final String... var) {
-        return this.lang.contains(variables(var));
+        return this.config.contains(variables(var));
     }
 
     @Override
     public int getInt(final String... var) {
-        return this.lang.getInt(variables(var));
+        return this.config.getInt(variables(var));
     }
 
     @Override
     public double getDouble(final String... var) {
-        return this.lang.getDouble(variables(var));
+        return this.config.getDouble(variables(var));
     }
 
-    @SafeVarargs
     @Override
-    public final String getCustomString(final String minVar, final Map<String, String>... placeholders) {
+    public String getCustomString(final String... var) {
+        return this.getCustomString(this.getString(var), var);
+    }
 
-        String target = this.getString(this.convertVar(minVar));
-
-        for (Map<String, String> placeholder : placeholders) {
-            for (String key : placeholder.keySet()) target = target.replace(key, placeholder.get(key));
-        }
-
-        if (target.startsWith("%prefix%")) {
-            final String replace = target.replace("%prefix%", Config.SETTINGS_PREFIX.getString());
+    @Override
+    public String getCustomString(String replace, final String... var) {
+        if (replace.startsWith("%prefix%")) {
+            replace = replace.replace("%prefix%", Config.SETTINGS_PREFIX.getString());
             if (replace.startsWith(Config.SETTINGS_PREFIX.getString() + "%center%")) {
-                final String replace2 = replace.replace("%center%", "");
-                return StringUtils.center(replace2);
+                replace = replace.replace("%center%", "");
+                return StringUtils.center(replace);
             }
             return replace;
         }
-        if(target.startsWith("%center%")) {
-            final String replace = target.replace("%center%", "");
+
+        if(replace.startsWith("%center%")) {
+            replace = replace.replace("%center%", "");
             return StringUtils.center(replace);
         }
-        return target;
+        return replace;
     }
 
-    @SafeVarargs
     @Override
-    public final String getCustomString(final Map<String, String>... placeholders) {
-
-        String target = this.getString();
-
-        for (Map<String, String> placeholder : placeholders) {
-            for (String key : placeholder.keySet()) target = target.replace(key, placeholder.get(key));
-        }
-
-        if (target.startsWith("%prefix%")) {
-            final String replace = target.replace("%prefix%", Config.SETTINGS_PREFIX.getString());
-            if (replace.startsWith(Config.SETTINGS_PREFIX.getString() + "%center%")) {
-                final String replace2 = replace.replace("%center%", "");
-                return StringUtils.center(replace2);
-            }
-            return replace;
-        }
-        if(target.startsWith("%center%")) {
-            final String replace = target.replace("%center%", "");
-            return StringUtils.center(replace);
-        }
-        return target;
+    public void send(final CommandSender sender, final String... var) {
+        if (this.getCustomString(var).isEmpty()) return;
+        sender.sendMessage(this.getCustomString(var));
     }
 
-    @SafeVarargs
     @Override
-    public final void send(final CommandSender sender, final String minVar, final Map<String, String>... placeholders) {
-        if (this.getCustomString(minVar, placeholders).isEmpty()) return;
-        sender.sendMessage(this.getCustomString(minVar, placeholders));
+    public void send(final CommandSender sender, final Map<String, String> placeholders, final String... var) {
+        String message = this.getCustomString(var);
+        if (message.isEmpty()) return;
+        for (String key : placeholders.keySet()) message = message.replace(key, placeholders.get(key));
+        sender.sendMessage(message);
     }
 
-    @SafeVarargs
     @Override
-    public final void send(final CommandSender sender, final Map<String, String>... placeholders) {
-        if (this.getCustomString(placeholders).isEmpty()) return;
-        sender.sendMessage(this.getCustomString(placeholders));
+    public void sendList(final CommandSender sender, final String... var) {
+        if (this.getStringList(var).isEmpty()) return;
+        this.getStringList(var).forEach(msg -> sender.sendMessage(this.getCustomString(msg, var)));
     }
 
     @Override
     public Set<String> getKeys() {
-        return this.lang.getKeys(false);
+        return this.config.getKeys(false);
     }
 
     @SuppressWarnings("all")
     @Override
     public Set<String> getConfigurationSection(final String... var) {
-        return this.lang.getConfigurationSection(this.variables(var)).getKeys( false);
+        return this.config.getConfigurationSection(this.variables(var)).getKeys( false);
     }
 
     private String[] convertVar(final String var) {

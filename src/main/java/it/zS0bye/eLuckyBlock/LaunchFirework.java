@@ -1,4 +1,4 @@
-package it.zS0bye.eLuckyBlock.objects;
+package it.zS0bye.eLuckyBlock;
 
 import it.zS0bye.eLuckyBlock.ELuckyBlock;
 import org.bukkit.Color;

@@ -6,15 +6,15 @@ import org.bukkit.entity.Player;
 
 public class SudoExecutor extends Executors {
 
-    private final String execute;
     private final Player player;
     private final HooksManager hooks;
+    private String execute;
 
     public SudoExecutor(final ELuckyBlock plugin, final String execute, final Player player) {
-        this.execute = execute;
         this.player = player;
         this.hooks = plugin.getHooks();
-        if (!this.execute.startsWith(this.getType())) return;
+        if (!execute.startsWith(this.getType())) return;
+        this.execute = execute.replace(this.getType(), "");
         this.apply();
     }
 
@@ -23,10 +23,6 @@ public class SudoExecutor extends Executors {
     }
 
     protected void apply() {
-
-        final String sudo = this.hooks.getPlaceholders(this.player, execute
-                .replace(this.getType(), ""));
-
-        player.chat(sudo);
+        player.chat(this.hooks.getPlaceholders(this.player, this.execute));
     }
 }

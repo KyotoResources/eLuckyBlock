@@ -14,9 +14,11 @@ public interface IFiles {
 
     String getString(final String... var);
 
-    String getCustomString(final String minVar, final Map<String, String>... placeholders);
+    String getStringNoColor(final String... var);
 
-    String getCustomString(final Map<String, String>... placeholders);
+    String getCustomString(final String... var);
+
+    String getCustomString(String replace, final String... var);
 
     List<String> getStringList(final String... var);
 
@@ -28,9 +30,11 @@ public interface IFiles {
 
     double getDouble(final String... var);
 
-    void send(final CommandSender sender, final String minVar, final Map<String, String>... placeholders);
+    void send(final CommandSender sender, final String... var);
 
-    void send(final CommandSender sender, final Map<String, String>... placeholders);
+    void send(final CommandSender sender, final Map<String, String> placeholders, final String... var);
+
+    void sendList(final CommandSender sender, final String... var);
 
     String variables(final String... var);
 

@@ -47,7 +47,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             new HelpSubCMD(args, sender, commandLabel, this.plugin);
             new AboutSubCMD(args, sender, this.plugin);
             new ReloadSubCMD(this.command, args, sender, this.plugin);
-            new InfoSubCMD(this.command, args, sender, "users", this.plugin);
+            new InfoSubCMD(this.command, args, sender, this.plugin);
 
             if(checkArgs(args[0], "help")
             && checkArgs(args[0], "about")
@@ -59,13 +59,11 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         }
 
         if(args.length == 2) {
-            new InfoSubCMD(this.command, args, sender, "admins", this.plugin);
+            new InfoSubCMD(this.command, args, sender, this.plugin);
             new CItemSubCMD(this.command, args, sender, this.plugin);
-            new CreateSubCMD(this.command, args, sender, this.plugin);
 
             if(checkArgs(args[0], "info")
-                    && checkArgs(args[0], "citem")
-                    && checkArgs(args[0], "create"))
+                    && checkArgs(args[0], "citem"))
                 new HelpSubCMD(sender, commandLabel, this.plugin);
 
             return true;
@@ -112,7 +110,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             new InfoSubCMD(this.command, commands, sender);
             new GiveSubCMD(this.command, commands, sender);
             new CItemSubCMD(this.command, commands, sender);
-            new CreateSubCMD(this.command, commands, sender);
             StringUtil.copyPartialMatches(args[0], commands, completions);
         }
 

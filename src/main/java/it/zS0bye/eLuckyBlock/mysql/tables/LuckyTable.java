@@ -14,10 +14,7 @@ public class LuckyTable {
     private Connection connection;
 
     public LuckyTable(final ELuckyBlock plugin) {
-
-        if(!plugin.getSqlConnection().hasConnection())
-            return;
-
+        if(plugin.getSqlConnection().hasClosedConnection()) return;
         this.connection = plugin.getSqlConnection().getConnection();
         this.create();
     }
@@ -34,7 +31,7 @@ public class LuckyTable {
     }
 
     public CompletableFuture<Boolean> hasNotLocation(final String location) {
-        String sql = "SELECT LuckyName FROM luckyblocks WHERE Location = ?";
+        final String sql = "SELECT LuckyName FROM luckyblocks WHERE Location = ?";
         return CompletableFuture.supplyAsync(() -> {
             try (PreparedStatement pst = this.connection.prepareStatement(sql)) {
                 pst.setString(1, location);
@@ -48,7 +45,7 @@ public class LuckyTable {
     }
 
     public void setLocation(final String location, final String name) {
-        String sql = "INSERT INTO luckyblocks(Location,LuckyName) VALUES(?,?)";
+        final String sql = "INSERT INTO luckyblocks(Location,LuckyName) VALUES(?,?)";
         CompletableFuture.runAsync(() -> {
             try (PreparedStatement pst = this.connection.prepareStatement(sql)) {
                 pst.setString(1, location);
@@ -61,7 +58,7 @@ public class LuckyTable {
     }
 
     public void remLocation(final String location) {
-        String sql = "DELETE FROM luckyblocks WHERE Location = ?";
+        final String sql = "DELETE FROM luckyblocks WHERE Location = ?";
         CompletableFuture.runAsync(() -> {
             try (PreparedStatement pst = this.connection.prepareStatement(sql)) {
                 pst.setString(1, location);
@@ -73,7 +70,7 @@ public class LuckyTable {
     }
 
     public CompletableFuture<String> getLuckyBlock(final String location) {
-        String sql = "SELECT LuckyName FROM luckyblocks WHERE Location = ?";
+        final String sql = "SELECT LuckyName FROM luckyblocks WHERE Location = ?";
         CompletableFuture<String> future = new CompletableFuture<>();
         hasNotLocation(location).thenAccept(check -> {
             if(check) {
@@ -96,7 +93,7 @@ public class LuckyTable {
     }
 
     public void fixLocations() {
-        String sql = "SELECT Location FROM luckyblocks ORDER BY LuckyName";
+        final String sql = "SELECT Location FROM luckyblocks ORDER BY LuckyName";
         CompletableFuture.runAsync(() -> {
             try (PreparedStatement pst = this.connection.prepareStatement(sql)) {
                 ResultSet rs = pst.executeQuery();

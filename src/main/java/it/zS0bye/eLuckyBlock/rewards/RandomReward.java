@@ -12,11 +12,10 @@ public class RandomReward<E> {
     private final Random random = new Random();
     private double total = 0;
 
-    public void add(double weight, @NotNull E value) {
-        if (weight > 0) {
-            total += weight;
-            map.put(total, value);
-        }
+    public void add(final double weight, final @NotNull E value) {
+        if (weight <= 0) return;
+        this.total += weight;
+        map.put(this.total, value);
     }
 
     @NotNull

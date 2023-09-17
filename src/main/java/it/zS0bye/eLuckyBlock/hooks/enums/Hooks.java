@@ -9,10 +9,7 @@ public enum Hooks {
     PLACEHOLDERAPI("PlaceholderAPI"),
     WORLDGUARD("WorldGuard"),
     WORLDEDIT("WorldEdit"),
-    VAULT("Vault"),
-    TOKENENCHANT("TokenEnchant"),
-    TOKENMANAGER("TokenManager"),
-    PLOTSQUARED("PlotSquared");
+    VAULT("Vault");
 
     private final ELuckyBlock plugin;
     private final String path;

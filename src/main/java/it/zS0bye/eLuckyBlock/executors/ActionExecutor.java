@@ -12,16 +12,16 @@ import org.bukkit.entity.Player;
 public class ActionExecutor extends Executors {
 
     private final ELuckyBlock plugin;
-    private final String execute;
     private final Player player;
     private final HooksManager hooks;
+    private String execute;
 
     public ActionExecutor(final ELuckyBlock plugin, final String execute, final Player player) {
         this.plugin = plugin;
-        this.execute = execute;
         this.player = player;
         this.hooks = plugin.getHooks();
-        if (!this.execute.startsWith(this.getType())) return;
+        if (!execute.startsWith(this.getType())) return;
+        this.execute = execute.replace(this.getType(), "");
         this.apply();
     }
 
@@ -41,9 +41,7 @@ public class ActionExecutor extends Executors {
 
     protected void apply() {
 
-        final String msg = this.hooks.getPlaceholders(this.player, execute
-                .replace(this.getType(), "")
-                .replace("%prefix%", Config.SETTINGS_PREFIX.getString()));
+        final String msg = this.hooks.getPlaceholders(this.player, execute.replace("%prefix%", Config.SETTINGS_PREFIX.getString()));
 
         if(msg.startsWith("@")) {
             Bukkit.getOnlinePlayers().forEach(players -> this.run(players, msg));
@@ -57,11 +55,10 @@ public class ActionExecutor extends Executors {
         msg = msg.replaceFirst("@", "");
         final ActionAnimationTask task = new ActionAnimationTask(this.plugin, player);
         for (final String animation : Animations.ANIMATIONS.getKeys()) {
-            if (msg.contains("%animation_" + animation + "%")) {
-                task.stopTask();
-                this.startTask(player, animation);
-                return;
-            }
+            if (!msg.contains("%animation_" + animation + "%")) continue;
+            task.stopTask();
+            this.startTask(player, animation);
+            return;
         }
 
         task.stopTask();

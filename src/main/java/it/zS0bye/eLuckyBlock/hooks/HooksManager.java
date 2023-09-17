@@ -11,7 +11,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.util.UUID;
 
 @Getter
 public class HooksManager {
@@ -27,9 +26,6 @@ public class HooksManager {
         Hooks.PLACEHOLDERAPI.load();
         Hooks.WORLDGUARD.load();
         Hooks.WORLDEDIT.load();
-        Hooks.TOKENENCHANT.load();
-        Hooks.TOKENMANAGER.load();
-        Hooks.PLOTSQUARED.load();
     }
 
     public void registerPlaceholders() {
@@ -39,7 +35,7 @@ public class HooksManager {
 
     public String getPlaceholders(final Player player, final String message) {
         if(!Hooks.PLACEHOLDERAPI.isCheck()) return StringUtils.colorize(message);
-        return new HPlaceholderAPI().getPlaceholders(player, message);
+        return new HPlaceholderAPI(plugin).replacePlaceholders(player, message);
     }
 
     public void giveMoney(final OfflinePlayer player, final double amount) {
@@ -52,16 +48,6 @@ public class HooksManager {
         new HVaultAPI(player, amount).takeMoney();
     }
 
-    public void giveTokens(final OfflinePlayer player, final double amount) {
-        if(Hooks.TOKENENCHANT.isCheck()) new HTokenEnchantAPI(player, amount).addTokens();
-        if(Hooks.TOKENMANAGER.isCheck()) new HTokenManagerAPI(player, amount).addTokens();
-    }
-
-    public void takeTokens(final OfflinePlayer player, final double amount) {
-        if(Hooks.TOKENENCHANT.isCheck()) new HTokenEnchantAPI(player, amount).takeTokens();
-        if(Hooks.TOKENMANAGER.isCheck()) new HTokenManagerAPI(player, amount).takeTokens();
-    }
-
     public void loadAndCopySchem(final File file, final World world, final Location loc) {
         if(!Hooks.WORLDEDIT.isCheck()) return;
         new HWorldEditAPI(file, world, loc).loadAndCopy();
@@ -70,11 +56,6 @@ public class HooksManager {
     public void pasteSchem(final File file, final World world, final Location loc) {
         if(!Hooks.WORLDEDIT.isCheck()) return;
         new HWorldEditAPI(file, world, loc).paste();
-    }
-
-    public boolean checkPlot(final UUID uuid) {
-        if(!Hooks.PLOTSQUARED.isCheck()) return false;
-        return new HPlotSquaredAPI(uuid).checkPlot();
     }
 
     public ApplicableRegionSet getRegions(final Location location) {
