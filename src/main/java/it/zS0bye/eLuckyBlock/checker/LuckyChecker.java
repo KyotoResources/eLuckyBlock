@@ -11,7 +11,7 @@ import it.zS0bye.eLuckyBlock.files.enums.Config;
 import it.zS0bye.eLuckyBlock.files.enums.Lucky;
 import it.zS0bye.eLuckyBlock.utils.ConvertUtils;
 import it.zS0bye.eLuckyBlock.utils.ItemUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

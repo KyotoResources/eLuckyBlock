@@ -20,7 +20,6 @@ public enum Config implements IFiles {
     HOOKS_VAULT("Settings.hooks.Vault", "false"),
     HOOKS_TOKENENCHANT("Settings.hooks.TokenEnchant", "false"),
     HOOKS_TOKENMANAGER("Settings.hooks.TokenManager", "false"),
-    HOOKS_ULTRAPRISONCORE("Settings.hooks.UltraPrisonCore", "false"),
     HOOKS_PLOTSQUARED("Settings.hooks.PlotSquared", "false"),
     DB_TYPE("Storage.type", "SQLite"),
     DB_NAME("Storage.mysql.database", "eLuckyBlock"),

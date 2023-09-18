@@ -26,7 +26,6 @@ public class HooksManager {
         Hooks.WORLDEDIT.load();
         Hooks.TOKENENCHANT.load();
         Hooks.TOKENMANAGER.load();
-        Hooks.ULTRAPRISONCORE.load();
         Hooks.PLOTSQUARED.load();
     }
 
@@ -51,8 +50,6 @@ public class HooksManager {
             new HTokenEnchantAPI(player, amount).addTokens();
         if(Hooks.TOKENMANAGER.isCheck())
             new HTokenManagerAPI(player, amount).addTokens();
-        if(Hooks.ULTRAPRISONCORE.isCheck())
-            new HUltraPrisonCoreAPI(player, amount).addTokens();
     }
 
     public static void takeTokens(final OfflinePlayer player, final double amount) {
@@ -60,8 +57,6 @@ public class HooksManager {
             new HTokenEnchantAPI(player, amount).takeTokens();
         if(Hooks.TOKENMANAGER.isCheck())
             new HTokenManagerAPI(player, amount).takeTokens();
-        if(Hooks.ULTRAPRISONCORE.isCheck())
-            new HUltraPrisonCoreAPI(player, amount).takeTokens();
     }
 
     public static void loadAndCopySchem(final File file, final World world, final Location loc) {

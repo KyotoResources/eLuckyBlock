@@ -12,7 +12,6 @@ public enum Hooks {
     VAULT("Vault"),
     TOKENENCHANT("TokenEnchant"),
     TOKENMANAGER("TokenManager"),
-    ULTRAPRISONCORE("UltraPrisonCore"),
     PLOTSQUARED("PlotSquared");
 
     private final ELuckyBlock plugin;

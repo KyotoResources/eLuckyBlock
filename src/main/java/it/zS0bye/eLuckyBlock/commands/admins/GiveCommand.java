@@ -7,7 +7,7 @@ import it.zS0bye.eLuckyBlock.files.enums.Lucky;
 import it.zS0bye.eLuckyBlock.utils.ItemUtils;
 import it.zS0bye.eLuckyBlock.files.enums.Lang;
 import it.zS0bye.eLuckyBlock.utils.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

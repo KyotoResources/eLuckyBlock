@@ -32,9 +32,13 @@ public class ScoreTable {
     public CompletableFuture<Boolean> hasNotScore(final String name) {
         String sql = "SELECT Numbers FROM breaks WHERE PlayerName = ?";
         return CompletableFuture.supplyAsync(() -> {
-            try (PreparedStatement pst = this.connection.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
+            try (PreparedStatement pst = this.connection.prepareStatement(sql)) {
                 pst.setString(1, name);
-                return !rs.next();
+                try (ResultSet rs = pst.executeQuery()) {
+                    return !rs.next();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
@@ -78,10 +82,12 @@ public class ScoreTable {
                 setScore(name);
             }
             CompletableFuture.runAsync(() -> {
-                try (PreparedStatement pst = this.connection.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
+                try (PreparedStatement pst = this.connection.prepareStatement(sql)) {
                     pst.setString(1, name);
-                    if (rs.next()) {
-                        future.complete(rs.getInt("Numbers"));
+                    try (ResultSet rs = pst.executeQuery()) {
+                        if (rs.next()) future.complete(rs.getInt("Numbers"));
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
                     }
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
